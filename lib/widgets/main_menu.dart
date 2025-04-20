@@ -33,10 +33,9 @@ class MainMenuWidget extends StatelessWidget {
               )
             ),
           onTap: () {
-            Navigator.pop(context);
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const Home()),
+              MaterialPageRoute(builder: (context) => const HomePage()),
             );
           },
         ),

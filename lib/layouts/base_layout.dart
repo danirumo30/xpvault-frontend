@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:game_trackr/pages/login.dart';
 import 'package:game_trackr/widgets/main_menu.dart';
 
 class BaseLayout extends StatelessWidget {
@@ -30,7 +31,10 @@ class BaseLayout extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: (){}, 
+            onPressed:() => Navigator.pushReplacement(
+              context, 
+              MaterialPageRoute(builder: (context) => LoginPage())
+            ), 
             child: Row(
               children: [
                 Icon(

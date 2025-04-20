@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:game_trackr/layouts/base_layout.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ class Home extends StatelessWidget {
       title: "GameTrackr",
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           child: SizedBox(
             width: boxWidth,
             child: Column(
@@ -29,7 +29,7 @@ class Home extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
                 TextField(
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -48,7 +48,7 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: (){}, 
                   style: ButtonStyle(
