@@ -32,16 +32,16 @@ class HomePage extends StatelessWidget {
                 SizedBox(height: 40),
                 TextField(
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 22.0,
-                  ),
+                  style: TextStyle(color: Colors.black, fontSize: 22.0),
                   decoration: InputDecoration(
                     hintText: "Nombre de usuario",
                     hintStyle: TextStyle(color: Colors.black),
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 18,
+                      horizontal: 20,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide.none,
@@ -50,15 +50,19 @@ class HomePage extends StatelessWidget {
                 ),
                 SizedBox(height: 40),
                 ElevatedButton(
-                  onPressed: (){}, 
+                  onPressed: () {},
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all(
                       Color.fromARGB(255, 102, 174, 254),
                     ),
-                    minimumSize: WidgetStateProperty.all(Size(double.infinity, 60)),
-                    shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    )),
+                    minimumSize: WidgetStateProperty.all(
+                      Size(double.infinity, 60),
+                    ),
+                    shape: WidgetStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
                     elevation: WidgetStateProperty.all(5),
                     shadowColor: WidgetStateProperty.all(Colors.blue[200]),
                   ),

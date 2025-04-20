@@ -6,11 +6,7 @@ class BaseLayout extends StatelessWidget {
   final String title;
   final Widget body;
 
-  const BaseLayout({
-    super.key,
-    required this.title,
-    required this.body,
-  });
+  const BaseLayout({super.key, required this.title, required this.body});
 
   @override
   Widget build(BuildContext context) {
@@ -26,31 +22,22 @@ class BaseLayout extends StatelessWidget {
         ),
         centerTitle: true,
         backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(
-          color: Colors.white
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           TextButton(
-            onPressed:() => Navigator.pushReplacement(
-              context, 
-              MaterialPageRoute(builder: (context) => LoginPage())
-            ), 
+            onPressed:
+                () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                ),
             child: Row(
               children: [
-                Icon(
-                  Icons.login,
-                  color: Colors.white,
-                ),
-                SizedBox(width: 5,),
-                Text(
-                  "Iniciar sesión",
-                  style: TextStyle(
-                    color: Colors.white
-                  ),
-                )
+                Icon(Icons.login, color: Colors.white),
+                SizedBox(width: 5),
+                Text("Iniciar sesión", style: TextStyle(color: Colors.white)),
               ],
-            )
-          )
+            ),
+          ),
         ],
       ),
       drawer: const Drawer(

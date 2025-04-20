@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:game_trackr/layouts/base_layout.dart';
 import 'package:game_trackr/services/validation.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import '../services/auth_signup.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -13,48 +12,33 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-    final formKey = GlobalKey<FormState>();
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-    bool passwordInvisible = true;
+  bool passwordInvisible = true;
 
-   @override
+  Future<void> singup() async {
+    final email = emailController.text;
+    final password = passwordController.text;
+
+    if (formKey.currentState!.validate()) {
+      await AuthSignup().signup(email, password);
+    } else {
+      print("Formulario inválido");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final boxWidth = screenWidth > 720 ? 700.0 : screenWidth * 0.9;
-
 
     //bool singupOk = false;
 
     /*Future<void> singup() async {
       singupOk = await AuthSingup().singup(emailController.text, passwordController.text);
     }*/
-
-    String url = "http://localhost:9090/auth/signup";
-    Future singup() async {
-      try {
-        /*var res = await http.post(
-          Uri.parse(url),
-          headers: {'Content-Type': 'application/json'},
-          body: json.encode({
-            'email': emailController.text,
-            'password': passwordController.text,
-          }),
-        );*/
-
-        final res = await http.post(
-        Uri.parse(url),
-        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-        body: "email=${emailController.text}&password=${passwordController.text}",
-      );
-
-        print("Status: ${res.statusCode}");
-        print("Body: ${res.body}");
-      } catch (e) {
-        print("Error en el registro: $e");
-      }
-    }
 
     return BaseLayout(
       title: "GameTrackr",
@@ -78,52 +62,55 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-              
+
                   SizedBox(height: 40),
-              
+
                   TextFormField(
                     controller: emailController,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 22.0,
-                    ),
+                    style: TextStyle(color: Colors.black, fontSize: 22.0),
                     decoration: InputDecoration(
                       hintText: "email@dominio.com",
                       hintStyle: TextStyle(color: Colors.black),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 18,
+                        horizontal: 20,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
                       ),
                     ),
-                    validator:(email) => ValidationService.emailValidation(email),
+                    validator:
+                        (email) => ValidationService.emailValidation(email),
                   ),
-              
+
                   SizedBox(height: 40),
-              
+
                   TextFormField(
                     controller: passwordController,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 22.0,
-                    ),
+                    style: TextStyle(color: Colors.black, fontSize: 22.0),
                     decoration: InputDecoration(
                       hintText: "contraseña",
                       hintStyle: TextStyle(color: Colors.black),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 18,
+                        horizontal: 20,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          passwordInvisible ? Icons.visibility_off : Icons.visibility
+                          passwordInvisible
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                         ),
                         onPressed: () {
                           setState(() {
@@ -135,21 +122,27 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     obscureText: passwordInvisible,
                     maxLength: 25,
-                    validator: (password) => ValidationService.passwordValidation(password),
+                    validator:
+                        (password) =>
+                            ValidationService.passwordValidation(password),
                   ),
 
-                  SizedBox(height: 40,),
-                  
+                  SizedBox(height: 40),
+
                   ElevatedButton(
-                    onPressed: () => singup(), 
+                    onPressed: () => singup(),
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(
                         Color.fromARGB(255, 102, 174, 254),
                       ),
-                      minimumSize: WidgetStateProperty.all(Size(double.infinity, 60)),
-                      shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      )),
+                      minimumSize: WidgetStateProperty.all(
+                        Size(double.infinity, 60),
+                      ),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
                       elevation: WidgetStateProperty.all(5),
                       shadowColor: WidgetStateProperty.all(Colors.blue[200]),
                     ),

@@ -1,15 +1,25 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 class AuthSignup {
-    Future<bool> singup(String email, String password) async {
-    final singupURL = Uri.parse("http://localhost:9090/singup");
+  Future<void> signup(String email, String password) async {
+    try {
+      final url = Uri.parse("http://localhost:9090/auth/signup");
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "email": email,
+          "password": password,
+          "username": "UsuarioDemo", // puedes cambiarlo según tus necesidades
+        }),
+      );
 
-    final response = await http.post(
-      singupURL,
-      headers: {"Content-Type": "application/x-www-form-urlencoded"},
-      body: "email=$email&password=$password",
-    );
-
-    return response.statusCode == 200;
+      print("Status: ${response.statusCode}");
+      print("Body: ${response.body}");
+    } catch (e) {
+      print("Error en el registro: $e");
+    }
   }
 }
