@@ -18,15 +18,8 @@ class _SignupPageState extends State<SignupPage> {
 
   bool passwordInvisible = true;
 
-  Future<void> singup() async {
-    final email = emailController.text;
-    final password = passwordController.text;
-
-    if (formKey.currentState!.validate()) {
-      await AuthSignup().signup(email, password);
-    } else {
-      print("Formulario inválido");
-    }
+  Future<void> signup() async {
+    await AuthSignup().signup(emailController.text, passwordController.text);
   }
 
   @override
@@ -34,14 +27,8 @@ class _SignupPageState extends State<SignupPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final boxWidth = screenWidth > 720 ? 700.0 : screenWidth * 0.9;
 
-    //bool singupOk = false;
-
-    /*Future<void> singup() async {
-      singupOk = await AuthSingup().singup(emailController.text, passwordController.text);
-    }*/
-
     return BaseLayout(
-      title: "GameTrackr",
+      title: "XPVAULT",
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16),
@@ -130,7 +117,7 @@ class _SignupPageState extends State<SignupPage> {
                   SizedBox(height: 40),
 
                   ElevatedButton(
-                    onPressed: () => singup(),
+                    onPressed: () => signup(),
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(
                         Color.fromARGB(255, 102, 174, 254),

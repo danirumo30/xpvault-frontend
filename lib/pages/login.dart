@@ -23,17 +23,12 @@ class _LoginPageState extends State<LoginPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final boxWidth = screenWidth > 720 ? 700.0 : screenWidth * 0.9;
 
-    bool loginOk = false;
-
     Future<void> login() async {
-      loginOk = await AuthLogin().login(
-        emailController.text,
-        passwordController.text,
-      );
+      await AuthLogin().login(emailController.text, passwordController.text);
     }
 
     return BaseLayout(
-      title: "GameTrackr",
+      title: "XPVAULT",
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16),

@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
     final boxWidth = screenWidth > 720 ? 700.0 : screenWidth * 0.9;
 
     return BaseLayout(
-      title: "GameTrackr",
+      title: "XPVAULT",
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16),
