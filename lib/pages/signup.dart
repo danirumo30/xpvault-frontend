@@ -117,7 +117,7 @@ class _SignupPageState extends State<SignupPage> {
                   SizedBox(height: 40),
 
                   ElevatedButton(
-                    onPressed: () => signup(),
+                    onPressed: () => ValidationService.submitForm(formKey,context,emailController.text) ? signup() : null,
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(
                         Color.fromARGB(255, 102, 174, 254),

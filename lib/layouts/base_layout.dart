@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:game_trackr/pages/home.dart';
 import 'package:game_trackr/pages/login.dart';
+import 'package:game_trackr/pages/signup.dart';
 import 'package:game_trackr/widgets/main_menu.dart';
 
 class BaseLayout extends StatelessWidget {
@@ -12,12 +14,23 @@ class BaseLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 25.0,
+        title: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+              );
+            },
+            child: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 25.0,
+              ),
+            ),
           ),
         ),
         centerTitle: true,
@@ -35,6 +48,20 @@ class BaseLayout extends StatelessWidget {
                 Icon(Icons.login, color: Colors.white),
                 SizedBox(width: 5),
                 Text("Iniciar sesión", style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed:
+                () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignupPage()),
+                ),
+            child: Row(
+              children: [
+                Icon(Icons.app_registration, color: Colors.white),
+                SizedBox(width: 5),
+                Text("Registrarse", style: TextStyle(color: Colors.white)),
               ],
             ),
           ),

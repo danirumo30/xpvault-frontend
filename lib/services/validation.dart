@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:game_trackr/pages/home.dart';
+import 'package:game_trackr/pages/verify_resend.dart';
 
 class ValidationService {
   static String? emailValidation(String? email) {
@@ -22,14 +23,33 @@ class ValidationService {
     return null;
   }
 
-  static bool submitForm(GlobalKey<FormState> formKey, BuildContext context) {
+  static bool submitForm(GlobalKey<FormState> formKey, BuildContext context, String email) {
     if (formKey.currentState?.validate() ?? false) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
+      if (email.isNotEmpty) {
+        // Si el argumento del email no está vacío quiere decir que está registrandose
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => VerifyResendPage(emailRegistration: email,)),
+        );
+      } else {
+        // Si el argumento del email está vacío quiere decir que inicia sesión
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
+
       return true;
     }
     return false;
+  }
+
+  static String? verifyCodeLength(String? code) {
+    if (code == null) {
+      return "Introduzca el código indicado en el correo";
+    } else if (code.length < 6 || !RegExp(r'^\d+$').hasMatch(code)) {
+      return "El código indicado no es válido";
+    }
+    return null;
   }
 }

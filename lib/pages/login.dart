@@ -123,30 +123,29 @@ class _LoginPageState extends State<LoginPage> {
                     "No se preocupe, para registrarse haga",
                     style: TextStyle(color: Colors.white),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      // Mostrar ventana para restaurar contraseña
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignupPage()),
-                      );
-                    },
-                    child: Text(
-                      "click aquí",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 102, 174, 254),
-                        decoration: TextDecoration.underline,
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Mostrar ventana para restaurar contraseña
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignupPage()),
+                        );
+                      },
+                      child: Text(
+                        "click aquí",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 102, 174, 254),
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(height: 20),
 
                   ElevatedButton(
-                    onPressed:
-                        () =>
-                            ValidationService.submitForm(formKey, context)
-                                ? login()
-                                : null,
+                    onPressed: () => ValidationService.submitForm(formKey, context, "") ? login() : null,
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(
                         Color.fromARGB(255, 102, 174, 254),
