@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/responsive_layout.dart';
+import 'package:xpvault/screens/desktop/playstation_desktop.dart';
 
 class PlaystationPage extends StatefulWidget {
   const PlaystationPage({super.key});
@@ -14,7 +15,7 @@ class _PlaystationPageState extends State<PlaystationPage> {
     return Scaffold(
       body: ResponsiveLayout(
         mobileBody: Scaffold(),
-        desktopBody: Scaffold(),
+        desktopBody: PlaystationDesktop(),
       ),
     );
   }

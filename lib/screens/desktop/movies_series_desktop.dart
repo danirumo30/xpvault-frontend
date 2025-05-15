@@ -5,14 +5,14 @@ import 'package:xpvault/widgets/my_dropdownbutton.dart';
 import 'package:xpvault/widgets/my_imagecontainer.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
 
-class SteamDesktopPage extends StatefulWidget {
-  const SteamDesktopPage({super.key});
+class MoviesSeriesDesktop extends StatefulWidget {
+  const MoviesSeriesDesktop({super.key});
 
   @override
-  State<SteamDesktopPage> createState() => _SteamDesktopPageState();
+  State<MoviesSeriesDesktop> createState() => _MoviesSeriesDesktopState();
 }
 
-class _SteamDesktopPageState extends State<SteamDesktopPage> {
+class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
   String dropdownvalue = "";
 
   @override
@@ -41,12 +41,12 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                     hint: dropdownvalue.isEmpty ? "Select genre" : dropdownvalue,
                     items: const [
                       DropdownMenuItem(
-                        value: "Shooter",
-                        child: Text("Shooter"),
+                        value: "Action",
+                        child: Text("Action"),
                       ),
                       DropdownMenuItem(
-                        value: "RPG",
-                        child: Text("RPG"),
+                        value: "Horror",
+                        child: Text("Horror"),
                       ),
                       DropdownMenuItem(
                         value: "Adventure",
@@ -83,7 +83,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Games",
+                              "Movies",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
@@ -96,8 +96,8 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                 child: Column(
                                   children: [
                                     MyImageContainer(
-                                      title: "Juego 1",
-                                      body: "Info del juego 1",
+                                      title: "Movie 1",
+                                      body: "Movie body",
                                       image: "assets/movies.jpg",
                                     ),
                                   ],
@@ -123,7 +123,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "My games",
+                              "Last seen",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,

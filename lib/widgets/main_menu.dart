@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:xpvault/screens/home.dart';
+import 'package:xpvault/screens/movies_series.dart';
+import 'package:xpvault/screens/playstation.dart';
+import 'package:xpvault/screens/steam.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 class MainMenuWidget extends StatelessWidget {
@@ -11,28 +15,18 @@ class MainMenuWidget extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: [
         DrawerHeader(
-          decoration: const BoxDecoration(
-            color: AppColors.primary
-          ),
+          decoration: const BoxDecoration(color: AppColors.primary),
           child: const Text(
             'Menu',
-            style: TextStyle(
-              color: AppColors.textPrimary, 
-              fontSize: 24
-            ),
+            style: TextStyle(color: AppColors.textPrimary, fontSize: 24),
           ),
         ),
         ListTile(
-          leading: const Icon(
-            Icons.home, 
-            color: AppColors.textPrimary,
-          ),
+          leading: const Icon(Icons.home, color: AppColors.textPrimary),
           title: const Text(
-            "Home", 
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              )
-            ),
+            "Home",
+            style: TextStyle(color: AppColors.textPrimary),
+          ),
           onTap: () {
             Navigator.pop(context);
             Navigator.pushReplacement(
@@ -42,15 +36,10 @@ class MainMenuWidget extends StatelessWidget {
           },
         ),
         ListTile(
-          leading: const Icon(
-            Icons.person,
-            color: AppColors.textPrimary,
-          ),
+          leading: const Icon(Icons.person, color: AppColors.textPrimary),
           title: const Text(
             "Profile",
-            style: TextStyle(
-              color: AppColors.textPrimary,
-            ),
+            style: TextStyle(color: AppColors.textPrimary),
           ),
           onTap: () {
             Navigator.pop(context);
@@ -58,49 +47,57 @@ class MainMenuWidget extends StatelessWidget {
         ),
         ListTile(
           leading: const Icon(
-            Icons.group,
+            Icons.movie_creation_outlined,
             color: AppColors.textPrimary,
           ),
           title: const Text(
-            "Friends",
-            style: TextStyle(
-              color: AppColors.textPrimary,
-            ),
+            "Cinema",
+            style: TextStyle(color: AppColors.textPrimary),
           ),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MoviesSeriesPage()));
           },
         ),
         ListTile(
-          leading: const Icon(
-            Icons.insert_chart_rounded,
-            color: AppColors.textPrimary,
+          leading: SvgPicture.asset(
+            'assets/steam-icon.svg',
+            height: 24,
+            width: 24,
+            colorFilter: ColorFilter.mode(AppColors.textPrimary, BlendMode.srcIn),
           ),
           title: const Text(
-            "Ranking",
-            style: TextStyle(
-              color: AppColors.textPrimary,
-            ),
+            "Steam",
+            style: TextStyle(color: AppColors.textPrimary),
           ),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SteamPage()));
           },
         ),
         ListTile(
-          leading: const Icon(
-            Icons.history,
-            color: AppColors.textPrimary,
+          leading: SvgPicture.asset(
+            'assets/playstation-icon.svg',
+            height: 24,
+            width: 24,
+            colorFilter: ColorFilter.mode(AppColors.textPrimary, BlendMode.srcIn),
           ),
+          title: const Text(
+            "Playstation",
+            style: TextStyle(color: AppColors.textPrimary),
+          ),
+          onTap: () {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PlaystationPage()));
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.history, color: AppColors.textPrimary),
           title: const Text(
             "Last seen",
-            style: TextStyle(
-              color: AppColors.textPrimary,
-            ),
+            style: TextStyle(color: AppColors.textPrimary),
           ),
           onTap: () {
             Navigator.pop(context);
           },
-        )
+        ),
       ],
     );
   }

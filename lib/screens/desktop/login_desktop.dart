@@ -91,6 +91,13 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
                           context,
                           MaterialPageRoute(builder: (context) => HomePage()),
                         );
+                        //TODO: El Login devuelve un bool, si es true muestra el snackbar
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Successful login!"),
+                            backgroundColor: AppColors.success,
+                          ),
+                        );
                       }
                     },
                   ),

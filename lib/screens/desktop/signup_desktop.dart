@@ -75,15 +75,21 @@ class _SignupDesktopPageState extends State<SignupDesktopPage> {
                   ),
                   const SizedBox(height: 20),
                   MyButton(
-                    text: "Signup",
+                    text: "Sign up",
                     fontSize: 20,
                     onTap: () {
                       if (formKey.currentState?.validate() ?? false) {
-                        print("Correo ingresado: ${emailController.text}");
                         signup();
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => VerifyResendPage(email: emailController.text,)),
+                        );
+                        //TODO: El método sign up debe devolver bool para mostrar el mensaje
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Successful sign up!"),
+                            backgroundColor: AppColors.success,
+                          ),
                         );
                       }
                     },

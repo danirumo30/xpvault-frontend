@@ -71,6 +71,13 @@ class _VerifyResendDesktopPageState extends State<VerifyResendDesktopPage> {
                       if (formKey.currentState?.validate() ?? false) {
                         verifyCode();
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(),));
+                        //TODO: Verificar el código tiene que devolver un bool para que este mensaje se muestre
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Successful verify!"),
+                            backgroundColor: AppColors.success,
+                          ),
+                        );
                       }
                     },
                   ),
@@ -79,7 +86,13 @@ class _VerifyResendDesktopPageState extends State<VerifyResendDesktopPage> {
                     mainText: "Didn't receive the email? ",
                     linkText: "Resend verification code",
                     onTap: () {
-                      // TODO: Resend verification code
+                      resendCode();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Code forwarded"),
+                            backgroundColor: AppColors.success,
+                          ),
+                        );
                     },
                   ),
                 ],
