@@ -1,6 +1,6 @@
 {
-  "name": "game_trackr",
-  "short_name": "game_trackr",
+  "name": "xpvault",
+  "short_name": "xpvault",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",

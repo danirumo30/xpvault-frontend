@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:game_trackr/pages/home.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:xpvault/screens/home.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(body: Center(child: HomePage())),
+      theme: ThemeData(
+        textTheme: GoogleFonts.balooThambi2TextTheme(),
+      ),
+      home: const Scaffold(
+        body: HomePage(),
+      ),
     );
   }
 }

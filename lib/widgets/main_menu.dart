@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:game_trackr/pages/home.dart';
+import 'package:xpvault/screens/home.dart';
+import 'package:xpvault/themes/app_color.dart';
 
 class MainMenuWidget extends StatelessWidget {
   const MainMenuWidget({super.key});
@@ -10,16 +11,30 @@ class MainMenuWidget extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: [
         DrawerHeader(
-          decoration: const BoxDecoration(color: Colors.black),
+          decoration: const BoxDecoration(
+            color: AppColors.primary
+          ),
           child: const Text(
-            'Menú',
-            style: TextStyle(color: Colors.white, fontSize: 24),
+            'Menu',
+            style: TextStyle(
+              color: AppColors.textPrimary, 
+              fontSize: 24
+            ),
           ),
         ),
         ListTile(
-          leading: const Icon(Icons.home, color: Colors.white),
-          title: const Text("Home", style: TextStyle(color: Colors.white)),
+          leading: const Icon(
+            Icons.home, 
+            color: AppColors.textPrimary,
+          ),
+          title: const Text(
+            "Home", 
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              )
+            ),
           onTap: () {
+            Navigator.pop(context);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const HomePage()),
@@ -27,33 +42,65 @@ class MainMenuWidget extends StatelessWidget {
           },
         ),
         ListTile(
-          leading: const Icon(Icons.person, color: Colors.white),
-          title: const Text("Perfil", style: TextStyle(color: Colors.white)),
+          leading: const Icon(
+            Icons.person,
+            color: AppColors.textPrimary,
+          ),
+          title: const Text(
+            "Profile",
+            style: TextStyle(
+              color: AppColors.textPrimary,
+            ),
+          ),
           onTap: () {
             Navigator.pop(context);
           },
         ),
         ListTile(
-          leading: const Icon(Icons.group, color: Colors.white),
-          title: const Text("Amigos", style: TextStyle(color: Colors.white)),
+          leading: const Icon(
+            Icons.group,
+            color: AppColors.textPrimary,
+          ),
+          title: const Text(
+            "Friends",
+            style: TextStyle(
+              color: AppColors.textPrimary,
+            ),
+          ),
           onTap: () {
             Navigator.pop(context);
           },
         ),
         ListTile(
-          leading: const Icon(Icons.insert_chart_rounded, color: Colors.white),
-          title: const Text("Ranking", style: TextStyle(color: Colors.white)),
+          leading: const Icon(
+            Icons.insert_chart_rounded,
+            color: AppColors.textPrimary,
+          ),
+          title: const Text(
+            "Ranking",
+            style: TextStyle(
+              color: AppColors.textPrimary,
+            ),
+          ),
           onTap: () {
             Navigator.pop(context);
           },
         ),
         ListTile(
-          leading: const Icon(Icons.history, color: Colors.white),
-          title: const Text("Historial", style: TextStyle(color: Colors.white)),
+          leading: const Icon(
+            Icons.history,
+            color: AppColors.textPrimary,
+          ),
+          title: const Text(
+            "Last seen",
+            style: TextStyle(
+              color: AppColors.textPrimary,
+            ),
+          ),
           onTap: () {
             Navigator.pop(context);
           },
-        ),
+        )
       ],
     );
   }

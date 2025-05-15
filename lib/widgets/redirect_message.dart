@@ -1,0 +1,36 @@
+import 'package:flutter/material.dart';
+import 'package:xpvault/themes/app_color.dart';
+
+class RedirectMessage extends StatelessWidget {
+  final String mainText;
+  final String linkText;
+  final void Function()? onTap;
+
+  const RedirectMessage({super.key, required this.mainText, required this.linkText, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          mainText,
+          style: TextStyle(color: AppColors.textPrimary),
+        ),
+        MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Text(
+              linkText,
+              style: TextStyle(
+                color: AppColors.accent,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
