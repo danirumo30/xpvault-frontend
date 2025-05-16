@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthOperation {
-  Future<void> login(String email, String password) async {
+  Future<int> login(String email, String password) async {
     try {
       final url = Uri.parse("http://localhost:9090/auth/login");
       final res = await http.post(
@@ -13,14 +13,14 @@ class AuthOperation {
           "password": password
         }),
       );
-      print(res.statusCode);
-      print(res.body);
+      return res.statusCode;
     } catch (e) {
       print("Error en el registro: $e");
     }
+    return -1;
   }
 
-  Future<void> signup(String email, String password) async {
+  Future<int> signup(String email, String password) async {
     try {
       final url = Uri.parse("http://localhost:9090/auth/signup");
       final res = await http.post(
@@ -33,13 +33,14 @@ class AuthOperation {
         }),
       );
       print(res.statusCode);
-      print(res.body);
+      return res.statusCode;
     } catch (e) {
       print("Error en el registro: $e");
     }
+    return -1;
   }
 
-  Future<void> resend(String email) async {
+  Future<int> resend(String email) async {
     try {
       final url = Uri.parse("http://localhost:9090/auth/resend");
       final res = await http.post(
@@ -47,14 +48,14 @@ class AuthOperation {
         headers: {"Content-Type": "text/plain"},
         body: email,
       );
-      print(res.statusCode);
-      print(res.body);
+      return res.statusCode;
     } catch (e) {
       print("Error en el registro: $e");
     }
+    return -1;
   }
 
-  Future<void> verifyCode(String email, String code) async {
+  Future<int> verifyCode(String email, String code) async {
     try {
       final url = Uri.parse("http://localhost:9090/auth/verify");
       final res = await http.post(
@@ -65,10 +66,10 @@ class AuthOperation {
           "verificationCode": code
         }),
       );
-      print(res.statusCode);
-      print(res.body);
+      return res.statusCode;
     } catch (e) {
       print("Error en el registro: $e");
     }
+    return -1;
   }
 }

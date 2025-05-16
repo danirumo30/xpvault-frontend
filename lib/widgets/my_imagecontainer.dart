@@ -29,7 +29,7 @@ class _MyImageContainerState extends State<MyImageContainer> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedScale(
-        scale: _isHovered ? 1.02 : 1.0,
+        scale: _isHovered ? 1.03 : 1.0,
         duration: const Duration(milliseconds: 200),
         child: GestureDetector(
           onTap: widget.onTap,

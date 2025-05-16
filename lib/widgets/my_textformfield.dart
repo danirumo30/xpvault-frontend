@@ -30,7 +30,7 @@ class MyTextformfield extends StatelessWidget {
           ),
           errorStyle: TextStyle(
             color: AppColors.error,
-            fontSize: 13
+            fontSize: 13,
           ),
           hintText: hintText,
           suffixIcon: suffixIcon

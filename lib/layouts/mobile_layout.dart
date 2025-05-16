@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:xpvault/screens/desktop/home_desktop.dart';
-import 'package:xpvault/screens/desktop/login_desktop.dart';
-import 'package:xpvault/screens/desktop/signup_desktop.dart';
+import 'package:xpvault/screens/home.dart';
+import 'package:xpvault/screens/login.dart';
+import 'package:xpvault/screens/signup.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/main_menu.dart';
 
@@ -21,7 +21,7 @@ class MobileLayout extends StatelessWidget {
             onTap:
                 () => Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeDesktopPage()),
+                  MaterialPageRoute(builder: (context) => HomePage()),
                 ),
             child: Text(
               title,
@@ -34,7 +34,7 @@ class MobileLayout extends StatelessWidget {
           ),
         ),
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.redAccent,
         actions: [
           Row(
             children: [
@@ -43,7 +43,7 @@ class MobileLayout extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginDesktopPage()),
+                    MaterialPageRoute(builder: (context) => LoginPage()),
                   );
                 },
                 child: Text(
@@ -58,10 +58,10 @@ class MobileLayout extends StatelessWidget {
               Icon(Icons.app_registration),
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignupDesktopPage(),));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignupPage(),));
                 },
                 child: Text(
-                  "Signup",
+                  "Sign up",
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -70,7 +70,7 @@ class MobileLayout extends StatelessWidget {
         ],
         centerTitle: true,
       ),
-      drawer: Drawer(child: MainMenuWidget(),),
+      drawer: Drawer(backgroundColor: AppColors.secondary,child: MainMenuWidget(),),
       backgroundColor: AppColors.secondary,
       body: body,
     );

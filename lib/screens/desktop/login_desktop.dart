@@ -24,12 +24,15 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
 
   bool passwordInvisible = true;
 
-  Future<void> login() async {
-    await AuthOperation().login(emailController.text, passwordController.text);
+  Future<int> login() async {
+    return await AuthOperation().login(
+      emailController.text,
+      passwordController.text,
+    );
   }
 
-  Future<void> resenCode() async {
-    await AuthOperation().resend(emailController.text);
+  Future<int> resenCode() async {
+    return await AuthOperation().resend(emailController.text);
   }
 
   @override
@@ -84,20 +87,29 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
                   MyButton(
                     text: "Login",
                     fontSize: 20,
-                    onTap: () {
+                    onTap: () async {
                       if (formKey.currentState?.validate() ?? false) {
-                        login();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
-                        //TODO: El Login devuelve un bool, si es true muestra el snackbar
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Successful login!"),
-                            backgroundColor: AppColors.success,
-                          ),
-                        );
+                        if (await login() == 200) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Successful login!"),
+                              backgroundColor: AppColors.success,
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Could not log in, try resending the verification code, create an account or try again later.",
+                              ),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
                       }
                     },
                   ),
@@ -105,18 +117,33 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
                   RedirectMessage(
                     mainText: "Did you skip the verification code? ",
                     linkText: "Resend verification code",
-                    onTap: () {
+                    onTap: () async {
                       if (emailController.text.isNotEmpty) {
-                        resenCode();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => VerifyResendPage(
-                                  email: emailController.text,
-                                ),
-                          ),
-                        );
+                        if (await resenCode() == 200) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => VerifyResendPage(
+                                    email: emailController.text,
+                                  ),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Code could not be sent"),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Enter your email address to resend the verification code"),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
                       }
                     },
                   ),

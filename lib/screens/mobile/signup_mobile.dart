@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xpvault/layouts/desktop_layout.dart';
+import 'package:xpvault/layouts/mobile_layout.dart';
 import 'package:xpvault/screens/login.dart';
 import 'package:xpvault/screens/verify_resend.dart';
 import 'package:xpvault/services/auth_operation.dart';
@@ -9,15 +9,15 @@ import 'package:xpvault/widgets/my_button.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
 import 'package:xpvault/widgets/redirect_message.dart';
 
-class SignupDesktopPage extends StatefulWidget {
-  const SignupDesktopPage({super.key});
+class SignupMobilePage extends StatefulWidget {
+  const SignupMobilePage({super.key});
 
   @override
-  State<SignupDesktopPage> createState() => _SignupDesktopPageState();
+  State<SignupMobilePage> createState() => _SignupMobilePageState();
 }
 
-class _SignupDesktopPageState extends State<SignupDesktopPage> {
-  final formKey = GlobalKey<FormState>();
+class _SignupMobilePageState extends State<SignupMobilePage> {
+    final formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -32,13 +32,13 @@ class _SignupDesktopPageState extends State<SignupDesktopPage> {
 
   @override
   Widget build(BuildContext context) {
-    return DesktopLayout(
+    return MobileLayout(
       title: "XPVAULT",
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: SizedBox(
-            width: 700,
+            width: 600,
             child: Form(
               key: formKey,
               child: Column(
@@ -46,9 +46,11 @@ class _SignupDesktopPageState extends State<SignupDesktopPage> {
                 children: [
                   Text(
                     "Let's create an account for you",
+                    textAlign: TextAlign.center,
+                    softWrap: true,
                     style: TextStyle(
                       color: AppColors.accent,
-                      fontSize: 45,
+                      fontSize: 35,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -103,7 +105,7 @@ class _SignupDesktopPageState extends State<SignupDesktopPage> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text("account could not be registered"),
+                              content: Text("Account could not be registered"),
                               backgroundColor: AppColors.error,
                             ),
                           );

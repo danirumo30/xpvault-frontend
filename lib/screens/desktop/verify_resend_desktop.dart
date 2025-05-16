@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
-import 'package:xpvault/screens/home.dart';
+import 'package:xpvault/screens/login.dart';
 import 'package:xpvault/services/auth_operation.dart';
 import 'package:xpvault/services/validation.dart';
 import 'package:xpvault/themes/app_color.dart';
@@ -14,19 +14,20 @@ class VerifyResendDesktopPage extends StatefulWidget {
   const VerifyResendDesktopPage({super.key, required this.email});
 
   @override
-  State<VerifyResendDesktopPage> createState() => _VerifyResendDesktopPageState();
+  State<VerifyResendDesktopPage> createState() =>
+      _VerifyResendDesktopPageState();
 }
 
 class _VerifyResendDesktopPageState extends State<VerifyResendDesktopPage> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController codeController = TextEditingController();
 
-  Future<void> verifyCode() async {
-    await AuthOperation().verifyCode(widget.email,codeController.text);
+  Future<int> verifyCode() async {
+    return await AuthOperation().verifyCode(widget.email, codeController.text);
   }
 
-  Future<void> resendCode() async {
-    await AuthOperation().resend(widget.email);
+  Future<int> resendCode() async {
+    return await AuthOperation().resend(widget.email);
   }
 
   @override
@@ -51,7 +52,7 @@ class _VerifyResendDesktopPageState extends State<VerifyResendDesktopPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 15,),
+                  const SizedBox(height: 15),
                   Text(
                     "An email with the verification code has been sent to ${widget.email}",
                     style: TextStyle(color: Colors.white),
@@ -67,17 +68,29 @@ class _VerifyResendDesktopPageState extends State<VerifyResendDesktopPage> {
                   MyButton(
                     text: "Confirm",
                     fontSize: 20,
-                    onTap: () {
+                    onTap: () async {
                       if (formKey.currentState?.validate() ?? false) {
-                        verifyCode();
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(),));
-                        //TODO: Verificar el código tiene que devolver un bool para que este mensaje se muestre
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Successful verify!"),
-                            backgroundColor: AppColors.success,
-                          ),
-                        );
+                        if (await verifyCode() == 200) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Successful verify!"),
+                              backgroundColor: AppColors.success,
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Verify code invalid"),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
                       }
                     },
                   ),
@@ -85,14 +98,22 @@ class _VerifyResendDesktopPageState extends State<VerifyResendDesktopPage> {
                   RedirectMessage(
                     mainText: "Didn't receive the email? ",
                     linkText: "Resend verification code",
-                    onTap: () {
-                      resendCode();
-                      ScaffoldMessenger.of(context).showSnackBar(
+                    onTap: () async {
+                      if (await resendCode() == 200) {
+                        ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text("Code forwarded"),
                             backgroundColor: AppColors.success,
                           ),
                         );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Code could not be sent"),
+                            backgroundColor: AppColors.error,
+                          ),
+                        );
+                      }
                     },
                   ),
                 ],

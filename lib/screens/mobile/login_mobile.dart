@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:xpvault/layouts/desktop_layout.dart';
-import 'package:xpvault/screens/login.dart';
+import 'package:xpvault/layouts/mobile_layout.dart';
+import 'package:xpvault/screens/home.dart';
+import 'package:xpvault/screens/signup.dart';
 import 'package:xpvault/screens/verify_resend.dart';
 import 'package:xpvault/services/auth_operation.dart';
 import 'package:xpvault/services/validation.dart';
@@ -9,46 +10,52 @@ import 'package:xpvault/widgets/my_button.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
 import 'package:xpvault/widgets/redirect_message.dart';
 
-class SignupDesktopPage extends StatefulWidget {
-  const SignupDesktopPage({super.key});
+class LoginMobilePage extends StatefulWidget {
+  const LoginMobilePage({super.key});
 
   @override
-  State<SignupDesktopPage> createState() => _SignupDesktopPageState();
+  State<LoginMobilePage> createState() => _LoginMobilePageState();
 }
 
-class _SignupDesktopPageState extends State<SignupDesktopPage> {
+class _LoginMobilePageState extends State<LoginMobilePage> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   bool passwordInvisible = true;
 
-  Future<int> signup() async {
-    return await AuthOperation().signup(
+  Future<int> login() async {
+    return await AuthOperation().login(
       emailController.text,
       passwordController.text,
     );
   }
 
+  Future<int> resenCode() async {
+    return await AuthOperation().resend(emailController.text);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DesktopLayout(
+    return MobileLayout(
       title: "XPVAULT",
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: SizedBox(
-            width: 700,
+            width: 600,
             child: Form(
               key: formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Let's create an account for you",
+                    "Welcome back!",
+                    textAlign: TextAlign.center,
+                    softWrap: true,
                     style: TextStyle(
                       color: AppColors.accent,
-                      fontSize: 45,
+                      fontSize: 35,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -80,30 +87,27 @@ class _SignupDesktopPageState extends State<SignupDesktopPage> {
                   ),
                   const SizedBox(height: 20),
                   MyButton(
-                    text: "Sign up",
+                    text: "Login",
                     fontSize: 20,
                     onTap: () async {
                       if (formKey.currentState?.validate() ?? false) {
-                        if (await signup() == 200) {
+                        if (await login() == 200) {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => VerifyResendPage(
-                                    email: emailController.text,
-                                  ),
-                            ),
+                            MaterialPageRoute(builder: (context) => HomePage()),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text("Successful sign up!"),
+                              content: Text("Successful login!"),
                               backgroundColor: AppColors.success,
                             ),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text("account could not be registered"),
+                              content: Text(
+                                "Could not log in, try resending the verification code, create an account or try again later.",
+                              ),
                               backgroundColor: AppColors.error,
                             ),
                           );
@@ -113,12 +117,46 @@ class _SignupDesktopPageState extends State<SignupDesktopPage> {
                   ),
                   const SizedBox(height: 20),
                   RedirectMessage(
-                    mainText: "Already have an account? ",
-                    linkText: "Login now",
+                    mainText: "Did you skip the verification code? ",
+                    linkText: "Resend verification code",
+                    onTap: () async {
+                      if (emailController.text.isNotEmpty) {
+                        if (await resenCode() == 200) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => VerifyResendPage(
+                                    email: emailController.text,
+                                  ),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Code could not be sent"),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Enter your email address to resend the verification code"),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                      }
+                    },
+                  ),
+                  Text("-", style: TextStyle(color: AppColors.textPrimary)),
+                  RedirectMessage(
+                    mainText: "Don't have an account? ",
+                    linkText: "Sign up now",
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(builder: (context) => SignupPage()),
                       );
                     },
                   ),
