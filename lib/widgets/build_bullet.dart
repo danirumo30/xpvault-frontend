@@ -15,7 +15,7 @@ class BuildBullet extends StatelessWidget {
         children: [
           const Text(
             "• ",
-            style: TextStyle(color: AppColors.accent, fontSize: 18),
+            style: TextStyle(color: AppColors.accent, fontSize: 20),
           ),
           Expanded(
             child: Text(

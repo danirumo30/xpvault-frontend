@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:xpvault/services/token_manager.dart';
+import 'package:xpvault/controllers/user_controller.dart';
 
-class AuthOperation {
+class AuthController {
   Future<int> login(String email, String password) async {
     try {
       final url = Uri.parse("http://localhost:9090/auth/login");
@@ -13,6 +15,15 @@ class AuthOperation {
           "password": password
         }),
       );
+
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        final token = data['token'];
+        TokenManager.saveToken(token);
+        
+        UserController().getUser();
+      }
+      
       return res.statusCode;
     } catch (e) {
       print("Error en el registro: $e");
@@ -48,6 +59,8 @@ class AuthOperation {
         headers: {"Content-Type": "text/plain"},
         body: email,
       );
+      print(res.statusCode);
+      print(res.body);
       return res.statusCode;
     } catch (e) {
       print("Error en el registro: $e");
