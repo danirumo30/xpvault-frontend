@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/screens/login.dart';
-import 'package:xpvault/services/auth_operation.dart';
+import 'package:xpvault/controllers/auth_controller.dart';
 import 'package:xpvault/services/validation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_button.dart';
@@ -23,11 +23,11 @@ class _VerifyResendDesktopPageState extends State<VerifyResendDesktopPage> {
   final TextEditingController codeController = TextEditingController();
 
   Future<int> verifyCode() async {
-    return await AuthOperation().verifyCode(widget.email, codeController.text);
+    return await AuthController().verifyCode(widget.email, codeController.text);
   }
 
   Future<int> resendCode() async {
-    return await AuthOperation().resend(widget.email);
+    return await AuthController().resend(widget.email);
   }
 
   @override

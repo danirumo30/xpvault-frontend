@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:xpvault/models/user.dart';
 import 'package:xpvault/screens/home.dart';
 import 'package:xpvault/screens/movies_series.dart';
 import 'package:xpvault/screens/playstation.dart';
+import 'package:xpvault/screens/profile.dart';
 import 'package:xpvault/screens/steam.dart';
+import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 class MainMenuWidget extends StatelessWidget {
@@ -16,9 +19,36 @@ class MainMenuWidget extends StatelessWidget {
       children: [
         DrawerHeader(
           decoration: const BoxDecoration(color: AppColors.primary),
-          child: const Text(
-            'Menu',
-            style: TextStyle(color: AppColors.textPrimary, fontSize: 24),
+          child: FutureBuilder<User?>(
+            future: UserManager.getUser(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data != null) {
+                final user = snapshot.data!;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 20,
+                  children: [
+                    const Text(
+                      'Menú',
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 24,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'User: ${user.username}',
+                      style: const TextStyle(color: AppColors.textPrimary),
+                    ),
+                  ],
+                );
+              } else {
+                return const Text(
+                  'Menú',
+                  style: TextStyle(color: AppColors.textPrimary, fontSize: 24),
+                );
+              }
+            },
           ),
         ),
         ListTile(
@@ -42,7 +72,7 @@ class MainMenuWidget extends StatelessWidget {
             style: TextStyle(color: AppColors.textPrimary),
           ),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfilePage(),));
           },
         ),
         ListTile(
@@ -55,7 +85,10 @@ class MainMenuWidget extends StatelessWidget {
             style: TextStyle(color: AppColors.textPrimary),
           ),
           onTap: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MoviesSeriesPage()));
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => MoviesSeriesPage()),
+            );
           },
         ),
         ListTile(
@@ -63,14 +96,20 @@ class MainMenuWidget extends StatelessWidget {
             'assets/steam-icon.svg',
             height: 24,
             width: 24,
-            colorFilter: ColorFilter.mode(AppColors.textPrimary, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(
+              AppColors.textPrimary,
+              BlendMode.srcIn,
+            ),
           ),
           title: const Text(
             "Steam",
             style: TextStyle(color: AppColors.textPrimary),
           ),
           onTap: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SteamPage()));
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => SteamPage()),
+            );
           },
         ),
         ListTile(
@@ -78,14 +117,20 @@ class MainMenuWidget extends StatelessWidget {
             'assets/playstation-icon.svg',
             height: 24,
             width: 24,
-            colorFilter: ColorFilter.mode(AppColors.textPrimary, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(
+              AppColors.textPrimary,
+              BlendMode.srcIn,
+            ),
           ),
           title: const Text(
             "Playstation",
             style: TextStyle(color: AppColors.textPrimary),
           ),
           onTap: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PlaystationPage()));
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => PlaystationPage()),
+            );
           },
         ),
         ListTile(

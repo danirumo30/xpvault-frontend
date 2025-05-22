@@ -3,7 +3,7 @@ import 'package:xpvault/layouts/mobile_layout.dart';
 import 'package:xpvault/screens/home.dart';
 import 'package:xpvault/screens/signup.dart';
 import 'package:xpvault/screens/verify_resend.dart';
-import 'package:xpvault/services/auth_operation.dart';
+import 'package:xpvault/controllers/auth_controller.dart';
 import 'package:xpvault/services/validation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_button.dart';
@@ -25,14 +25,14 @@ class _LoginMobilePageState extends State<LoginMobilePage> {
   bool passwordInvisible = true;
 
   Future<int> login() async {
-    return await AuthOperation().login(
+    return await AuthController().login(
       emailController.text,
       passwordController.text,
     );
   }
 
   Future<int> resenCode() async {
-    return await AuthOperation().resend(emailController.text);
+    return await AuthController().resend(emailController.text);
   }
 
   @override

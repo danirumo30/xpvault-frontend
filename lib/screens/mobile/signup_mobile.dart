@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/mobile_layout.dart';
 import 'package:xpvault/screens/login.dart';
 import 'package:xpvault/screens/verify_resend.dart';
-import 'package:xpvault/services/auth_operation.dart';
+import 'package:xpvault/controllers/auth_controller.dart';
 import 'package:xpvault/services/validation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_button.dart';
@@ -24,7 +24,7 @@ class _SignupMobilePageState extends State<SignupMobilePage> {
   bool passwordInvisible = true;
 
   Future<int> signup() async {
-    return await AuthOperation().signup(
+    return await AuthController().signup(
       emailController.text,
       passwordController.text,
     );
