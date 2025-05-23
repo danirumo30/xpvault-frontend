@@ -1,4 +1,4 @@
-name: game_trackr
+name: xpvault
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0
@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  google_fonts: ^4.0.4
+  http: ^1.4.0
+  flutter_svg: ^2.1.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +21,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets: 
+    - assets/
