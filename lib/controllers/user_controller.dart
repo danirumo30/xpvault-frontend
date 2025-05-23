@@ -47,3 +47,4 @@ class UserController {
     return -1;
   }
 }
+
