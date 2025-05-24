@@ -37,43 +37,45 @@ class _MyNetImageContainerState extends State<MyNetImageContainer> {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
                 image: NetworkImage(widget.image),
                 fit: BoxFit.cover,
               ),
             ),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                image: DecorationImage(
-                  image: AssetImage(widget.image),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Text(
                     widget.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 20,
+                      color: Colors.white,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      backgroundColor: AppColors.background
                     ),
                   ),
-                  Text(
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  child: Text(
                     widget.body,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: AppColors.accent,
-                      fontSize: 15,
+                      color: Colors.white70,
+                      fontSize: 13,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

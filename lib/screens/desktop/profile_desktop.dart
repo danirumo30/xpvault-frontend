@@ -6,7 +6,6 @@ import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/build_bullet.dart';
-import 'package:xpvault/widgets/my_imagecontainer.dart';
 import 'package:xpvault/models/user.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
 import 'package:xpvault/widgets/redirect_message.dart';
