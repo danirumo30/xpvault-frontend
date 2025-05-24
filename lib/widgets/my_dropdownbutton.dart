@@ -28,6 +28,7 @@ class MyDropdownbutton extends StatelessWidget {
             canvasColor: AppColors.secondary,
           ),
           child: DropdownButton<String>(
+            isExpanded: true,
             hint: Text(hint,style: TextStyle(color: AppColors.textPrimary),),
             value: value,
             items: items,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/game_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/game.dart';
+import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
 import 'package:xpvault/widgets/my_netimagecontainer.dart';
@@ -16,32 +17,109 @@ class SteamDesktopPage extends StatefulWidget {
 
 class _SteamDesktopPageState extends State<SteamDesktopPage> {
   static const String defaultImage =
-      "https://w.wallhaven.cc/full/4l/wallhaven-4ly9gp.jpg";
+      "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
 
   final GameController _gameController = GameController();
+  final TextEditingController searchController = TextEditingController();
+  final int _pageSize = 12;
+
   String dropdownvalue = "";
   List<Game> games = [];
+  List<Game> myGames = [];
   bool _isLoading = true;
-  int _currentPage = 2;
-  final int _pageSize = 21;
+  bool _isLoadingMyGames = true;
+  bool _isSteamUser = false;
+  int _currentPage = 10;
+
+  final List<String> steamGenres = [
+    'Action',
+    'Adventure',
+    'Role-Playing (RPG)',
+    'Simulation',
+    'Strategy',
+    'Sports',
+    'Racing',
+    'Indie',
+    'Casual',
+    'Horror',
+    'Survival',
+    'Massively Multiplayer (MMO)',
+    'Open World',
+    'Puzzle',
+    'Shooter (FPS/TPS)',
+    'Co-op',
+    'Platformer',
+    'Virtual Reality (VR)',
+    'Story-rich / Narrative',
+    'Sandbox',
+    'Tower Defense',
+    'Roguelike / Roguelite',
+    'Hack and Slash',
+    'Battle Royale',
+    'Metroidvania',
+    'Clicker / Incremental',
+    'Tactical / Turn-Based',
+  ];
 
   @override
   void initState() {
     super.initState();
     _loadGames();
+    _loadMyGames();
   }
 
   Future<void> _loadGames() async {
+    late List<Game> loadedGames = [];
+    final isSearching = searchController.text.trim().isNotEmpty;
+
+    if (isSearching) {
+      _currentPage = 0;
+    } else if (_currentPage == 0) {
+      _currentPage = 10;
+    }
+
     setState(() {
       _isLoading = true;
     });
-    final loadedGames = await _gameController.fetchGames(
-      page: _currentPage,
-      size: _pageSize,
-    );
+
+    if (isSearching) {
+      loadedGames = await _gameController.searchGameByTitle(
+        page: _currentPage,
+        size: _pageSize,
+        gameTitle: searchController.text,
+      );
+    } else {
+      loadedGames = await _gameController.fetchGames(
+        page: _currentPage,
+        size: _pageSize,
+      );
+    }
+
     setState(() {
       games = loadedGames;
       _isLoading = false;
+    });
+  }
+
+  Future<void> _loadMyGames() async {
+    late List<Game> loadedGames = [];
+    final currentUser = await UserManager.getUser();
+
+    if (currentUser?.steamId != null) {
+      _isSteamUser = true;
+    }
+
+    setState(() {
+      _isLoadingMyGames = true;
+    });
+
+    if (_isSteamUser) {
+      loadedGames = await _gameController.getUserGames(currentUser?.steamId);
+    }
+
+    setState(() {
+      myGames = loadedGames;
+      _isLoadingMyGames = false;
     });
   }
 
@@ -55,32 +133,37 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: MyTextformfield(
                     hintText: "Search",
                     obscureText: false,
-                    suffixIcon: Icon(Icons.search, color: AppColors.textMuted),
+                    textEditingController: searchController,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        _loadGames();
+                      },
+                      icon: Icon(Icons.search, color: AppColors.textMuted),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: MyDropdownbutton(
                     hint:
                         dropdownvalue.isEmpty ? "Select genre" : dropdownvalue,
-                    items: const [
-                      DropdownMenuItem(
-                        value: "Shooter",
-                        child: Text("Shooter"),
-                      ),
-                      DropdownMenuItem(value: "RPG", child: Text("RPG")),
-                      DropdownMenuItem(
-                        value: "Adventure",
-                        child: Text("Adventure"),
-                      ),
-                    ],
+                    items:
+                        steamGenres.map<DropdownMenuItem<String>>((
+                          String genre,
+                        ) {
+                          return DropdownMenuItem<String>(
+                            value: genre,
+                            child: Text(genre),
+                          );
+                        }).toList(),
                     onChanged: (value) {
                       if (value is String) {
                         setState(() {
@@ -92,6 +175,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                 ),
               ],
             ),
+
             const SizedBox(height: 16),
             Expanded(
               child: Row(
@@ -134,7 +218,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                               crossAxisCount: 3,
                                               crossAxisSpacing: 10,
                                               mainAxisSpacing: 10,
-                                              childAspectRatio: 3 / 2,
+                                              childAspectRatio: 2,
                                             ),
                                         itemBuilder: (context, index) {
                                           final game = games[index];
@@ -182,9 +266,50 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                             ),
                             const SizedBox(height: 16),
                             Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(children: []),
-                              ),
+                              child:
+                                  !_isSteamUser
+                                      ? Center(
+                                        child: Text(
+                                          "Please log in with your Steam account to view your games.",
+                                          style: TextStyle(
+                                            color: AppColors.textPrimary,
+                                            fontSize: 16,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      )
+                                      : _isLoadingMyGames
+                                      ? Center(
+                                        child: CircularProgressIndicator(
+                                          color: AppColors.accent,
+                                        ),
+                                      )
+                                      : GridView.builder(
+                                        itemCount: myGames.length,
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 1,
+                                              crossAxisSpacing: 5,
+                                              mainAxisSpacing: 10,
+                                              childAspectRatio: 5,
+                                            ),
+                                        itemBuilder: (context, index) {
+                                          final game = myGames[index];
+                                          final imageUrl =
+                                              (game.screenshotUrl
+                                                          ?.trim()
+                                                          .isNotEmpty ??
+                                                      false)
+                                                  ? game.screenshotUrl!
+                                                  : defaultImage;
+
+                                          return MyNetImageContainer(
+                                            title: game.title,
+                                            body: "",
+                                            image: imageUrl,
+                                          );
+                                        },
+                                      ),
                             ),
                           ],
                         ),

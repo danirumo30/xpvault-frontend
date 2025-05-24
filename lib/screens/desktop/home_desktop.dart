@@ -4,7 +4,6 @@ import 'package:xpvault/screens/movies_series.dart';
 import 'package:xpvault/screens/playstation.dart';
 import 'package:xpvault/screens/steam.dart';
 import 'package:xpvault/themes/app_color.dart';
-import 'package:xpvault/widgets/build_bullet.dart';
 import 'package:xpvault/widgets/my_imagecontainer.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
 
