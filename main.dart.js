@@ -89241,13 +89241,13 @@ A.as_.prototype={
 $2(a,b){var s,r=J.iJ(this.a.w,b),q=r.c,p=q==null?null:B.c.eb(q).length!==0
 if(p===!0){q.toString
 s=q}else s=u.r
-return A.aBR("",s,r.a)},
+return A.aBR("","https://corsproxy.io/"+s,r.a)},
 $S:212}
 A.as0.prototype={
 $2(a,b){var s,r=J.iJ(this.a.x,b),q=r.c,p=q==null?null:B.c.eb(q).length!==0
 if(p===!0){q.toString
 s=q}else s=u.r
-return A.aBR("",s,r.a)},
+return A.aBR("","https://corsproxy.io/"+s,r.a)},
 $S:212}
 A.as1.prototype={
 $0(){var s=this.a
