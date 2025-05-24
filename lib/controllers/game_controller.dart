@@ -5,7 +5,7 @@ import 'package:xpvault/models/game.dart';
 class GameController {
   Future<List<Game>> fetchGames({int page = 0, int size = 12}) async {
     final url = Uri.parse(
-      "https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/game/steam/apps-with-details?page=$page&size=$size",
+      "http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/game/steam/apps-with-details?page=$page&size=$size",
     );
 
     try {
@@ -29,7 +29,7 @@ class GameController {
     String gameTitle = "",
   }) async {
     final url = Uri.parse(
-      "https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/game/steam/title/$gameTitle?page=$page&size=$size",
+      "http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/game/steam/title/$gameTitle?page=$page&size=$size",
     );
 
     try {
@@ -52,7 +52,7 @@ class GameController {
 
   Future<List<Game>> getUserGames(int? steamUserId) async {
     final url = Uri.parse(
-      "https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/steam-user/owned/$steamUserId",
+      "http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/steam-user/owned/$steamUserId",
     );
 
     try {

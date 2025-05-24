@@ -6,7 +6,7 @@ import 'package:xpvault/controllers/user_controller.dart';
 class AuthController {
   Future<int> login(String email, String password) async {
     try {
-      final url = Uri.parse("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/login");
+      final url = Uri.parse("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/login");
       final res = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
@@ -33,7 +33,7 @@ class AuthController {
 
   Future<int> signup(String email, String password) async {
     try {
-      final url = Uri.parse("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/signup");
+      final url = Uri.parse("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/signup");
       final res = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
@@ -53,7 +53,7 @@ class AuthController {
 
   Future<int> resend(String email) async {
     try {
-      final url = Uri.parse("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/resend");
+      final url = Uri.parse("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/resend");
       final res = await http.post(
         url,
         headers: {"Content-Type": "text/plain"},
@@ -70,7 +70,7 @@ class AuthController {
 
   Future<int> verifyCode(String email, String code) async {
     try {
-      final url = Uri.parse("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/verify");
+      final url = Uri.parse("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/verify");
       final res = await http.post(
         url,
         headers: {"Content-Type": "application/json"},

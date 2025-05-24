@@ -233,7 +233,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                           return MyNetImageContainer(
                                             title: game.title,
                                             body: "",
-                                            image: "https://corsproxy.io/$imageUrl",
+                                            image: imageUrl,
                                           );
                                         },
                                       ),
@@ -306,7 +306,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                           return MyNetImageContainer(
                                             title: game.title,
                                             body: "",
-                                            image: "https://corsproxy.io/$imageUrl",
+                                            image: imageUrl,
                                           );
                                         },
                                       ),
