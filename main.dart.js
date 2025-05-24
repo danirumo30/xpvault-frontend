@@ -88436,7 +88436,7 @@ vt(a,b){return this.aos(a,b)},
 aos(a,b){var s=0,r=A.E(t.S),q,p=2,o=[],n,m,l,k,j,i,h,g,f
 var $async$vt=A.A(function(c,d){if(c===1){o.push(d)
 s=p}while(true)switch(s){case 0:p=4
-n=A.dP("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/login",0,null)
+n=A.dP("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/login",0,null)
 i=t.N
 h=A.ar(["Content-Type","application/json"],i,i)
 s=7
@@ -88471,7 +88471,7 @@ rD(a,b){return this.a_7(a,b)},
 a_7(a,b){var s=0,r=A.E(t.S),q,p=2,o=[],n,m,l,k,j,i,h
 var $async$rD=A.A(function(c,d){if(c===1){o.push(d)
 s=p}while(true)switch(s){case 0:p=4
-n=A.dP("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/signup",0,null)
+n=A.dP("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/signup",0,null)
 k=t.N
 j=A.ar(["Content-Type","application/json"],k,k)
 s=7
@@ -88503,7 +88503,7 @@ r6(a){return this.ar_(a)},
 ar_(a){var s=0,r=A.E(t.S),q,p=2,o=[],n,m,l,k,j,i
 var $async$r6=A.A(function(b,c){if(b===1){o.push(c)
 s=p}while(true)switch(s){case 0:p=4
-n=A.dP("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/resend",0,null)
+n=A.dP("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/resend",0,null)
 k=t.N
 s=7
 return A.F(A.ave(n,a,A.ar(["Content-Type","text/plain"],k,k)),$async$r6)
@@ -88536,7 +88536,7 @@ BG(a,b){return this.arH(a,b)},
 arH(a,b){var s=0,r=A.E(t.S),q,p=2,o=[],n,m,l,k,j,i,h
 var $async$BG=A.A(function(c,d){if(c===1){o.push(d)
 s=p}while(true)switch(s){case 0:p=4
-n=A.dP("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/verify",0,null)
+n=A.dP("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/verify",0,null)
 k=t.N
 j=A.ar(["Content-Type","application/json"],k,k)
 s=7
@@ -88567,7 +88567,7 @@ A.a5s.prototype={
 zJ(a,b){return this.alT(a,b)},
 alT(a,b){var s=0,r=A.E(t.RD),q,p=2,o=[],n,m,l,k,j,i,h
 var $async$zJ=A.A(function(c,d){if(c===1){o.push(d)
-s=p}while(true)switch(s){case 0:i=A.dP("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/game/steam/apps-with-details?page="+a+"&size="+b,0,null)
+s=p}while(true)switch(s){case 0:i=A.dP("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/game/steam/apps-with-details?page="+a+"&size="+b,0,null)
 p=4
 s=7
 return A.F(A.a_3(i,null),$async$zJ)
@@ -88599,7 +88599,7 @@ return A.D($async$zJ,r)},
 wo(a,b,c){return this.Zv(a,b,c)},
 Zv(a,b,c){var s=0,r=A.E(t.RD),q,p=2,o=[],n,m,l,k,j,i,h
 var $async$wo=A.A(function(d,e){if(d===1){o.push(e)
-s=p}while(true)switch(s){case 0:i=A.dP("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/game/steam/title/"+a+"?page="+b+"&size="+c,0,null)
+s=p}while(true)switch(s){case 0:i=A.dP("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/game/steam/title/"+a+"?page="+b+"&size="+c,0,null)
 p=4
 s=7
 return A.F(A.a_3(i,null),$async$wo)
@@ -88635,7 +88635,7 @@ return A.D($async$wo,r)},
 wj(a){return this.Zh(a)},
 Zh(a){var s=0,r=A.E(t.RD),q,p=2,o=[],n,m,l,k,j,i,h,g
 var $async$wj=A.A(function(b,c){if(b===1){o.push(c)
-s=p}while(true)switch(s){case 0:h=A.dP("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/steam-user/owned/"+A.k(a),0,null)
+s=p}while(true)switch(s){case 0:h=A.dP("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/steam-user/owned/"+A.k(a),0,null)
 p=4
 s=7
 return A.F(A.a_3(h,null),$async$wj)
@@ -88683,7 +88683,7 @@ var $async$oV=A.A(function(a,b){if(a===1){p.push(b)
 s=q}while(true)switch(s){case 0:s=2
 return A.F(A.DJ(),$async$oV)
 case 2:j=b
-i=A.dP("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/users/me",0,null)
+i=A.dP("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/users/me",0,null)
 h=t.N
 g=A.ar(["Authorization","Bearer "+A.k(j),"Content-Type","application/json"],h,h)
 q=4
@@ -88717,7 +88717,7 @@ return A.D($async$oV,r)},
 wg(a){return this.Zf(a)},
 Zf(a){var s=0,r=A.E(t.S),q,p=2,o=[],n,m,l,k,j,i
 var $async$wg=A.A(function(b,c){if(b===1){o.push(c)
-s=p}while(true)switch(s){case 0:j=A.dP("https://corsproxy.io/http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/steam-user/resolve/id?username="+a,0,null)
+s=p}while(true)switch(s){case 0:j=A.dP("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/steam-user/resolve/id?username="+a,0,null)
 p=4
 s=7
 return A.F(A.a_3(j,null),$async$wg)
@@ -89241,13 +89241,13 @@ A.as_.prototype={
 $2(a,b){var s,r=J.iJ(this.a.w,b),q=r.c,p=q==null?null:B.c.eb(q).length!==0
 if(p===!0){q.toString
 s=q}else s=u.r
-return A.aBR("","https://corsproxy.io/"+s,r.a)},
+return A.aBR("",s,r.a)},
 $S:212}
 A.as0.prototype={
 $2(a,b){var s,r=J.iJ(this.a.x,b),q=r.c,p=q==null?null:B.c.eb(q).length!==0
 if(p===!0){q.toString
 s=q}else s=u.r
-return A.aBR("","https://corsproxy.io/"+s,r.a)},
+return A.aBR("",s,r.a)},
 $S:212}
 A.as1.prototype={
 $0(){var s=this.a
