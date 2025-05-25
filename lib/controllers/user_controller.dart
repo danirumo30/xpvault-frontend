@@ -7,7 +7,7 @@ import 'package:xpvault/services/user_manager.dart';
 class UserController {
   Future<void> getUser() async {
     final token = await TokenManager.getToken();
-    final url = Uri.parse("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/users/me");
+    final url = Uri.parse("https://www.xpvaultbackend.es/users/me");
 
     final headers = {
       'Authorization': 'Bearer $token',
@@ -29,7 +29,7 @@ class UserController {
 
   Future<int> getSteamUserId(String steamUser) async {
     final url = Uri.parse(
-      "http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/steam-user/resolve/id?username=$steamUser",
+      "https://www.xpvaultbackend.es/steam-user/resolve/id?username=$steamUser",
     );
 
     try {

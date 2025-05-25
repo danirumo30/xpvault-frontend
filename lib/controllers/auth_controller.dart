@@ -53,7 +53,7 @@ class AuthController {
 
   Future<int> resend(String email) async {
     try {
-      final url = Uri.parse("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/resend");
+      final url = Uri.parse("https://www.xpvaultbackend.es/auth/resend");
       final res = await http.post(
         url,
         headers: {"Content-Type": "text/plain"},
@@ -70,7 +70,7 @@ class AuthController {
 
   Future<int> verifyCode(String email, String code) async {
     try {
-      final url = Uri.parse("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/verify");
+      final url = Uri.parse("https://www.xpvaultbackend.es/auth/verify");
       final res = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
