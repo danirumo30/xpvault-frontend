@@ -17,87 +17,104 @@ class HomeDesktopPage extends StatelessWidget {
     return DesktopLayout(
       title: "XPVAULT",
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: screenHeight * 0.8,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppColors.tertiary,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
+        padding: const EdgeInsets.all(24.0),
+        child: Container(
+          height: screenHeight * 0.85,
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: AppColors.tertiary,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(),
+                blurRadius: 16,
+                offset: Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        flex: 3,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            spacing: 20,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                spacing: 20,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Search for users",
-                                    style: TextStyle(
-                                      color: AppColors.accent,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 45,
-                                    ),
-                                  ),
-                                  MyTextformfield(
-                                    hintText: "Search...",
-                                    obscureText: false,
-                                    suffixIcon: IconButton(onPressed: (){}, icon: Icon(Icons.search,color: AppColors.textMuted,)),
-                                  )
-                                ],
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              "Search for users",
+                              style: TextStyle(
+                                color: AppColors.accent,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 48,
                               ),
-                              const SizedBox(height: 16),
-                              Text(
-                                "Get started with...",
-                                style: TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
+                            ),
+                            const SizedBox(height: 20),
+                            MyTextformfield(
+                              hintText: "Search...",
+                              obscureText: false,
+                              suffixIcon: IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.search,
+                                  color: AppColors.textMuted,
                                 ),
                               ),
-                              MyImageContainer(
-                                title: "Movies and series",
-                                body: "Login or sign up to start",
-                                image: "assets/movies.jpg",
-                                onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MoviesSeriesPage(),)),
-                              ),
-                              MyImageContainer(
-                                title: "Steam",
-                                body:"Login to your Steam account and get started",
-                                image: "assets/steam.jpg",
-                                onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SteamPage(),)),
-                              ),
-                              MyImageContainer(
-                                title: "Playstation",
-                                body:"Login to your Playstation account and get started",
-                                image: "assets/playstation.jpg",
-                                onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PlaystationPage(),)),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
+                      ),
+                      const SizedBox(height: 40),
+                      Text(
+                        "Get started with",
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 32,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Wrap(
+                        spacing: 24,
+                        runSpacing: 24,
+                        children: [
+                          MyImageContainer(
+                            title: "Movies and Series",
+                            body: "Login or sign up to start exploring your favorites",
+                            image: "assets/movies.jpg",
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => MoviesSeriesPage()),
+                            ),
+                          ),
+                          MyImageContainer(
+                            title: "Steam",
+                            body: "Login to your Steam account and get started",
+                            image: "assets/steam.jpg",
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => SteamPage()),
+                            ),
+                          ),
+                          MyImageContainer(
+                            title: "Playstation",
+                            body: "Login to your Playstation account and get started",
+                            image: "assets/playstation.jpg",
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => PlaystationPage()),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

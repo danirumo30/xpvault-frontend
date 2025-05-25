@@ -6,7 +6,7 @@ import 'package:xpvault/controllers/user_controller.dart';
 class AuthController {
   Future<int> login(String email, String password) async {
     try {
-      final url = Uri.parse("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/login");
+      final url = Uri.parse("https://www.xpvaultbackend.es/auth/login");
       final res = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
@@ -33,7 +33,7 @@ class AuthController {
 
   Future<int> signup(String email, String password) async {
     try {
-      final url = Uri.parse("http://spring-env.eba-mwisafe4.eu-west-1.elasticbeanstalk.com/auth/signup");
+      final url = Uri.parse("https://www.xpvaultbackend.es/auth/signup");
       final res = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
