@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/game_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/game.dart';
+import 'package:xpvault/screens/desktop/game_detail_desktop.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
@@ -234,6 +235,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                             title: game.title,
                                             body: "",
                                             image: imageUrl,
+                                            onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GameDetailDesktopPage(game: game),)),
                                           );
                                         },
                                       ),
@@ -307,6 +309,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                             title: game.title,
                                             body: "",
                                             image: imageUrl,
+                                            onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GameDetailDesktopPage(game: game),)),
                                           );
                                         },
                                       ),

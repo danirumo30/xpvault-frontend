@@ -12,92 +12,93 @@ class HomeMobilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return MobileLayout(
       title: "XPVAULT",
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: screenHeight * 0.8,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppColors.tertiary,
-                    borderRadius: BorderRadius.circular(8),
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppColors.tertiary,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(),
+                    blurRadius: 10,
+                    offset: Offset(0, 6),
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            spacing: 20,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                spacing: 20,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Search for users",
-                                    style: TextStyle(
-                                      color: AppColors.accent,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 45,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  MyTextformfield(
-                                    hintText: "Search...",
-                                    obscureText: false,
-                                    suffixIcon: IconButton(onPressed: (){}, icon: Icon(Icons.search,color: AppColors.textMuted,)),
-                                  )
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                "Get started with...",
-                                style: TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                ),
-                              ),
-                              MyImageContainer(
-                                title: "Movies and series",
-                                body: "Login or sign up to start",
-                                image: "assets/movies.jpg",
-                                onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MoviesSeriesPage(),)),
-                              ),
-                              MyImageContainer(
-                                title: "Steam",
-                                body:"Login to your Steam account and get started",
-                                image: "assets/steam.jpg",
-                                onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SteamPage(),)),
-                              ),
-                              MyImageContainer(
-                                title: "Playstation",
-                                body:"Login to your Playstation account and get started",
-                                image: "assets/playstation.jpg",
-                                onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PlaystationPage(),)),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    "Search for users",
+                    style: TextStyle(
+                      color: AppColors.accent,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 32,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 20),
+                  MyTextformfield(
+                    hintText: "Search...",
+                    obscureText: false,
+                    suffixIcon: IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.search, color: AppColors.textMuted),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Get started with",
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 26,
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            MyImageContainer(
+              title: "Movies and Series",
+              body: "Login or sign up to start exploring",
+              image: "assets/movies.jpg",
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => MoviesSeriesPage()),
+              ),
+            ),
+            const SizedBox(height: 16),
+            MyImageContainer(
+              title: "Steam",
+              body: "Login to your Steam account and get started",
+              image: "assets/steam.jpg",
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => SteamPage()),
+              ),
+            ),
+            const SizedBox(height: 16),
+            MyImageContainer(
+              title: "Playstation",
+              body: "Login to your Playstation account and get started",
+              image: "assets/playstation.jpg",
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => PlaystationPage()),
+              ),
+            ),
+            const SizedBox(height: 40),
           ],
         ),
       ),
