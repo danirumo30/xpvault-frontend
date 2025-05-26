@@ -114,5 +114,5 @@ Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para má
 
 ## 📋 Otros documentos
 
-- [📝 Lista de tareas (TODOList.md)](TODOList.md)
+- [📝 Lista de tareas (TODO.md)](TODO.md)
 
