@@ -4,6 +4,7 @@
 
 ### 🔍 Búsqueda
 - [ ] En las barras de búsqueda, permitir que al pulsar `Enter` se ejecute la búsqueda.
+- [ ] En la selección de generos poner por defecto sin seleccionar.
 
 ### 👤 Perfil
 - [ ] Eliminar la barra de "buscar amigos".
