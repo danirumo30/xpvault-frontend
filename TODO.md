@@ -4,8 +4,6 @@
 
 ### 🔍 Búsqueda
 - [ ] En las barras de búsqueda, permitir que al pulsar `Enter` se ejecute la búsqueda.
-- [ ] Hacer el input de búsqueda más pequeño.
-- [ ] Colocar el buscador a la izquierda, y el nombre del perfil + foto a la derecha.
 
 ### 👤 Perfil
 - [ ] Eliminar la barra de "buscar amigos".
@@ -19,7 +17,9 @@
 - [ ] Implementar subida de imagen de perfil en base64 y guardarla en la base de datos.
 
 ### 🏠 Home
-- [ ] Rediseñar el home con los "Gepetas" (widgets personalizados) y contenedores de pelis, Steam y PSN.
+- [ ] Hacer el input de búsqueda más pequeño.
+- [ ] Colocar el buscador a la izquierda, y el nombre del perfil + foto a la derecha.
+- [ ] Utilizar contenedores del profile.
 - [ ] Mostrar solo 5 elementos por contenedor.
 - [ ] Añadir un botón "Ver todos" en la parte superior derecha de cada contenedor.
 - [ ] Utilizar los endpoints de `POPULAR` y `FEATURED`.
