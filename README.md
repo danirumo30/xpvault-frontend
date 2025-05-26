@@ -111,3 +111,8 @@ Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para má
 ## 🙋‍♀️ Contribuciones
 
 ¡Las contribuciones son bienvenidas! Abre un issue o un pull request con tus mejoras o sugerencias.
+
+## 📋 Otros documentos
+
+- [📝 Lista de tareas (TODOList.md)](TODOList.md)
+
