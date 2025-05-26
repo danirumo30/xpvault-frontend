@@ -6,6 +6,7 @@
 - [ ] En las barras de búsqueda, permitir que al pulsar `Enter` se ejecute la búsqueda.
 - [ ] En la selección de generos poner por defecto sin seleccionar.
 - [ ] Arreglar boton de siguiente en juegos de steam.
+- [ ] Modificar número de juegos que aparecen, debido a una modificación del back salen menos por cada busqueda (ASK DANIEL RUBIO).
 
 ### 👤 Perfil
 - [ ] Eliminar la barra de "buscar amigos".
