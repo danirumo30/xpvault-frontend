@@ -7,8 +7,17 @@ class MyTextformfield extends StatelessWidget {
   final Widget? suffixIcon;
   final TextEditingController? textEditingController;
   final String? Function(String?)? validator;
-  
-  const MyTextformfield({super.key, required this.hintText, required this.obscureText, this.suffixIcon, this.textEditingController, this.validator});
+  final void Function(String)? onChanged;  // <-- nuevo
+
+  const MyTextformfield({
+    super.key,
+    required this.hintText,
+    required this.obscureText,
+    this.suffixIcon,
+    this.textEditingController,
+    this.validator,
+    this.onChanged,  // <-- nuevo
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,22 +34,15 @@ class MyTextformfield extends StatelessWidget {
           ),
           filled: true,
           fillColor: AppColors.background,
-          hintStyle: TextStyle(
-            color: AppColors.textMuted
-          ),
-          errorStyle: TextStyle(
-            color: AppColors.error,
-            fontSize: 13,
-          ),
+          hintStyle: TextStyle(color: AppColors.textMuted),
+          errorStyle: TextStyle(color: AppColors.error, fontSize: 13),
           hintText: hintText,
           suffixIcon: suffixIcon
         ),
-        style: TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: 20
-        ),
+        style: TextStyle(color: AppColors.textPrimary, fontSize: 20),
         obscureText: obscureText,
         validator: validator,
+        onChanged: onChanged,  // <-- nuevo
       ),
     );
   }

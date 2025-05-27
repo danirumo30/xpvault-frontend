@@ -4,6 +4,11 @@ import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
 import 'package:xpvault/widgets/my_imagecontainer.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
+import 'package:xpvault/models/movie.dart';
+import 'package:xpvault/controllers/movie_controller.dart';
+import 'package:xpvault/widgets/cast_with_navigation.dart';
+import 'package:xpvault/widgets/movie_grid.dart';
+import 'package:xpvault/screens/desktop/movie_detail.dart';
 
 class MoviesSeriesDesktop extends StatefulWidget {
   const MoviesSeriesDesktop({super.key});
@@ -13,7 +18,62 @@ class MoviesSeriesDesktop extends StatefulWidget {
 }
 
 class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
-  String dropdownvalue = "";
+  List<Movie> movies = [];
+  bool _isLoading = true;
+  final TextEditingController searchController = TextEditingController();
+  int _currentPage = 1;
+  final int _pageSize = 10;
+  String dropdownValue = "";
+
+  void _showMovieDetails(Movie movie) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MovieDetail(movie: movie),
+      ),
+    );
+  }
+
+  final MovieController movieController = MovieController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initMovies();
+  }
+
+  Future<void> _loadMovies() async {
+    setState(() => _isLoading = true);
+
+    List<Movie> loadedMovies;
+    if (searchController.text.trim().isNotEmpty) {
+      loadedMovies = movieController.searchMovieByTitle( // await
+        title: searchController.text.trim(),
+        page: _currentPage,
+        size: _pageSize,
+      );
+    } else {
+      loadedMovies = movieController.fetchMovies( // await
+        page: _currentPage,
+        size: _pageSize,
+      );
+    }
+
+    if (dropdownValue.isNotEmpty) {
+      loadedMovies =
+          loadedMovies.where((m) => m.genres.contains(dropdownValue)).toList();
+    }
+
+    setState(() {
+      movies = loadedMovies;
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _initMovies() async {
+    await movieController.loadMoviesFromAssets('movies.json');
+    await _loadMovies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +89,21 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                 Expanded(
                   flex: 2,
                   child: MyTextformfield(
+                    textEditingController: searchController,
                     hintText: "Search",
                     obscureText: false,
                     suffixIcon: Icon(Icons.search, color: AppColors.textMuted),
+                    onChanged: (value) {
+                      _currentPage = 1;
+                      _loadMovies();
+                    },
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   flex: 1,
                   child: MyDropdownbutton(
-                    hint: dropdownvalue.isEmpty ? "Select genre" : dropdownvalue,
+                    hint: dropdownValue.isEmpty ? "Select genre" : dropdownValue,
                     items: const [
                       DropdownMenuItem(
                         value: "Action",
@@ -56,8 +121,10 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                     onChanged: (value) {
                       if (value is String) {
                         setState(() {
-                          dropdownvalue = value;
+                          dropdownValue = value;
+                          _currentPage = 1;
                         });
+                        _loadMovies();
                       }
                     },
                   ),
@@ -92,16 +159,10 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                             ),
                             const SizedBox(height: 16),
                             Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    MyImageContainer(
-                                      title: "Movie 1",
-                                      body: "Movie body",
-                                      image: "assets/movies.jpg",
-                                    ),
-                                  ],
-                                ),
+                              child: MovieGrid(
+                                movies: movies,
+                                isLoading: _isLoading,
+                                onMovieTap: _showMovieDetails,
                               ),
                             ),
                           ],
@@ -132,10 +193,8 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                             ),
                             const SizedBox(height: 16),
                             Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [],
-                                ),
+                              child: const Center(
+                                child: Text("No movie selected"),
                               ),
                             ),
                           ],
