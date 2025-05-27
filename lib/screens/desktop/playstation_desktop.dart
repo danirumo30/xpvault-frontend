@@ -6,7 +6,6 @@ class PlaystationDesktop extends StatefulWidget {
   const PlaystationDesktop({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _PlaystationDesktopState createState() => _PlaystationDesktopState();
 }
 

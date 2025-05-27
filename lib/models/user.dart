@@ -2,7 +2,7 @@ class User {
   final int id;
   final String username;
   final String email;
-  final int? steamId;
+  int? steamId;
 
   User({
     required this.id,

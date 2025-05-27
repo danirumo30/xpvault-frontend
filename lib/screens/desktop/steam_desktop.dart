@@ -22,7 +22,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
 
   final GameController _gameController = GameController();
   final TextEditingController searchController = TextEditingController();
-  final int _pageSize = 12;
+  final int _pageSize = 13;
 
   String dropdownvalue = "";
   List<Game> games = [];
@@ -33,6 +33,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   int _currentPage = 10;
 
   final List<String> steamGenres = [
+    "All",
     'Action',
     'Adventure',
     'Role-Playing (RPG)',
@@ -89,6 +90,8 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
         size: _pageSize,
         gameTitle: searchController.text,
       );
+    } else if (dropdownvalue.isNotEmpty) {
+      loadedGames = await _gameController.getGamesByGenre(genre: dropdownvalue, page: _currentPage, size: _pageSize);
     } else {
       loadedGames = await _gameController.fetchGames(
         page: _currentPage,
@@ -168,8 +171,13 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                     onChanged: (value) {
                       if (value is String) {
                         setState(() {
-                          dropdownvalue = value;
+                          if (value == "All") {
+                            dropdownvalue = "";
+                          } else {
+                            dropdownvalue = value;
+                          }
                         });
+                        _loadGames();
                       }
                     },
                   ),
@@ -233,7 +241,6 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
 
                                           return MyNetImageContainer(
                                             title: game.title,
-                                            body: "",
                                             image: imageUrl,
                                             onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GameDetailDesktopPage(game: game),)),
                                           );
@@ -307,7 +314,6 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
 
                                           return MyNetImageContainer(
                                             title: game.title,
-                                            body: "",
                                             image: imageUrl,
                                             onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GameDetailDesktopPage(game: game),)),
                                           );

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:xpvault/themes/app_color.dart';
 
 class MyNetImageContainer extends StatefulWidget {
   final String title;
-  final String body;
   final String image;
   final void Function()? onTap;
 
   const MyNetImageContainer({
     super.key,
     required this.title,
-    required this.body,
     required this.image,
     this.onTap,
   });
@@ -45,29 +44,22 @@ class _MyNetImageContainerState extends State<MyNetImageContainer> {
                 ),
                 Container(
                   width: double.infinity,
-                  color: Colors.white.withValues(),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  color: AppColors.secondary.withValues(),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          widget.title,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
                       Text(
-                        widget.body, // e.g. "Movie"
+                        widget.title,
                         style: const TextStyle(
-                          color: Colors.black54,
-                          fontSize: 13,
+                          color: AppColors.textPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
                       ),
                     ],
                   ),

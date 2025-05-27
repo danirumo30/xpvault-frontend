@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:xpvault/models/user.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
@@ -27,23 +28,11 @@ class UserController {
     }
   }
 
-  Future<int> getSteamUserId(String steamUser) async {
-    final url = Uri.parse(
-      "https://www.xpvaultbackend.es/steam-user/resolve/id?username=$steamUser",
-    );
+  Future<void> openSteamLogin() async {
+    final Uri url = Uri.parse("https://www.xpvaultbackend.es/steam-auth/login");
 
-    try {
-    final res = await http.get(url);
-
-    if (res.statusCode == 200) {
-      UserManager.assignSteamIdToUser(int.parse(res.body));
-      return res.statusCode;
-    } 
-
-    } catch (e) {
-      throw Exception("Failed to get Steam user ID: $e");
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
     }
-
-    return -1;
   }
 }
