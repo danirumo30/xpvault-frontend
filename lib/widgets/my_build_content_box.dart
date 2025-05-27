@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/themes/app_color.dart';
 
+import '../screens/desktop/game_detail_desktop.dart';
+
 class MyBuildContentBox extends StatelessWidget {
   final List<dynamic> items;
 
@@ -64,7 +66,7 @@ class MyBuildContentBox extends StatelessWidget {
             imageUrl = null;
           }
 
-          return Container(
+          Widget content = Container(
             width: 120,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -115,6 +117,22 @@ class MyBuildContentBox extends StatelessWidget {
               ],
             ),
           );
+
+          if (item.runtimeType.toString() == 'Game') {
+            return GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GameDetailDesktopPage(game: item),
+                  ),
+                );
+              },
+              child: content,
+            );
+          } else {
+            return content;
+          }
         },
       ),
     );

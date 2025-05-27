@@ -38,7 +38,6 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
 
   Future<void> loadContentSequentially() async {
     final user = await UserManager.getUser();
-    print("USER LOADED: ${user?.username}, photo: ${user?.profilePhoto}");
     final gameController = GameController();
     final movieController = MovieController();
     final serieController = SerieController();
