@@ -49,7 +49,7 @@ class GameController {
     return [];
   }
 
-  Future<List<Game>> getUserGames(int? steamUserId) async {
+  Future<List<Game>> getUserGames(String? steamUserId) async {
     final url = Uri.parse(
       "https://www.xpvaultbackend.es/steam-user/owned/$steamUserId",
     );
@@ -92,5 +92,16 @@ class GameController {
     }
 
     return [];
+  }
+
+  Future<List<Game>> fetchFeaturedGames() async {
+    final response = await http.get(Uri.parse("https://www.xpvaultbackend.es/game/steam/featured"));
+
+    if (response.statusCode == 200) {
+      final List data = json.decode(response.body);
+      return data.map((json) => Game.fromJson(json)).toList();
+    } else {
+      return [];
+    }
   }
 }

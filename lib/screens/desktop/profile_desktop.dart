@@ -1,11 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:xpvault/controllers/game_controller.dart';
+import 'package:xpvault/controllers/movie_controller.dart';
+import 'package:xpvault/controllers/serie_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
+import 'package:xpvault/models/game.dart';
+import 'package:xpvault/models/movie.dart';
+import 'package:xpvault/models/serie.dart';
+import 'package:xpvault/models/user.dart';
+import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
 import 'package:xpvault/widgets/my_build_section_title.dart';
-import 'package:xpvault/models/user.dart';
-import 'package:xpvault/services/user_manager.dart';
-import 'package:xpvault/widgets/my_textformfield.dart';
 
 class ProfileDesktopPage extends StatefulWidget {
   const ProfileDesktopPage({super.key});
@@ -15,103 +22,186 @@ class ProfileDesktopPage extends StatefulWidget {
 }
 
 class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
+  final GameController _gameController = GameController();
+  final MovieController _movieController = MovieController();
+  final SerieController _serieController = SerieController();
+
   User? _user;
+  List<Game> _games = [];
+  List<Movie> _movies = [];
+  List<Serie> _series = [];
+
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _loadUserAndContent();
   }
 
-  Future<void> _loadUser() async {
+  Future<void> _loadUserAndContent() async {
+    setState(() => _loading = true);
+
     final loadedUser = await UserManager.getUser();
+
+    if (loadedUser == null) {
+      setState(() {
+        _user = null;
+        _loading = false;
+      });
+      return;
+    }
+
+    _user = loadedUser;
+
+    List<Game> games = [];
+    if (loadedUser.steamId != null && loadedUser.steamId!.isNotEmpty) {
+      games = await _gameController.getUserGames(loadedUser.steamId!);
+    }
+
+    final movies = await _movieController.fetchUserMovies(loadedUser.username);
+    final series = await _serieController.fetchUserSeries(loadedUser.username);
+
     setState(() {
-      _user = loadedUser;
+      _games = games;
+      _movies = movies;
+      _series = series;
+      _loading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return DesktopLayout(
-      title: "XPVAULT",
-      body: _user == null
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.lock,color: AppColors.accent,size: 45,),
-                  SizedBox(height: 16),
-                  Text(
-                    "You need to log in to access the profile",
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 20,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "XPVAULT",
-                          style: TextStyle(
-                            color: AppColors.accent,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                        CircleAvatar(
-                          backgroundColor: AppColors.surface,
-                          radius: 24,
-                          child: Text(
-                            "👤",
-                            style: TextStyle(fontSize: 24),
-                          ),
-                        ),
-                      ],
-                    ),
+    if (_loading) {
+      return const DesktopLayout(
+        title: "XPVAULT",
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
-                    const SizedBox(height: 24),
-
-                    SizedBox(
-                      height: 45,
-                      width: double.infinity,
-                      child: MyTextformfield(hintText: "Search friends 🔍", obscureText: false)
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    Expanded(
-                      child: ListView(
-                        children: const [
-                          MyBuildSectionTitle(title: "🎮 My Games"),
-                          MyBuildContentBox(),
-
-                          SizedBox(height: 24),
-
-                          MyBuildSectionTitle(title: "🎬 My Movies"),
-                          MyBuildContentBox(),
-
-                          SizedBox(height: 24),
-
-                          MyBuildSectionTitle(title: "📺 My Series"),
-                          MyBuildContentBox(),
-                        ],
-                      ),
-                    ),
-                  ],
+    if (_user == null) {
+      return const DesktopLayout(
+        title: "XPVAULT",
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.lock, color: AppColors.accent, size: 45),
+              SizedBox(height: 16),
+              Text(
+                "You need to log in to access the profile",
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 20,
                 ),
               ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return DesktopLayout(
+      title: "XPVAULT",
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Usuario con avatar y nombre
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (_user!.profilePhoto != null &&
+                    _user!.profilePhoto!.isNotEmpty)
+                  CircleAvatar(
+                    radius: 36,
+                    backgroundImage: MemoryImage(
+                      base64Decode(_user!.profilePhoto!),
+                    ),
+                  )
+                else
+                  const CircleAvatar(
+                    backgroundColor: AppColors.surface,
+                    radius: 36,
+                    child: Text("👤", style: TextStyle(fontSize: 28)),
+                  ),
+                const SizedBox(width: 16),
+                Text(
+                  _user!.username,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 24),
+
+            // Estadísticas
+            Wrap(
+              spacing: 24,
+              runSpacing: 12,
+              children: [
+                _buildStatCard("🎮 Tiempo J", _user!.totalTimePlayed),
+                _buildStatCard("🎬 Tiempo P", _user!.totalTimeMoviesWatched),
+                _buildStatCard("📺 Tiempo S", _user!.totalTimeEpisodesWatched),
+                _buildStatCard("👥 Amigos", 0, isTime: false),
+              ],
+            ),
+            const SizedBox(height: 32),
+
+            // Contenido
+            Expanded(
+              child: ListView(
+                children: [
+                  const MyBuildSectionTitle(title: "🎮 My Games"),
+                  MyBuildContentBox(items: _games),
+                  const SizedBox(height: 24),
+
+                  const MyBuildSectionTitle(title: "🎬 My Movies"),
+                  MyBuildContentBox(items: _movies),
+                  const SizedBox(height: 24),
+
+                  const MyBuildSectionTitle(title: "📺 My Series"),
+                  MyBuildContentBox(items: _series),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String title, int value, {bool isTime = true}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            isTime ? "$value h" : "$value",
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
