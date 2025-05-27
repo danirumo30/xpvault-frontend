@@ -8,23 +8,22 @@
 - [ ] Arreglar boton de siguiente en juegos de steam.
 
 ### 👤 Perfil
-- [ ] Eliminar la barra de "buscar amigos".
-- [ ] Añadir estadísticas: tiempo de pelis vistas, series vistas, tiempo jugado y número de amigos.
-- [ ] Cambiar el texto "XP Vault" por el nombre del usuario.
 - [ ] Hacer que al pulsar sobre la foto del perfil, se redirija a una pestaña para cambiar:
   - Contraseña
   - Email
   - Steam
   - Otros ajustes
 - [ ] Implementar subida de imagen de perfil en base64 y guardarla en la base de datos.
+- [ ] Añadir animaciones hover en las imagenes y cambio de cursor.
+- [ ] Añadir scroll para que en pc puedan mover las pelis, series y juegos a la derecha o izquierda.
+- [ ] Inicio de sesión con Steam.
 
 ### 🏠 Home
-- [ ] Hacer el input de búsqueda más pequeño.
-- [ ] Colocar el buscador a la izquierda, y el nombre del perfil + foto a la derecha.
-- [ ] Utilizar contenedores del profile.
-- [ ] Mostrar solo 5 elementos por contenedor.
 - [ ] Añadir un botón "Ver todos" en la parte superior derecha de cada contenedor.
-- [ ] Utilizar los endpoints de `POPULAR` y `FEATURED`.
+- [ ] Añadir animaciones hover en las imagenes y cambio de cursor.
+- [ ] Añadir scroll para que en pc puedan mover las pelis, series y juegos a la derecha o izquierda.
+- [ ] Al hacer logout y volver a iniciar sesion se buguea y no te deja acceder al perfil.
+- [ ] No se muestran los juegos/pelis/series populares en el GH PAGES pero si en local.
 
 ### 🎮 Conexión Back + Front
 - [ ] Implementar conexión del backend con el frontend para:
@@ -39,6 +38,12 @@
   - Top usuarios con más horas de juegos
 
 ### 📱 Vistas móviles
+- [ ] Crear vistas:
+  - Usuarios/Amigos (foto + username)
+  - Ajustes perfil/cuenta
+  - Ranking
+- [ ] Modificar vistas:
+  - Detalles videojuegos
 - [ ] Adaptar vistas móviles para:
   - Steam
   - Películas
