@@ -1,121 +1,142 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:xpvault/controllers/game_controller.dart';
+import 'package:xpvault/controllers/movie_controller.dart';
+import 'package:xpvault/controllers/serie_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
-import 'package:xpvault/screens/movies_series.dart';
-import 'package:xpvault/screens/playstation.dart';
-import 'package:xpvault/screens/steam.dart';
+import 'package:xpvault/models/game.dart';
+import 'package:xpvault/models/movie.dart';
+import 'package:xpvault/models/serie.dart';
+import 'package:xpvault/models/user.dart';
+import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
-import 'package:xpvault/widgets/my_imagecontainer.dart';
+import 'package:xpvault/widgets/my_build_content_box.dart';
+import 'package:xpvault/widgets/my_build_section_title.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
 
-class HomeDesktopPage extends StatelessWidget {
+class HomeDesktopPage extends StatefulWidget {
   const HomeDesktopPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+  State<HomeDesktopPage> createState() => _HomeDesktopPageState();
+}
 
+class _HomeDesktopPageState extends State<HomeDesktopPage> {
+  List<Game> featuredGames = [];
+  List<Movie> popularMovies = [];
+  List<Serie> popularSeries = [];
+  User? _user;
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadContentSequentially();
+  }
+
+  Future<void> loadContentSequentially() async {
+    final user = await UserManager.getUser();
+    print("USER LOADED: ${user?.username}, photo: ${user?.profilePhoto}");
+    final gameController = GameController();
+    final movieController = MovieController();
+    final serieController = SerieController();
+
+    final games = await gameController.fetchFeaturedGames();
+    final movies = await movieController.fetchPopularMovies();
+    final series = await serieController.fetchPopularSeries();
+
+    setState(() {
+      _user = user;
+      featuredGames = games.toList();
+      popularMovies = movies.toList();
+      popularSeries = series.toList();
+      isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return DesktopLayout(
       title: "XPVAULT",
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Container(
-          height: screenHeight * 0.85,
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            color: AppColors.tertiary,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(),
-                blurRadius: 16,
-                offset: Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 0, top: 24, right: 32, bottom: 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 600,
+                  height: 40,
+                  child: MyTextformfield(
+                    hintText: "Search friends 🔍",
+                    obscureText: false,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 32),
+                  child: Row(
                     children: [
-                      Center(
-                        child: Column(
-                          children: [
-                            Text(
-                              "Search for users",
-                              style: TextStyle(
-                                color: AppColors.accent,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 48,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            MyTextformfield(
-                              hintText: "Search...",
-                              obscureText: false,
-                              suffixIcon: IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.search,
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
-                            ),
-                          ],
+                      if (_user != null)
+                        Text(
+                          _user!.username,
+                          style: const TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 40),
-                      Text(
-                        "Get started with",
-                        style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 32,
+                      const SizedBox(width: 12),
+                      _user != null && _user!.profilePhoto != null && _user!.profilePhoto!.isNotEmpty
+                          ? CircleAvatar(
+                        radius: 24,
+                        backgroundImage: MemoryImage(
+                          base64Decode(_user!.profilePhoto!),
                         ),
-                      ),
-                      const SizedBox(height: 24),
-                      Wrap(
-                        spacing: 24,
-                        runSpacing: 24,
-                        children: [
-                          MyImageContainer(
-                            title: "Movies and Series",
-                            body: "Login or sign up to start exploring your favorites",
-                            image: "assets/movies.jpg",
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => MoviesSeriesPage()),
-                            ),
-                          ),
-                          MyImageContainer(
-                            title: "Steam",
-                            body: "Login to your Steam account and get started",
-                            image: "assets/steam.jpg",
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => SteamPage()),
-                            ),
-                          ),
-                          MyImageContainer(
-                            title: "Playstation",
-                            body: "Login to your Playstation account and get started",
-                            image: "assets/playstation.jpg",
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => PlaystationPage()),
-                            ),
-                          ),
-                        ],
+                      )
+                          : const CircleAvatar(
+                        backgroundColor: AppColors.surface,
+                        radius: 24,
+                        child: Text("👤", style: TextStyle(fontSize: 24)),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+
+          const SizedBox(height: 32),
+
+          // 🧱 Contenido general con padding
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView(
+                children: [
+                  const MyBuildSectionTitle(title: "🎮 Featured Games"),
+                  MyBuildContentBox(items: featuredGames),
+
+                  const SizedBox(height: 24),
+
+                  const MyBuildSectionTitle(title: "🎬 Popular Movies"),
+                  MyBuildContentBox(items: popularMovies),
+
+                  const SizedBox(height: 24),
+
+                  const MyBuildSectionTitle(title: "📺 Popular Series"),
+                  MyBuildContentBox(items: popularSeries),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

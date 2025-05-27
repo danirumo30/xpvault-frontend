@@ -36,7 +36,7 @@ class UserController {
     final res = await http.get(url);
 
     if (res.statusCode == 200) {
-      UserManager.assignSteamIdToUser(int.parse(res.body));
+      UserManager.assignSteamIdToUser(res.body);
       return res.statusCode;
     } 
 
