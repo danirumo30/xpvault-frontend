@@ -9,6 +9,7 @@ import 'package:xpvault/controllers/movie_controller.dart';
 import 'package:xpvault/widgets/cast_with_navigation.dart';
 import 'package:xpvault/widgets/movie_grid.dart';
 import 'package:xpvault/screens/desktop/movie_detail.dart';
+import 'dart:async';
 
 class MoviesSeriesDesktop extends StatefulWidget {
   const MoviesSeriesDesktop({super.key});
@@ -24,6 +25,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
   int _currentPage = 1;
   final int _pageSize = 10;
   String dropdownValue = "";
+  Timer? _debounce;
 
   void _showMovieDetails(Movie movie) {
     Navigator.push(
@@ -94,7 +96,12 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                     suffixIcon: Icon(Icons.search, color: AppColors.textMuted),
                     onChanged: (value) {
                       _currentPage = 1;
-                      _loadMovies();
+
+                      if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+                      _debounce = Timer(const Duration(milliseconds: 1500), () {
+                        _loadMovies();
+                      });
                     },
                   ),
                 ),

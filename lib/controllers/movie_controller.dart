@@ -11,7 +11,6 @@ class MovieController {
     try {
       final String response = await rootBundle.loadString('assets/$path');
       final List data = jsonDecode(response);
-      // Aquí podrías guardar estos datos en una lista interna si lo necesitas
       print("Películas cargadas desde assets: ${data.length}");
     } catch (e) {
       print("Error al cargar películas desde assets: $e");
