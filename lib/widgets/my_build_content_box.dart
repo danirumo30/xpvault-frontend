@@ -52,6 +52,11 @@ class MyBuildContentBox extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final item = items[index];
+          print('Item at $index runtimeType: ${item.runtimeType}');
+          print('Item at $index is Game? ${item is Game}');
+          print('Item at $index is Movie? ${item is Movie}');
+          print('Item at $index is Serie? ${item is Serie}');
+
           final String title;
           String? imageUrl;
 
