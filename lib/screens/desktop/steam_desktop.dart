@@ -122,54 +122,29 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   Future<void> _onNextPressed() async {
     setState(() {
       _isLoading = true;
+      _currentPage++;
     });
 
-    int nextPage = _currentPage + 1;
-    List<Game> nextPageGames = [];
+    final isSearching = searchController.text.trim().isNotEmpty;
+    List<Game> nextPageGames;
 
-    final currentGameIds = games.map((g) => g.steamId).toSet();
-
-    while (true) {
-      final isSearching = searchController.text.trim().isNotEmpty;
-
-      if (isSearching) {
-        nextPageGames = await _gameController.searchGameByTitle(
-          page: nextPage,
-          size: _pageSize,
-          gameTitle: searchController.text,
-        );
-      } else {
-        nextPageGames = await _gameController.fetchGames(
-          page: nextPage,
-          size: _pageSize,
-        );
-      }
-
-      if (nextPageGames.isEmpty) {
-        nextPageGames = [];
-        break;
-      }
-
-      bool hasNewGame = nextPageGames.any((game) => !currentGameIds.contains(game.steamId));
-
-      if (hasNewGame) {
-        break;
-      } else {
-        nextPage++;
-      }
-    }
-
-    if (nextPageGames.isNotEmpty) {
-      setState(() {
-        _currentPage = nextPage;
-        games = nextPageGames;
-        _isLoading = false;
-      });
+    if (isSearching) {
+      nextPageGames = await _gameController.searchGameByTitle(
+        page: _currentPage,
+        size: _pageSize,
+        gameTitle: searchController.text,
+      );
     } else {
-      setState(() {
-        _isLoading = false;
-      });
+      nextPageGames = await _gameController.fetchGames(
+        page: _currentPage,
+        size: _pageSize,
+      );
     }
+
+    setState(() {
+      games = nextPageGames;
+      _isLoading = false;
+    });
   }
 
   void _onSearch() {
