@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 import '../screens/desktop/game_detail_desktop.dart';
+import 'my_netimagecontainer.dart';
 
 class MyBuildContentBox extends StatelessWidget {
   final List<dynamic> items;
+  final bool showBodyLabel;
 
   const MyBuildContentBox({
     super.key,
     required this.items,
+    this.showBodyLabel = true,
   });
 
   @override
@@ -24,7 +27,7 @@ class MyBuildContentBox extends StatelessWidget {
             BoxShadow(
               color: AppColors.shadow,
               blurRadius: 8,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -51,88 +54,52 @@ class MyBuildContentBox extends StatelessWidget {
           final item = items[index];
           final String title;
           String? imageUrl;
+          String bodyText;
 
-          if (item.runtimeType.toString() == 'Game') {
+          final typeStr = item.runtimeType.toString();
+
+          if (typeStr == 'Game') {
             title = item.title;
             imageUrl = item.screenshotUrl;
-          } else if (item.runtimeType.toString() == 'Movie') {
+            bodyText = "Juego";
+          } else if (typeStr == 'Movie') {
             title = item.title;
             imageUrl = item.posterUrl;
-          } else if (item.runtimeType.toString() == 'Serie') {
+            bodyText = "Película";
+          } else if (typeStr == 'Serie') {
             title = item.title;
             imageUrl = item.posterUrl;
+            bodyText = "Serie";
+          } else if (typeStr == 'Achievement') {
+            title = item.name ?? 'Desconocido';
+            imageUrl = item.url ?? null;
+            bodyText = "Logro";
           } else {
             title = 'Desconocido';
             imageUrl = null;
+            bodyText = '';
           }
 
-          Widget content = Container(
+          final void Function()? onTapHandler = (typeStr == 'Game')
+              ? () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GameDetailDesktopPage(steamId: item.steamId),
+              ),
+            );
+          }
+              : null;
+
+          return SizedBox(
             width: 120,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadow,
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
-                    child: imageUrl != null && imageUrl.isNotEmpty
-                        ? Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (_, __, ___) =>
-                      const Icon(Icons.broken_image, size: 50),
-                    )
-                        : const Icon(Icons.broken_image, size: 50),
-                  ),
-                ),
-                Container(
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
-                  width: double.infinity,
-                  color: Colors.white,
-                  child: Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
+            child: MyNetImageContainer(
+              title: title,
+              body: showBodyLabel ? bodyText : '',
+              image: imageUrl ?? '',
+              onTap: onTapHandler,
             ),
           );
-
-          if (item.runtimeType.toString() == 'Game') {
-            return GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GameDetailDesktopPage(game: item),
-                  ),
-                );
-              },
-              child: content,
-            );
-          } else {
-            return content;
-          }
         },
       ),
     );

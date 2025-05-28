@@ -157,15 +157,15 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
               child: ListView(
                 children: [
                   const MyBuildSectionTitle(title: "🎮 My Games"),
-                  MyBuildContentBox(items: _games),
+                  MyBuildContentBox(items: _games, showBodyLabel: false),
                   const SizedBox(height: 24),
 
                   const MyBuildSectionTitle(title: "🎬 My Movies"),
-                  MyBuildContentBox(items: _movies),
+                  MyBuildContentBox(items: _movies, showBodyLabel: false),
                   const SizedBox(height: 24),
 
                   const MyBuildSectionTitle(title: "📺 My Series"),
-                  MyBuildContentBox(items: _series),
+                  MyBuildContentBox(items: _series, showBodyLabel: false),
                 ],
               ),
             ),
