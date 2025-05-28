@@ -36,6 +36,11 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
 
   final MovieController movieController = MovieController();
 
+  Future<void> _initMovies() async {
+    await movieController.loadMoviesFromAssets('movies.json');
+    await _loadMovies();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -47,15 +52,13 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
 
     List<Movie> loadedMovies;
     if (searchController.text.trim().isNotEmpty) {
-      loadedMovies = movieController.searchMovieByTitle( // await
-        title: searchController.text.trim(),
+      loadedMovies = await movieController.searchMovieByTitle(
+        searchController.text.trim(),
         page: _currentPage,
-        size: _pageSize,
       );
     } else {
-      loadedMovies = movieController.fetchMovies( // await
+      loadedMovies = await movieController.getPopularMovies(
         page: _currentPage,
-        size: _pageSize,
       );
     }
 
@@ -70,10 +73,6 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
     });
   }
 
-  Future<void> _initMovies() async {
-    await movieController.loadMoviesFromAssets('movies.json');
-    await _loadMovies();
-  }
 
   @override
   Widget build(BuildContext context) {
