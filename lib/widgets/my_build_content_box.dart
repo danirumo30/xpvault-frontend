@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:xpvault/models/game.dart';
+import 'package:xpvault/models/movie.dart';
+import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 import '../screens/desktop/game_detail_desktop.dart';
@@ -52,13 +55,13 @@ class MyBuildContentBox extends StatelessWidget {
           final String title;
           String? imageUrl;
 
-          if (item.runtimeType.toString() == 'Game') {
+          if (item is Game) {
             title = item.title;
             imageUrl = item.screenshotUrl;
-          } else if (item.runtimeType.toString() == 'Movie') {
+          } else if (item is Movie) {
             title = item.title;
             imageUrl = item.posterUrl;
-          } else if (item.runtimeType.toString() == 'Serie') {
+          } else if (item is Serie) {
             title = item.title;
             imageUrl = item.posterUrl;
           } else {
