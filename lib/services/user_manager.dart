@@ -24,7 +24,7 @@ class UserManager {
     await prefs.remove(_userKey);
   }
 
-  static Future<void> assignSteamIdToUser(int steamId) async {
+  static Future<void> assignSteamIdToUser(String steamId) async {
   try {
     final currentUser = await UserManager.getUser();
 

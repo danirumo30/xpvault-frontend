@@ -6,13 +6,11 @@ import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/news.dart';
 import 'package:xpvault/screens/steam.dart';
 import 'package:xpvault/themes/app_color.dart';
-import 'package:xpvault/widgets/build_bullet.dart';
-import 'package:xpvault/widgets/my_imagecontainer.dart';
 
 class GameDetailDesktopPage extends StatefulWidget {
-  final Game game;
+  final int steamId;
 
-  const GameDetailDesktopPage({super.key, required this.game});
+  const GameDetailDesktopPage({super.key, required this.steamId});
 
   @override
   State<GameDetailDesktopPage> createState() => _GameDetailDesktopPageState();
@@ -21,162 +19,349 @@ class GameDetailDesktopPage extends StatefulWidget {
 class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
   final GameController _gameController = GameController();
 
+  Game? _game;
+  bool _isLoadingGame = true;
   bool _searchingNews = true;
   List<News> gameNews = [];
+  final List<bool> _hovering = [];
+  final List<bool> _hoveringAchievements = [];
 
   @override
   void initState() {
     super.initState();
-    _loadNews();
+    _loadGameAndNews();
   }
 
-  Future<void> _loadNews() async {
-    late List<News> news;
+  Future<void> _loadGameAndNews() async {
+    final game = await _gameController.getGameBySteamId(widget.steamId);
+    if (game != null) {
+      final news = await _gameController.getGameNewsById(widget.steamId);
 
-    if (_searchingNews) {
-      news = await _gameController.getGameNewsById(widget.game.steamId);
+      setState(() {
+        _game = game;
+        _isLoadingGame = false;
+        gameNews = news;
+        _hovering.addAll(List.generate(news.length, (_) => false));
+        _hoveringAchievements.addAll(List.generate(game.achievements?.length ?? 0, (_) => false));
+        _searchingNews = false;
+      });
+    } else {
+      setState(() {
+        _isLoadingGame = false;
+        _searchingNews = false;
+      });
     }
+  }
 
-    setState(() {
-      gameNews = news;
-      _searchingNews = false;
-    });
+  String resolveImageUrl(String? url) {
+    const defaultImage =
+        "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
+
+    if (url == null || url.trim().isEmpty) {
+      return defaultImage;
+    }
+    return url;
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    const String defaultImage =
-        "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
-    final imageUrl =
-        (widget.game.screenshotUrl?.trim().isNotEmpty ?? false)
-            ? widget.game.screenshotUrl!
-            : defaultImage;
+    if (_isLoadingGame) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
-    print(gameNews.toList());
+    if (_game == null) {
+      return Scaffold(
+        body: Center(
+          child: Text(
+            "Game not found",
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 18),
+          ),
+        ),
+      );
+    }
+
+    final imageUrl = resolveImageUrl(_game!.headerUrl);
 
     return DesktopLayout(
-  title: "XPVAULT",
-  body: Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: screenHeight * 0.8,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.tertiary,
-                borderRadius: BorderRadius.circular(8),
+      title: "XPVAULT",
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                imageUrl,
+                width: double.infinity,
+                height: 320,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: double.infinity,
+                    height: 320,
+                    color: Colors.grey,
+                    child: const Icon(Icons.broken_image, size: 64, color: Colors.white),
+                  );
+                },
               ),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        imageUrl,
-                        width: double.infinity,
-                        height: 200,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      widget.game.title,
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      widget.game.description,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 18,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Genres",
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
-                    ),
-                    Wrap(
-                      spacing: 8,
-                      children: widget.game.genres
-                          .map((genre) => BuildBullet(text: genre))
-                          .toList(),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "News",
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
-                    ),
-                    Column(
-                      children: gameNews
-                          .map(
-                            (gameNews) => MyImageContainer(
-                              title: gameNews.title,
-                              body: gameNews.contents,
-                              image: "assets/solid_color.jpg",
-                              onTap: () async {
-                                final rawUrl = gameNews.url.trim();
-                                final uri = Uri.tryParse(rawUrl);
+            ),
+            const SizedBox(height: 24),
 
-                                if (uri == null) {
-                                  print("Invalid URL: $rawUrl");
-                                  return;
-                                }
+            // Game Title
+            Text(
+              _game!.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
 
-                                if (await canLaunchUrl(uri)) {
-                                  await launchUrl(
-                                    uri,
-                                    mode: LaunchMode.externalApplication,
-                                  );
-                                }
+            // Description
+            Text(
+              _game!.description,
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 16,
+                height: 1.6,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Price
+            Text(
+              "Price: \$${_game!.price.toStringAsFixed(2)}",
+              style: const TextStyle(
+                color: Colors.greenAccent,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Tags
+            Text(
+              "Tags",
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: _game!.genres
+                  .map(
+                    (tag) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey[800],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    tag,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 36),
+
+            // Achievements with hover and spacing
+            Text(
+              "Achievements",
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            (_game!.achievements == null || _game!.achievements!.isEmpty)
+                ? Text(
+              "No achievements available.",
+              style: TextStyle(color: AppColors.textSecondary),
+            )
+                : Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: _game!.achievements!.asMap().entries.map((entry) {
+                final index = entry.key;
+                final achievement = entry.value;
+                final imageUrl = _gameController.proxiedSteamImage(achievement.url);
+                final isHovered = _hoveringAchievements[index];
+
+                return MouseRegion(
+                  onEnter: (_) {
+                    setState(() => _hoveringAchievements[index] = true);
+                  },
+                  onExit: (_) {
+                    setState(() => _hoveringAchievements[index] = false);
+                  },
+                  child: AnimatedScale(
+                    scale: isHovered ? 1.1 : 1.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 96,
+                          height: 96,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            image: DecorationImage(
+                              image: NetworkImage(imageUrl),
+                              fit: BoxFit.cover,
+                              onError: (error, stackTrace) {
+                                debugPrint('Image load error: $error');
                               },
                             ),
-                          )
-                          .toList(),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        SizedBox(
+                          width: 96,
+                          child: Text(
+                            achievement.name,
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                );
+              }).toList(),
+            ),
+
+            const SizedBox(height: 36),
+
+            // News
+            Text(
+              "News",
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (_searchingNews)
+              const Center(child: CircularProgressIndicator())
+            else if (gameNews.isEmpty)
+              Text(
+                "No news found.",
+                style: TextStyle(color: AppColors.textSecondary),
+              )
+            else
+              Column(
+                children: gameNews.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final newsItem = entry.value;
+                  final isHovered = _hovering[index];
+
+                  return MouseRegion(
+                    onEnter: (_) {
+                      setState(() => _hovering[index] = true);
+                    },
+                    onExit: (_) {
+                      setState(() => _hovering[index] = false);
+                    },
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () async {
+                        final uri = Uri.tryParse(newsItem.url.trim());
+                        if (uri != null && await canLaunchUrl(uri)) {
+                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      child: AnimatedScale(
+                        scale: isHovered ? 1.02 : 1.0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey[900],
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.25),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                newsItem.title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                newsItem.contents,
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 14,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+
+            const SizedBox(height: 40),
+
+            // Back Button
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => SteamPage()),
+                  );
+                },
+                child: const Text(
+                  "Go Back",
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),
-          ),
+          ],
         ),
-        const SizedBox(height: 10),
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => SteamPage()),
-              );
-            },
-            child: const Text("Go back"),
-          ),
-        ),
-      ],
-    ),
-  ),
-);
-
+      ),
+    );
   }
 }

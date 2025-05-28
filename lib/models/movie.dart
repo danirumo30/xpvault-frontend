@@ -4,7 +4,7 @@ class Movie {
   final String description;
   final String releaseDate;
   final double rating;
-  final int totalTime; // duración en minutos o lo que sea
+  final int totalTime;
   final String? posterUrl;
   final Director director;
   final List<Casting> casting;

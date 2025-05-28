@@ -94,14 +94,11 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                     hintText: "Search",
                     obscureText: false,
                     suffixIcon: Icon(Icons.search, color: AppColors.textMuted),
-                    onChanged: (value) {
-                      _currentPage = 1;
-
-                      if (_debounce?.isActive ?? false) _debounce!.cancel();
-
-                      _debounce = Timer(const Duration(milliseconds: 1500), () {
-                        _loadMovies();
+                    onFieldSubmitted: (value) {
+                      setState(() {
+                        _currentPage = 1;
                       });
+                      _loadMovies();
                     },
                   ),
                 ),

@@ -7,7 +7,7 @@ import 'package:xpvault/services/user_manager.dart';
 class UserController {
   Future<void> getUser() async {
     final token = await TokenManager.getToken();
-    final url = Uri.parse("https://www.xpvaultbackend.es/users/me");
+    final url = Uri.parse("http://localhost:5000/users/me");
 
     final headers = {
       'Authorization': 'Bearer $token',
@@ -29,14 +29,14 @@ class UserController {
 
   Future<int> getSteamUserId(String steamUser) async {
     final url = Uri.parse(
-      "https://www.xpvaultbackend.es/steam-user/resolve/id?username=$steamUser",
+      "http://localhost:5000/steam-user/resolve/id?username=$steamUser",
     );
 
     try {
     final res = await http.get(url);
 
     if (res.statusCode == 200) {
-      UserManager.assignSteamIdToUser(int.parse(res.body));
+      UserManager.assignSteamIdToUser(res.body);
       return res.statusCode;
     } 
 
