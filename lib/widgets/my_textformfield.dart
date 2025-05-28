@@ -7,8 +7,17 @@ class MyTextformfield extends StatelessWidget {
   final Widget? suffixIcon;
   final TextEditingController? textEditingController;
   final String? Function(String?)? validator;
-  
-  const MyTextformfield({super.key, required this.hintText, required this.obscureText, this.suffixIcon, this.textEditingController, this.validator});
+  final void Function(String)? onFieldSubmitted; // 👈 Añadido
+
+  const MyTextformfield({
+    super.key,
+    required this.hintText,
+    required this.obscureText,
+    this.suffixIcon,
+    this.textEditingController,
+    this.validator,
+    this.onFieldSubmitted,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,29 +27,30 @@ class MyTextformfield extends StatelessWidget {
         controller: textEditingController,
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.border)
+            borderSide: BorderSide(color: AppColors.border),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
           ),
           filled: true,
           fillColor: AppColors.background,
           hintStyle: TextStyle(
-            color: AppColors.textMuted
+            color: AppColors.textMuted,
           ),
           errorStyle: TextStyle(
             color: AppColors.error,
             fontSize: 13,
           ),
           hintText: hintText,
-          suffixIcon: suffixIcon
+          suffixIcon: suffixIcon,
         ),
         style: TextStyle(
           color: AppColors.textPrimary,
-          fontSize: 20
+          fontSize: 20,
         ),
         obscureText: obscureText,
         validator: validator,
+        onFieldSubmitted: onFieldSubmitted,
       ),
     );
   }
