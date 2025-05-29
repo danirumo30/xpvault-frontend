@@ -56,7 +56,7 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
 
     List<Game> games = [];
     if (loadedUser.steamId != null && loadedUser.steamId!.isNotEmpty) {
-      games = await _gameController.getUserGames(loadedUser.steamId!);
+      games = (await _gameController.getTenUserGames(loadedUser.steamId!));
     }
 
     final movies = await _movieController.fetchUserMovies(loadedUser.username);

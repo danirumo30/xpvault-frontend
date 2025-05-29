@@ -21,9 +21,9 @@ class AuthController {
         final token = data['token'];
         TokenManager.saveToken(token);
         
-        UserController().getUser();
+        await UserController().getUser();
       }
-      
+
       return res.statusCode;
     } catch (e) {
       print("Error en el registro: $e");

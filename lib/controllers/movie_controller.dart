@@ -17,21 +17,14 @@ class MovieController {
   }
 
   Future<List<Movie>> getPopularMovies({int page = 0}) async {
-    final url = Uri.parse("$_baseUrl/popular?page=$page");
+    final response = await http.get(Uri.parse("$_baseUrl/popular?page=$page"));
 
-    try {
-      final res = await http.get(url);
-      if (res.statusCode == 200) {
-        final List data = jsonDecode(res.body);
-        return data.map((json) => Movie.fromJson(json)).toList();
-      } else {
-        print("Error: ${res.statusCode}");
-      }
-    } catch (e) {
-      print("Error al obtener películas populares: $e");
+    if (response.statusCode == 200) {
+      final List data = json.decode(response.body);
+      return data.map((json) => Movie.fromJson(json)).toList();
+    } else {
+      return [];
     }
-
-    return [];
   }
 
   Future<List<Movie>> getTopRatedMovies({int page = 0}) async {

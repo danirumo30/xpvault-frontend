@@ -6,7 +6,8 @@ class Movie {
   final double rating;
   final int totalTime;
   final String? posterUrl;
-  final Director director;
+  final String? headerUrl;
+  final Director? director;
   final List<Casting> casting;
   final List<String> genres;
 
@@ -18,26 +19,30 @@ class Movie {
     required this.rating,
     required this.totalTime,
     this.posterUrl,
-    required this.director,
+    this.headerUrl,
+    this.director,
     required this.casting,
     required this.genres,
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
-      tmbdId: json['tmbdId'] ?? 0,
-      title: json['title'] ?? 'Untitled',
-      description: json['description'] ?? 'No description',
+      title: json['title'] ?? 'Sin título',
+      description: json['description'] ?? 'Sin descripción',
+      tmbdId: json['tmbdId'] ?? -1,
+      posterUrl: json['posterUrl'] as String?,
+      headerUrl: json['headerUrl'] as String?,
+      genres: List<String>.from(json['genres'] ?? []),
       releaseDate: json['releaseDate'] ?? '',
       rating: (json['rating'] ?? 0).toDouble(),
       totalTime: json['totalTime'] ?? 0,
-      posterUrl: json['posterUrl'] as String?,
-      director: Director.fromJson(json['director']),
+      director: json['director'] != null
+          ? Director.fromJson(json['director'])
+          : null,
       casting: (json['casting'] as List<dynamic>?)
-              ?.map((item) => Casting.fromJson(item))
-              .toList() ??
+          ?.map((item) => Casting.fromJson(item))
+          .toList() ??
           [],
-      genres: List<String>.from(json['genres'] ?? []),
     );
   }
 }

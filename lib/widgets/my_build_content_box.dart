@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xpvault/screens/desktop/movie_detail_desktop.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 import '../screens/desktop/game_detail_desktop.dart';
@@ -72,7 +73,7 @@ class MyBuildContentBox extends StatelessWidget {
             bodyText = "Serie";
           } else if (typeStr == 'Achievement') {
             title = item.name ?? 'Desconocido';
-            imageUrl = item.url ?? null;
+            imageUrl = item.url;
             bodyText = "Logro";
           } else {
             title = 'Desconocido';
@@ -80,16 +81,31 @@ class MyBuildContentBox extends StatelessWidget {
             bodyText = '';
           }
 
-          final void Function()? onTapHandler = (typeStr == 'Game')
-              ? () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GameDetailDesktopPage(steamId: item.steamId),
-              ),
-            );
+          void Function()? onTapHandler;
+          if (typeStr == 'Game') {
+            onTapHandler = () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      GameDetailDesktopPage(steamId: item.steamId),
+                ),
+              );
+            };
+          } else if (typeStr == 'Movie') {
+            onTapHandler = () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      MovieDetailDesktopPage(movie: item),
+                ),
+              );
+            };
+          } else {
+            onTapHandler = null;
           }
-              : null;
+
 
           return SizedBox(
             width: 120,

@@ -32,12 +32,13 @@ class GameController {
     final url = Uri.parse(
       "http://localhost:5000/game/steam/title/$gameTitle?page=$page&size=$size",
     );
-
+    print("${gameTitle}");
     try {
       final res = await http.get(url);
 
       if (res.statusCode == 200) {
         final List data = jsonDecode(res.body);
+        print(res.body);
         return data.map((json) => Game.fromJson(json)).toList();
       } else {
         print("Error: ${res.statusCode}");
@@ -52,6 +53,30 @@ class GameController {
   Future<List<Game>> getUserGames(String? steamUserId) async {
     final url = Uri.parse(
       "http://localhost:5000/steam-user/owned/$steamUserId",
+    );
+
+    try {
+      final res = await http.get(url);
+      if (res.statusCode == 200) {
+        final List data = jsonDecode(res.body);
+
+        return data
+            .where((json) => json['game'] != null)
+            .map<Game>((json) => Game.fromJson(json['game']))
+            .toList();
+      } else {
+        print("Error: ${res.statusCode}");
+      }
+    } catch (e) {
+      print("Error al obtener juegos: $e");
+    }
+
+    return [];
+  }
+
+  Future<List<Game>> getTenUserGames(String? steamUserId) async {
+    final url = Uri.parse(
+      "http://localhost:5000/steam-user/owned/ten/$steamUserId",
     );
 
     try {

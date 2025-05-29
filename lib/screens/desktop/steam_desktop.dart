@@ -35,7 +35,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   bool _isFirstTimeAll = true;
   bool _isFirstTimeGenre = true;
   bool _noMoreGames = false;
-  int _currentPage = 1;
+  int _currentPage = 0;
 
   final List<String> steamGenres = [
     "All",
@@ -68,7 +68,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
 
     if (isSearching) {
       if (_isFirstTimeSearching || lastSearchValue == searchController.text) {
-        _currentPage = 1;
+        _currentPage = 0;
         _isFirstTimeSearching = false;
         _isFirstTimeAll = true;
         _isFirstTimeGenre = true;
@@ -82,7 +82,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
       dropdownvalue = "All";
     } else if (dropdownvalue.isNotEmpty) {
       if (_isFirstTimeGenre) {
-        _currentPage = 1;
+        _currentPage = 0;
         _isFirstTimeGenre = false;
         _isFirstTimeAll = true;
         _isFirstTimeSearching = true;
@@ -90,7 +90,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
       loadedGames = await _gameController.getGamesByGenre(genre: dropdownvalue, page: _currentPage, size: _pageSize);
     } else {
       if (_isFirstTimeAll) {
-        _currentPage = 1;
+        _currentPage = 0;
         _isFirstTimeAll = false;
         _isFirstTimeSearching = true;
         _isFirstTimeGenre = true;

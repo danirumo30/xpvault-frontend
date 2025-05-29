@@ -4,13 +4,15 @@ import 'package:xpvault/widgets/cast_with_navigation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 
-class MovieDetail extends StatelessWidget {
+class MovieDetailDesktopPage extends StatelessWidget {
   final Movie movie;
 
-  const MovieDetail({super.key, required this.movie});
+  const MovieDetailDesktopPage({super.key, required this.movie});
 
   @override
   Widget build(BuildContext context) {
+    final director = movie.director;
+
     return DesktopLayout(
       title: 'XPVAULT',
       body: Container(
@@ -22,7 +24,6 @@ class MovieDetail extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Botón de volver
                 Align(
                   alignment: Alignment.topLeft,
                   child: TextButton.icon(
@@ -55,7 +56,7 @@ class MovieDetail extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              "Year: ${movie.releaseDate?.split('-').first ?? 'Unknown'}",
+                              "Year: ${movie.releaseDate.split('-').first}",
                               style: const TextStyle(
                                 fontSize: 20,
                                 color: AppColors.textSecondary,
@@ -71,7 +72,7 @@ class MovieDetail extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              movie.description ?? '',
+                              movie.description,
                               style: const TextStyle(
                                 fontSize: 16,
                                 color: AppColors.textPrimary,
@@ -92,7 +93,7 @@ class MovieDetail extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 24),
-                      // Parte derecha: Imagen y director
+                      // Parte derecha
                       Expanded(
                         flex: 1,
                         child: Column(
@@ -110,8 +111,8 @@ class MovieDetail extends StatelessWidget {
                                   height: 350,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.broken_image,
-                                          size: 100, color: AppColors.error),
+                                  const Icon(Icons.broken_image,
+                                      size: 100, color: AppColors.error),
                                 ),
                               ),
                             ),
@@ -119,20 +120,20 @@ class MovieDetail extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                if (movie.director.photoUrl != null &&
-                                    movie.director.photoUrl!.isNotEmpty &&
-                                    !movie.director.photoUrl!.endsWith("null"))
+                                if (director?.photoUrl != null &&
+                                    director!.photoUrl!.isNotEmpty &&
+                                    !director.photoUrl!.endsWith("null"))
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(30),
                                     child: Image.network(
-                                      movie.director.photoUrl!,
+                                      director.photoUrl!,
                                       width: 40,
                                       height: 40,
                                       fit: BoxFit.cover,
                                       errorBuilder:
                                           (context, error, stackTrace) =>
-                                              const Icon(Icons.person,
-                                                  color: AppColors.textMuted),
+                                      const Icon(Icons.person,
+                                          color: AppColors.textMuted),
                                     ),
                                   )
                                 else
@@ -140,7 +141,7 @@ class MovieDetail extends StatelessWidget {
                                       size: 40, color: AppColors.textMuted),
                                 const SizedBox(width: 8),
                                 Text(
-                                  movie.director.name,
+                                  director?.name ?? "Director desconocido",
                                   style: const TextStyle(
                                     fontSize: 16,
                                     color: AppColors.textSecondary,

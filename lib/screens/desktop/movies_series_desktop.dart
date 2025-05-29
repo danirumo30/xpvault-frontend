@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
-import 'package:xpvault/widgets/my_imagecontainer.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/controllers/movie_controller.dart';
-import 'package:xpvault/widgets/cast_with_navigation.dart';
 import 'package:xpvault/widgets/movie_grid.dart';
-import 'package:xpvault/screens/desktop/movie_detail.dart';
+import 'package:xpvault/screens/desktop/movie_detail_desktop.dart';
 import 'dart:async';
 
 class MoviesSeriesDesktop extends StatefulWidget {
@@ -23,15 +21,13 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
   bool _isLoading = true;
   final TextEditingController searchController = TextEditingController();
   int _currentPage = 1;
-  final int _pageSize = 10;
   String dropdownValue = "";
-  Timer? _debounce;
 
   void _showMovieDetails(Movie movie) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MovieDetail(movie: movie),
+        builder: (_) => MovieDetailDesktopPage(movie: movie),
       ),
     );
   }
