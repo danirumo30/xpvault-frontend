@@ -81,7 +81,7 @@ class MovieController {
     return [];
   }
 
-  Future<Movie?> getMovieById(String movieId, {int page = 0}) async {
+  Future<Movie?> getMovieById(int movieId, {int page = 0}) async {
     final url = Uri.parse("$_baseUrl/id/$movieId?page=$page");
 
     try {

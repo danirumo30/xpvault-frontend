@@ -98,7 +98,7 @@ class MyBuildContentBox extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      MovieDetailDesktopPage(movie: item),
+                      MovieDetailDesktopPage(movieId: item.tmbdId),
                 ),
               );
             };

@@ -1,17 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:xpvault/controllers/movie_controller.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/widgets/cast_with_navigation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 
-class MovieDetailDesktopPage extends StatelessWidget {
-  final Movie movie;
+class MovieDetailDesktopPage extends StatefulWidget {
+  final int movieId;
 
-  const MovieDetailDesktopPage({super.key, required this.movie});
+  const MovieDetailDesktopPage({super.key, required this.movieId});
+
+  @override
+  State<MovieDetailDesktopPage> createState() => _MovieDetailDesktopPageState();
+}
+
+class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
+  final MovieController _movieController = MovieController();
+
+  Movie? _movie;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMovie();
+  }
+
+  Future<void> _loadMovie() async {
+    final movie = await _movieController.getMovieById(widget.movieId);
+    setState(() {
+      _movie = movie;
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final director = movie.director;
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_movie == null) {
+      return Scaffold(
+        body: Center(
+          child: Text(
+            "Movie not found",
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 18),
+          ),
+        ),
+      );
+    }
+
+    final director = _movie!.director;
 
     return DesktopLayout(
       title: 'XPVAULT',
@@ -40,60 +82,64 @@ class MovieDetailDesktopPage extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Parte izquierda
+                      // Left side
                       Expanded(
                         flex: 2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              movie.title,
-                              style: const TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _movie!.title,
+                                style: const TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Year: ${movie.releaseDate.split('-').first}",
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: AppColors.textSecondary,
+                              const SizedBox(height: 8),
+                              Text(
+                                "Year: ${_movie!.releaseDate.split('-').first}",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Genres: ${movie.genres.join(', ')}",
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: AppColors.textMuted,
+                              const SizedBox(height: 8),
+                              Text(
+                                "Genres: ${_movie!.genres.join(', ')}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.textMuted,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              movie.description,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: AppColors.textPrimary,
+                              const SizedBox(height: 16),
+                              Text(
+                                _movie!.description,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.textPrimary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 24),
-                            const Text(
-                              "Cast:",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textSecondary,
+                              const SizedBox(height: 24),
+                              const Text(
+                                "Cast:",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            CastWithNavigation(casting: movie.casting),
-                          ],
+                              const SizedBox(height: 8),
+                              CastWithNavigation(casting: _movie!.casting),
+                            ],
+                          ),
                         ),
                       ),
+
                       const SizedBox(width: 24),
-                      // Parte derecha
+
+                      // Right side
                       Expanded(
                         flex: 1,
                         child: Column(
@@ -107,7 +153,7 @@ class MovieDetailDesktopPage extends StatelessWidget {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: Image.network(
-                                  movie.posterUrl ?? '',
+                                  _movie!.posterUrl ?? '',
                                   height: 350,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
@@ -130,8 +176,7 @@ class MovieDetailDesktopPage extends StatelessWidget {
                                       width: 40,
                                       height: 40,
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
+                                      errorBuilder: (context, error, stackTrace) =>
                                       const Icon(Icons.person,
                                           color: AppColors.textMuted),
                                     ),

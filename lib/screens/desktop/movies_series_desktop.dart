@@ -27,7 +27,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MovieDetailDesktopPage(movie: movie),
+        builder: (_) => MovieDetailDesktopPage(movieId: movie.tmbdId),
       ),
     );
   }
