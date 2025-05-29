@@ -16,12 +16,12 @@ class GameController {
         return data.map((json) => Game.fromJson(json)).toList();
       } else {
         print("Error: ${res.statusCode}");
+        return [Game.error('ERRORXPVAULT')];
       }
     } catch (e) {
       print("Error al obtener juegos: $e");
+      return [Game.error('ERRORXPVAULT')];
     }
-
-    return [];
   }
 
   Future<List<Game>> searchGameByTitle({
@@ -41,12 +41,12 @@ class GameController {
         return data.map((json) => Game.fromJson(json)).toList();
       } else {
         print("Error: ${res.statusCode}");
+        return [Game.error('ERRORXPVAULT')];
       }
     } catch (e) {
       print("Error al obtener juegos: $e");
+      return [Game.error('ERRORXPVAULT')];
     }
-
-    return [];
   }
 
   Future<List<Game>> getUserGames(String? steamUserId) async {
@@ -126,5 +126,24 @@ class GameController {
   String proxiedSteamImage(String imageUrl) {
     final encodedUrl = Uri.encodeComponent(imageUrl);
     return 'http://localhost:5000/game/steam/image-proxy?url=$encodedUrl';
+  }
+
+  Future<List<Game>> getGamesByGenre({String genre = "",int page = 0, int size = 12}) async {
+    final url = Uri.parse("http://localhost:5000/game/steam/genre/$genre?page=$page&size=$size");
+
+    try {
+      final res = await http.get(url);
+
+      if (res.statusCode == 200) {
+        final List data = jsonDecode(res.body);
+        return data.map((json) => Game.fromJson(json)).toList();
+      } else {
+        print("Error: ${res.statusCode}");
+        return [Game.error('ERRORXPVAULT')];
+      }
+    } catch (e) {
+      print("Error al obtener juegos: $e");
+      return [Game.error('ERRORXPVAULT')];
+    }
   }
 }

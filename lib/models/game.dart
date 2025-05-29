@@ -23,6 +23,15 @@ class Game {
     this.achievements = const [],
   });
 
+  factory Game.error(String title) {
+    return Game(
+      title: title,
+      description: 'Juego no encontrado',
+      steamId: -1,
+      genres: [],
+    );
+  }
+
   factory Game.fromJson(Map<String, dynamic> json) {
     return Game(
       title: json['title'] ?? 'Sin título',
