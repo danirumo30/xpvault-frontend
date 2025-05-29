@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:xpvault/models/movie.dart';
 import 'package:flutter/services.dart';
 
-
 class MovieController {
   final String _baseUrl = "http://localhost:5000/movies";
 
@@ -141,5 +140,17 @@ class MovieController {
     }
 
     return [];
+  }
+
+  Future<List<Movie>> fetchUserMovies(String appUsername) async {
+    final url = "http://localhost:5000/users/profile/$appUsername/movies";
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final List data = json.decode(response.body);
+      return data.map((json) => Movie.fromJson(json)).toList();
+    } else {
+      return [];
+    }
   }
 }

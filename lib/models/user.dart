@@ -7,6 +7,7 @@ class User {
   final int totalTimePlayed;
   final int totalTimeMoviesWatched;
   final int totalTimeEpisodesWatched;
+  final int totalFriends;
 
   User({
     required this.id,
@@ -17,6 +18,7 @@ class User {
     required this.totalTimePlayed,
     required this.totalTimeMoviesWatched,
     required this.totalTimeEpisodesWatched,
+    required this.totalFriends
   });
 
   User copyWith({
@@ -25,6 +27,7 @@ class User {
     int? totalTimePlayed,
     int? totalTimeMoviesWatched,
     int? totalTimeEpisodesWatched,
+    int? totalFriends
   }) {
     return User(
       id: id,
@@ -35,6 +38,7 @@ class User {
       totalTimePlayed: totalTimePlayed ?? this.totalTimePlayed,
       totalTimeMoviesWatched: totalTimeMoviesWatched ?? this.totalTimeMoviesWatched,
       totalTimeEpisodesWatched: totalTimeEpisodesWatched ?? this.totalTimeEpisodesWatched,
+      totalFriends: totalFriends ?? this.totalFriends
     );
   }
 
@@ -48,6 +52,7 @@ class User {
       totalTimePlayed: json['totalTimePlayed'] ?? 0,
       totalTimeMoviesWatched: json['totalTimeMoviesWatched'] ?? 0,
       totalTimeEpisodesWatched: json['totalTimeEpisodesWatched'] ?? 0,
+      totalFriends: json['totalFriends'] ?? 0
     );
   }
 
@@ -60,5 +65,6 @@ class User {
     'totalTimePlayed': totalTimePlayed,
     'totalTimeMoviesWatched': totalTimeMoviesWatched,
     'totalTimeEpisodesWatched': totalTimeEpisodesWatched,
+    'totalFriends': totalFriends
   };
 }

@@ -59,12 +59,12 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
       games = await _gameController.getUserGames(loadedUser.steamId!);
     }
 
-    // final movies = await _movieController.fetchUserMovies(loadedUser.username);
+    final movies = await _movieController.fetchUserMovies(loadedUser.username);
     final series = await _serieController.fetchUserSeries(loadedUser.username);
 
     setState(() {
       _games = games;
-      // _movies = movies;
+      _movies = movies;
       _series = series;
       _loading = false;
     });
@@ -108,7 +108,6 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Usuario con avatar y nombre
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -139,7 +138,6 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
             ),
             const SizedBox(height: 24),
 
-            // Estadísticas
             Wrap(
               spacing: 24,
               runSpacing: 12,
@@ -147,12 +145,11 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
                 _buildStatCard("🎮 Tiempo J", _user!.totalTimePlayed),
                 _buildStatCard("🎬 Tiempo P", _user!.totalTimeMoviesWatched),
                 _buildStatCard("📺 Tiempo S", _user!.totalTimeEpisodesWatched),
-                _buildStatCard("👥 Amigos", 0, isTime: false),
+                _buildStatCard("👥 Amigos", _user!.totalFriends, isTime: false),
               ],
             ),
             const SizedBox(height: 32),
 
-            // Contenido
             Expanded(
               child: ListView(
                 children: [

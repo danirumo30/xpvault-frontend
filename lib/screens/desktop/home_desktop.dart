@@ -43,13 +43,13 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
     final serieController = SerieController();
 
     final games = await gameController.fetchFeaturedGames();
-    // final movies = await movieController.fetchPopularMovies();
+    final movies = await movieController.getPopularMovies();
     final series = await serieController.fetchPopularSeries();
 
     setState(() {
       _user = user;
       featuredGames = games.toList();
-      // popularMovies = movies.toList();
+      popularMovies = movies.toList();
       popularSeries = series.toList();
       isLoading = false;
     });
@@ -111,7 +111,6 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
 
           const SizedBox(height: 32),
 
-          // 🧱 Contenido general con padding
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
