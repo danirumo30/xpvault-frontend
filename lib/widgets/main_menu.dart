@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:xpvault/models/user.dart';
-import 'package:xpvault/screens/desktop/ranking_desktop.dart';
 import 'package:xpvault/screens/home.dart';
 import 'package:xpvault/screens/movies_series.dart';
 import 'package:xpvault/screens/playstation.dart';
 import 'package:xpvault/screens/profile.dart';
+import 'package:xpvault/screens/ranking.dart';
 import 'package:xpvault/screens/steam.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
@@ -143,7 +143,7 @@ class MainMenuWidget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const RankingDesktopPage()),
+              MaterialPageRoute(builder: (context) => const RankingPage()),
             );
           },
         ),
