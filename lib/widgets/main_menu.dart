@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:xpvault/models/user.dart';
+import 'package:xpvault/screens/desktop/ranking_desktop.dart';
 import 'package:xpvault/screens/home.dart';
 import 'package:xpvault/screens/movies_series.dart';
 import 'package:xpvault/screens/playstation.dart';
@@ -134,13 +135,16 @@ class MainMenuWidget extends StatelessWidget {
           },
         ),
         ListTile(
-          leading: const Icon(Icons.history, color: AppColors.textPrimary),
+          leading: const Icon(Icons.emoji_events, color: AppColors.textPrimary),
           title: const Text(
-            "Last seen",
+            "Ranking",
             style: TextStyle(color: AppColors.textPrimary),
           ),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const RankingDesktopPage()),
+            );
           },
         ),
       ],

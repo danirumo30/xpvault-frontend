@@ -136,7 +136,7 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
 
             // Price
             Text(
-              "Price: \$${_game!.price.toStringAsFixed(2)}",
+              "Price: ${( _game!.price / 100).toStringAsFixed(2)} €",
               style: const TextStyle(
                 color: Colors.greenAccent,
                 fontSize: 16,

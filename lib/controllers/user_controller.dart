@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:xpvault/models/top_user.dart';
 import 'package:xpvault/models/user.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
@@ -45,5 +46,61 @@ class UserController {
     }
 
     return -1;
+  }
+
+  Future<List<TopUser>> getTopMovies() async {
+    final url = Uri.parse("http://localhost:5000/users/top/movies");
+
+    try {
+      final res = await http.get(url);
+      if (res.statusCode == 200 && res.body.isNotEmpty) {
+        print("Respuesta raw películas: ${res.body}");
+        final List<dynamic> data = jsonDecode(res.body);
+        print("Usuarios películas recibidos: ${data.length}");
+        return data.map((json) => TopUser.fromJson(json)).toList();
+      } else {
+        print("No se encontraron usuarios con películas top.");
+      }
+    } catch (e) {
+      print("Error al obtener las películas top: $e");
+    }
+
+    return [];
+  }
+
+  Future<List<TopUser>> getTopTvSeries() async {
+    final url = Uri.parse("http://localhost:5000/users/top/tv-series");
+
+    try {
+      final res = await http.get(url);
+      if (res.statusCode == 200 && res.body.isNotEmpty) {
+        final List<dynamic> data = jsonDecode(res.body);
+        return data.map((json) => TopUser.fromJson(json)).toList();
+      } else {
+        print("No se encontraron usuarios con series top.");
+      }
+    } catch (e) {
+      print("Error al obtener las series top: $e");
+    }
+
+    return [];
+  }
+
+  Future<List<TopUser>> getTopGames() async {
+    final url = Uri.parse("http://localhost:5000/steam-user/top");
+
+    try {
+      final res = await http.get(url);
+      if (res.statusCode == 200 && res.body.isNotEmpty) {
+        final List<dynamic> data = jsonDecode(res.body);
+        return data.map((json) => TopUser.fromJson(json)).toList();
+      } else {
+        print("No se encontraron usuarios con juegos top.");
+      }
+    } catch (e) {
+      print("Error al obtener los juegos top: $e");
+    }
+
+    return [];
   }
 }
