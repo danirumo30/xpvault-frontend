@@ -22,6 +22,9 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
   bool _loading = true;
   List<TopUser> _users = [];
 
+  int _currentPage = 0;
+  static const int _usersPerPage = 20;
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +47,7 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
     }
     setState(() {
       _users = users;
+      _currentPage = 0;
       _loading = false;
     });
   }
@@ -64,6 +68,14 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
 
   @override
   Widget build(BuildContext context) {
+    final int totalPages = (_users.length / _usersPerPage).ceil();
+    final int startIndex = _currentPage * _usersPerPage;
+    final int endIndex = (_currentPage + 1) * _usersPerPage;
+    final List<TopUser> currentUsers = _users.sublist(
+      startIndex,
+      endIndex > _users.length ? _users.length : endIndex,
+    );
+
     return DesktopLayout(
       title: "XPVAULT",
       body: Padding(
@@ -93,38 +105,77 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
               ],
             ),
             const SizedBox(height: 24),
+
             Expanded(
               child: _loading
                   ? const Center(child: CircularProgressIndicator())
-                  : ListView.separated(
-                itemCount: _users.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (context, index) {
-                  final user = _users[index];
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: AppColors.surface,
-                      backgroundImage: user.photoUrl != null && user.photoUrl!.isNotEmpty
-                          ? MemoryImage(base64Decode(user.photoUrl!))
-                          : null,
-                      child: (user.photoUrl == null || user.photoUrl!.isEmpty)
-                          ? const Icon(Icons.person, color: AppColors.textSecondary)
-                          : null,
+                  : Column(
+                children: [
+                  Expanded(
+                    child: ListView.separated(
+                      itemCount: currentUsers.length,
+                      separatorBuilder: (_, __) => const Divider(),
+                      itemBuilder: (context, index) {
+                        final user = currentUsers[index];
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: AppColors.surface,
+                            backgroundImage: user.photoUrl != null &&
+                                user.photoUrl!.isNotEmpty
+                                ? MemoryImage(
+                                base64Decode(user.photoUrl!))
+                                : null,
+                            child: (user.photoUrl == null ||
+                                user.photoUrl!.isEmpty)
+                                ? const Icon(Icons.person,
+                                color: AppColors.textSecondary)
+                                : null,
+                          ),
+                          title: Text(
+                            "#${startIndex + index + 1}  ${user.nickname}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          subtitle: Text(
+                            _getTimeLabel(user),
+                            style: const TextStyle(
+                                color: AppColors.textSecondary),
+                          ),
+                        );
+                      },
                     ),
-                    title: Text(
-                      "#${index + 1}  ${user.nickname}",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                  ),
+                  const SizedBox(height: 16),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _currentPage > 0
+                            ? () => setState(() => _currentPage--)
+                            : null,
+                        child: const Text("Anterior"),
                       ),
-                    ),
-                    subtitle: Text(
-                      _getTimeLabel(user),
-                      style: const TextStyle(color: AppColors.textSecondary),
-                    ),
-                  );
-                },
+                      const SizedBox(width: 16),
+                      Text(
+                        "Página ${_currentPage + 1} de $totalPages",
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: (_currentPage + 1) < totalPages
+                            ? () => setState(() => _currentPage++)
+                            : null,
+                        child: const Text("Siguiente"),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
