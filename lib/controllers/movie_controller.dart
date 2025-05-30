@@ -4,7 +4,7 @@ import '../models/movie.dart';
 
 class MovieController {
   Future<List<Movie>> fetchPopularMovies() async {
-    final response = await http.get(Uri.parse("https://www.xpvaultbackend.es/movies/popular?page=0"));
+    final response = await http.get(Uri.parse("http://localhost:5000/movies/popular?page=0"));
 
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
@@ -15,7 +15,7 @@ class MovieController {
   }
 
   Future<List<Movie>> fetchUserMovies(String appUsername) async {
-    final url = "https://www.xpvaultbackend.es/users/profile/$appUsername/movies";
+    final url = "http://localhost:5000/users/profile/$appUsername/movies";
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

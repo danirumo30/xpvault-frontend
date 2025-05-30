@@ -106,7 +106,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
     late List<Game> loadedGames = [];
     final currentUser = await UserManager.getUser();
 
-    if (currentUser?.steamId != null) {
+    if (currentUser?.steamUser != null) {
       _isSteamUser = true;
     }
 
@@ -115,7 +115,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
     });
 
     if (_isSteamUser) {
-      loadedGames = await _gameController.getUserGames(currentUser?.steamId);
+      loadedGames = await _gameController.getUserGames(currentUser!.steamUser?.steamId);
     }
 
     setState(() {

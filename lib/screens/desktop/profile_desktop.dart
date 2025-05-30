@@ -9,10 +9,12 @@ import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
+import 'package:xpvault/screens/user_settings.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
 import 'package:xpvault/widgets/my_build_section_title.dart';
+import 'package:xpvault/widgets/my_stats_card.dart';
 
 class ProfileDesktopPage extends StatefulWidget {
   const ProfileDesktopPage({super.key});
@@ -40,42 +42,49 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
   }
 
   Future<void> _loadUserAndContent() async {
-    setState(() => _loading = true);
+  if (!mounted) return;
+  setState(() => _loading = true);
 
-    final loadedUser = await UserManager.getUser();
+  final loadedUser = await UserManager.getUser();
+  if (!mounted) return;
 
-    if (loadedUser == null) {
-      setState(() {
-        _user = null;
-        _loading = false;
-      });
-      return;
-    }
-
-    _user = loadedUser;
-
-    List<Game> games = [];
-    if (loadedUser.steamId != null && loadedUser.steamId!.isNotEmpty) {
-      games = await _gameController.getUserGames(loadedUser.steamId!);
-    }
-
-    final movies = await _movieController.fetchUserMovies(loadedUser.username);
-    final series = await _serieController.fetchUserSeries(loadedUser.username);
-
+  if (loadedUser == null) {
+    if (!mounted) return;
     setState(() {
-      _games = games;
-      _movies = movies;
-      _series = series;
+      _user = null;
       _loading = false;
     });
+    return;
   }
+
+  _user = loadedUser;
+
+  List<Game> games = [];
+  if (loadedUser.steamUser != null) {
+    games = await _gameController.getUserGames(loadedUser.steamUser!.steamId);
+    if (!mounted) return;
+  }
+
+  final movies = await _movieController.fetchUserMovies(loadedUser.username);
+  if (!mounted) return;
+  final series = await _serieController.fetchUserSeries(loadedUser.username);
+  if (!mounted) return;
+
+  setState(() {
+    _games = games;
+    _movies = movies;
+    _series = series;
+    _loading = false;
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
     if (_loading) {
       return const DesktopLayout(
         title: "XPVAULT",
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: CircularProgressIndicator(color: AppColors.accent)),
       );
     }
 
@@ -90,10 +99,7 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
               SizedBox(height: 16),
               Text(
                 "You need to log in to access the profile",
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 20,
-                ),
+                style: TextStyle(color: AppColors.textPrimary, fontSize: 20),
               ),
             ],
           ),
@@ -121,10 +127,23 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
                     ),
                   )
                 else
-                  const CircleAvatar(
-                    backgroundColor: AppColors.surface,
-                    radius: 36,
-                    child: Text("👤", style: TextStyle(fontSize: 28)),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap:
+                          () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => UserSettingsPage(user: _user),
+                            ),
+                          ),
+                      child: const CircleAvatar(
+                        backgroundColor: AppColors.surface,
+                        radius: 36,
+                        child: Text("👤", style: TextStyle(fontSize: 28)),
+                      ),
+                    ),
                   ),
                 const SizedBox(width: 16),
                 Text(
@@ -144,10 +163,22 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
               spacing: 24,
               runSpacing: 12,
               children: [
-                _buildStatCard("🎮 Tiempo J", _user!.totalTimePlayed),
-                _buildStatCard("🎬 Tiempo P", _user!.totalTimeMoviesWatched),
-                _buildStatCard("📺 Tiempo S", _user!.totalTimeEpisodesWatched),
-                _buildStatCard("👥 Amigos", 0, isTime: false),
+                MyStatsCard(
+                  title: "🎮 Hours played",
+                  value: _user!.steamUser?.totalTimePlayed ?? 0,
+                  isTime: true,
+                ),
+                MyStatsCard(
+                  title: "🎬 Hours watched in movies",
+                  value: _user!.totalTimeMoviesWatched,
+                  isTime: true,
+                ),
+                MyStatsCard(
+                  title: "📺 Hours watched in series",
+                  value: _user!.totalTimeEpisodesWatched,
+                  isTime: true,
+                ),
+                MyStatsCard(title: "👥 Friends", value: 0, isTime: false),
               ],
             ),
             const SizedBox(height: 32),
@@ -171,36 +202,6 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String title, int value, {bool isTime = true}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            isTime ? "$value h" : "$value",
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 16,
-            ),
-          ),
-        ],
       ),
     );
   }

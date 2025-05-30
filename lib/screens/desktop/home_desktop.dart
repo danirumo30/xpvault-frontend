@@ -1,14 +1,18 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:web/web.dart' as web;
 
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/game_controller.dart';
 import 'package:xpvault/controllers/movie_controller.dart';
 import 'package:xpvault/controllers/serie_controller.dart';
+import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
+import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
@@ -27,14 +31,63 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
   List<Movie> popularMovies = [];
   List<Serie> popularSeries = [];
   User? _user;
+  final UserController _userController = UserController();
 
   bool isLoading = true;
+  bool _isSteamLoggedIn = false;
+  String _token = "";
 
-  @override
-  void initState() {
-    super.initState();
-    loadContentSequentially();
+@override
+void initState() {
+  super.initState();
+  _initAsync();
+}
+
+Future<void> _initAsync() async {
+  await handleSteamLogin();
+  await loadContentSequentially();
+}
+
+Future<void> handleSteamLogin() async {
+  final search = web.window.location.search;
+  final uri = Uri.parse(search.isNotEmpty ? search : '');
+  final steamId = uri.queryParameters['steamId'];
+
+  if (steamId != null && steamId.isNotEmpty && !_isSteamLoggedIn) {
+    print('Steam ID extraído al volver: $steamId');
+
+    setState(() {
+      _isSteamLoggedIn = true;
+    });
+
+    // Asignamos steamId en UserManager (que debe actualizar el usuario guardado)
+    await UserManager.assignSteamIdToUser(steamId);
+
+    // Ahora recargamos el usuario actualizado
+    final user = await UserManager.getUser();
+
+    if (user != null) {
+      setState(() {
+        _user = user;
+      });
+
+      final token = await TokenManager.getToken();
+      if (token != null) {
+        setState(() {
+          _token = token;
+        });
+        print("DATOS DEL USUARIO A ACTUALIZAR: ${user.toJson()}");
+        await _userController.saveUser(user, _token);
+      }
+    }
+
+    // Limpia la URL sin parámetros
+    web.window.history.replaceState(null, '', '/');
+  } else {
+    print('No se encontró el Steam ID en la URL');
   }
+}
+
 
   Future<void> loadContentSequentially() async {
     final user = await UserManager.getUser();
@@ -55,6 +108,19 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
     });
   }
 
+  void checkSteamIdFromQuery(Function(String steamId) onSteamIdReceived) {
+    final search = web.window.location.search;
+    final uri = Uri.parse(search.isNotEmpty ? search : '');
+
+    final steamId = uri.queryParameters['steamId'];
+    if (steamId != null && steamId.isNotEmpty) {
+      print('Steam ID extraído: $steamId');
+      onSteamIdReceived(steamId);
+    } else {
+      print('No se encontró el Steam ID en los parámetros de la URL');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DesktopLayout(
@@ -63,7 +129,12 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 0, top: 24, right: 32, bottom: 0),
+            padding: const EdgeInsets.only(
+              left: 0,
+              top: 24,
+              right: 32,
+              bottom: 0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,18 +161,20 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                           ),
                         ),
                       const SizedBox(width: 12),
-                      _user != null && _user!.profilePhoto != null && _user!.profilePhoto!.isNotEmpty
+                      _user != null &&
+                              _user!.profilePhoto != null &&
+                              _user!.profilePhoto!.isNotEmpty
                           ? CircleAvatar(
-                        radius: 24,
-                        backgroundImage: MemoryImage(
-                          base64Decode(_user!.profilePhoto!),
-                        ),
-                      )
+                            radius: 24,
+                            backgroundImage: MemoryImage(
+                              base64Decode(_user!.profilePhoto!),
+                            ),
+                          )
                           : const CircleAvatar(
-                        backgroundColor: AppColors.surface,
-                        radius: 24,
-                        child: Text("👤", style: TextStyle(fontSize: 24)),
-                      ),
+                            backgroundColor: AppColors.surface,
+                            radius: 24,
+                            child: Text("👤", style: TextStyle(fontSize: 24)),
+                          ),
                     ],
                   ),
                 ),
@@ -115,24 +188,25 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView(
-                children: [
-                  const MyBuildSectionTitle(title: "🎮 Featured Games"),
-                  MyBuildContentBox(items: featuredGames),
+              child:
+                  isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView(
+                        children: [
+                          const MyBuildSectionTitle(title: "🎮 Featured Games"),
+                          MyBuildContentBox(items: featuredGames),
 
-                  const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                  const MyBuildSectionTitle(title: "🎬 Popular Movies"),
-                  MyBuildContentBox(items: popularMovies),
+                          const MyBuildSectionTitle(title: "🎬 Popular Movies"),
+                          MyBuildContentBox(items: popularMovies),
 
-                  const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                  const MyBuildSectionTitle(title: "📺 Popular Series"),
-                  MyBuildContentBox(items: popularSeries),
-                ],
-              ),
+                          const MyBuildSectionTitle(title: "📺 Popular Series"),
+                          MyBuildContentBox(items: popularSeries),
+                        ],
+                      ),
             ),
           ),
         ],

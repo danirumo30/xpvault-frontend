@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xpvault/models/steamUser.dart';
 import '../models/user.dart';
 
 class UserManager {
@@ -24,20 +25,20 @@ class UserManager {
     await prefs.remove(_userKey);
   }
 
-  static Future<void> assignSteamIdToUser(String steamId) async {
-  try {
-    final currentUser = await UserManager.getUser();
+static Future<void> assignSteamIdToUser(String steamId) async {
+  final user = await getUser();
+  if (user == null) return;
 
-    if (currentUser != null) {
-      final updatedUser = currentUser.copyWith(steamId: steamId);
-      await UserManager.saveUser(updatedUser);
-      print("Steam ID $steamId asignado al usuario ${updatedUser.username}");
-    } else {
-      print("No hay usuario guardado para actualizar.");
-    }
-  } catch (e) {
-    print("Error al asignar Steam ID: $e");
-  }
+  // Preservar datos existentes de SteamUser si ya hay uno
+  final updatedSteamUser = user.steamUser?.copyWith(steamId: steamId) ??
+      SteamUser(steamId: steamId);
+
+  final updatedUser = user.copyWith(
+    steamUser: updatedSteamUser,
+  );
+
+  await saveUser(updatedUser);
 }
+
 
 }
