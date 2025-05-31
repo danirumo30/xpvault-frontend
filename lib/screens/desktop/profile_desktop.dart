@@ -9,6 +9,7 @@ import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
+import 'package:xpvault/screens/user_settings.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
@@ -62,8 +63,8 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
     _user = loadedUser;
 
     List<Game> games = [];
-    if (loadedUser.steamId != null && loadedUser.steamId!.isNotEmpty) {
-      games = (await _gameController.getTenUserGames(loadedUser.steamId!));
+    if (loadedUser.steamUser?.steamId != null && loadedUser.steamUser!.steamId!.isNotEmpty) {
+      games = (await _gameController.getTenUserGames(loadedUser.steamUser?.steamId!));
     }
 
     final movies = await _movieController.fetchUserMovies(loadedUser.username);

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xpvault/controllers/user_controller.dart';
+import 'package:xpvault/models/steamUser.dart';
 import '../models/user.dart';
 
 class UserManager {
