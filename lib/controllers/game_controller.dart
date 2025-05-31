@@ -32,13 +32,11 @@ class GameController {
     final url = Uri.parse(
       "http://localhost:5000/game/steam/title/$gameTitle?page=$page&size=$size",
     );
-    print("${gameTitle}");
     try {
       final res = await http.get(url);
 
       if (res.statusCode == 200) {
         final List data = jsonDecode(res.body);
-        print(res.body);
         return data.map((json) => Game.fromJson(json)).toList();
       } else {
         print("Error: ${res.statusCode}");

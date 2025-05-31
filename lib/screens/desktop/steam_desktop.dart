@@ -22,7 +22,8 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
 
   final GameController _gameController = GameController();
   final TextEditingController searchController = TextEditingController();
-  final int _pageSize = 12;
+
+  static const int _pageSize = 12;
 
   String dropdownvalue = "";
   String lastSearchValue = "";
@@ -34,8 +35,9 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   bool _isFirstTimeSearching = true;
   bool _isFirstTimeAll = true;
   bool _isFirstTimeGenre = true;
-  bool _noMoreGames = false;
+
   int _currentPage = 0;
+  int _totalGamesCount = 0;
 
   final List<String> steamGenres = [
     "All",
@@ -58,16 +60,15 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   }
 
   Future<void> _loadGames() async {
-    late List<Game> loadedGames = [];
+    List<Game> loadedGames = [];
     final isSearching = searchController.text.trim().isNotEmpty;
 
     setState(() {
       _isLoading = true;
-      _noMoreGames = false;
     });
 
     if (isSearching) {
-      if (_isFirstTimeSearching || lastSearchValue == searchController.text) {
+      if (_isFirstTimeSearching || lastSearchValue != searchController.text) {
         _currentPage = 0;
         _isFirstTimeSearching = false;
         _isFirstTimeAll = true;
@@ -87,7 +88,11 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
         _isFirstTimeAll = true;
         _isFirstTimeSearching = true;
       }
-      loadedGames = await _gameController.getGamesByGenre(genre: dropdownvalue, page: _currentPage, size: _pageSize);
+      loadedGames = await _gameController.getGamesByGenre(
+        genre: dropdownvalue,
+        page: _currentPage,
+        size: _pageSize,
+      );
     } else {
       if (_isFirstTimeAll) {
         _currentPage = 0;
@@ -101,10 +106,6 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
       );
     }
 
-    if (loadedGames.any((game) => game.title == "ERRORXPVAULT")) {
-      _noMoreGames = true;
-    }
-
     setState(() {
       games = loadedGames;
       _isLoading = false;
@@ -112,7 +113,6 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   }
 
   Future<void> _loadMyGames() async {
-    late List<Game> loadedGames = [];
     final currentUser = await UserManager.getUser();
 
     if (currentUser?.steamId != null) {
@@ -124,17 +124,19 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
     });
 
     if (_isSteamUser) {
-      loadedGames = await _gameController.getUserGames(currentUser?.steamId);
+      myGames = await _gameController.getUserGames(currentUser?.steamId);
     }
 
     setState(() {
-      myGames = loadedGames;
       _isLoadingMyGames = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final int totalPages =
+    (games.length < _pageSize) ? _currentPage + 1 : _currentPage + 2;
+
     return DesktopLayout(
       title: "XPVAULT",
       body: Padding(
@@ -153,6 +155,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                     textEditingController: searchController,
                     suffixIcon: IconButton(
                       onPressed: () {
+                        _currentPage = 0;
                         _loadGames();
                       },
                       icon: Icon(Icons.search, color: AppColors.textMuted),
@@ -160,6 +163,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                     onFieldSubmitted: (_) {
                       setState(() {
                         dropdownvalue = "";
+                        _currentPage = 0;
                       });
                       _loadGames();
                     },
@@ -169,21 +173,20 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                 Expanded(
                   flex: 2,
                   child: MyDropdownbutton(
-                    hint:
-                    dropdownvalue.isEmpty ? "Select genre" : dropdownvalue,
-                    items:
-                    steamGenres.map<DropdownMenuItem<String>>((
-                        String genre,
-                        ) {
-                      return DropdownMenuItem<String>(
-                        value: genre,
-                        child: Text(genre),
-                      );
-                    }).toList(),
+                    hint: dropdownvalue.isEmpty ? "Select genre" : dropdownvalue,
+                    items: steamGenres.map<DropdownMenuItem<String>>(
+                          (String genre) {
+                        return DropdownMenuItem<String>(
+                          value: genre,
+                          child: Text(genre),
+                        );
+                      },
+                    ).toList(),
                     onChanged: (value) {
                       if (value is String) {
                         setState(() {
                           searchController.clear();
+                          _currentPage = 0;
                           if (value == "All") {
                             dropdownvalue = "";
                           } else {
@@ -197,7 +200,6 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
             Expanded(
               child: Row(
@@ -228,12 +230,14 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                             Expanded(
                               child: _isLoading
                                   ? Center(
-                                child: CircularProgressIndicator(color: AppColors.accent),
+                                child: CircularProgressIndicator(
+                                  color: AppColors.accent,
+                                ),
                               )
-                                  : _noMoreGames
+                                  : games.isEmpty
                                   ? Center(
                                 child: Text(
-                                  "Ya no hay más juegos.",
+                                  "No games found.",
                                   style: TextStyle(
                                     color: AppColors.textPrimary,
                                     fontSize: 20,
@@ -243,7 +247,8 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                               )
                                   : GridView.builder(
                                 itemCount: games.length,
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 3,
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 10,
@@ -251,7 +256,10 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                 ),
                                 itemBuilder: (context, index) {
                                   final game = games[index];
-                                  final imageUrl = (game.screenshotUrl?.trim().isNotEmpty ?? false)
+                                  final imageUrl = (game.screenshotUrl
+                                      ?.trim()
+                                      .isNotEmpty ??
+                                      false)
                                       ? game.screenshotUrl!
                                       : defaultImage;
 
@@ -262,7 +270,9 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                     onTap: () => Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => GameDetailDesktopPage(steamId: game.steamId),
+                                        builder: (context) =>
+                                            GameDetailDesktopPage(
+                                                steamId: game.steamId),
                                       ),
                                     ),
                                   );
@@ -297,8 +307,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                             ),
                             const SizedBox(height: 16),
                             Expanded(
-                              child:
-                              !_isSteamUser
+                              child: !_isSteamUser
                                   ? Center(
                                 child: Text(
                                   "Please log in with your Steam account to view your games.",
@@ -313,6 +322,17 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                   ? Center(
                                 child: CircularProgressIndicator(
                                   color: AppColors.accent,
+                                ),
+                              )
+                                  : myGames.isEmpty
+                                  ? Center(
+                                child: Text(
+                                  "You have no games.",
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
                               )
                                   : GridView.builder(
@@ -338,7 +358,15 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                     title: game.title,
                                     body: '',
                                     image: imageUrl,
-                                    onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GameDetailDesktopPage(steamId: game.steamId),)),
+                                    onTap: () => Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            GameDetailDesktopPage(
+                                                steamId:
+                                                game.steamId),
+                                      ),
+                                    ),
                                   );
                                 },
                               ),
@@ -355,8 +383,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed:
-                  _currentPage > 0 && !_isLoading
+                  onPressed: _currentPage > 0 && !_isLoading
                       ? () {
                     setState(() {
                       _currentPage--;
@@ -368,7 +395,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
-                  onPressed: !_isLoading && !_noMoreGames
+                  onPressed: !_isLoading && games.length == _pageSize
                       ? () {
                     setState(() {
                       _currentPage++;

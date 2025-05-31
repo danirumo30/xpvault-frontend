@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xpvault/controllers/user_controller.dart';
 import '../models/user.dart';
 
 class UserManager {
   static const _userKey = 'user_data';
+
+  static final UserController _userController = UserController();
 
   static Future<void> saveUser(User user) async {
     final prefs = await SharedPreferences.getInstance();
@@ -25,19 +28,22 @@ class UserManager {
   }
 
   static Future<void> assignSteamIdToUser(String steamId) async {
-  try {
-    final currentUser = await UserManager.getUser();
+    try {
+      final currentUser = await UserManager.getUser();
 
-    if (currentUser != null) {
-      final updatedUser = currentUser.copyWith(steamId: steamId);
-      await UserManager.saveUser(updatedUser);
-      print("Steam ID $steamId asignado al usuario ${updatedUser.username}");
-    } else {
-      print("No hay usuario guardado para actualizar.");
+      if (currentUser != null) {
+        final updatedUser = currentUser.copyWith(steamId: steamId);
+        await UserManager.saveUser(updatedUser);
+        print("Steam ID $steamId asignado al usuario ${updatedUser.username}");
+      } else {
+        print("No hay usuario guardado para actualizar.");
+      }
+    } catch (e) {
+      print("Error al asignar Steam ID: $e");
     }
-  } catch (e) {
-    print("Error al asignar Steam ID: $e");
   }
-}
 
+  static Future<User?> getUserByUsername(String username) async {
+    return await _userController.getUserByUsername(username);
+  }
 }

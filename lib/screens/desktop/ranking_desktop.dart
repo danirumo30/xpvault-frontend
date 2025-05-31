@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/top_user.dart';
+import 'package:xpvault/screens/desktop/profile_desktop.dart';
+import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 class RankingDesktopPage extends StatefulWidget {
@@ -25,10 +27,13 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
   int _currentPage = 0;
   static const int _usersPerPage = 20;
 
+  String? _currentLoggedUsername;
+
   @override
   void initState() {
     super.initState();
     _loadUsers();
+    _loadCurrentUser();
   }
 
   Future<void> _loadUsers() async {
@@ -49,6 +54,13 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
       _users = users;
       _currentPage = 0;
       _loading = false;
+    });
+  }
+
+  Future<void> _loadCurrentUser() async {
+    final user = await UserManager.getUser();
+    setState(() {
+      _currentLoggedUsername = user?.username;
     });
   }
 
@@ -109,74 +121,41 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
             Expanded(
               child: _loading
                   ? const Center(child: CircularProgressIndicator())
-                  : Column(
-                children: [
-                  Expanded(
-                    child: ListView.separated(
-                      itemCount: currentUsers.length,
-                      separatorBuilder: (_, __) => const Divider(),
-                      itemBuilder: (context, index) {
-                        final user = currentUsers[index];
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: AppColors.surface,
-                            backgroundImage: user.photoUrl != null &&
-                                user.photoUrl!.isNotEmpty
-                                ? MemoryImage(
-                                base64Decode(user.photoUrl!))
-                                : null,
-                            child: (user.photoUrl == null ||
-                                user.photoUrl!.isEmpty)
-                                ? const Icon(Icons.person,
-                                color: AppColors.textSecondary)
-                                : null,
-                          ),
-                          title: Text(
-                            "#${startIndex + index + 1}  ${user.nickname}",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          subtitle: Text(
-                            _getTimeLabel(user),
-                            style: const TextStyle(
-                                color: AppColors.textSecondary),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: _currentPage > 0
-                            ? () => setState(() => _currentPage--)
-                            : null,
-                        child: const Text("Anterior"),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        "Página ${_currentPage + 1} de $totalPages",
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
-                        onPressed: (_currentPage + 1) < totalPages
-                            ? () => setState(() => _currentPage++)
-                            : null,
-                        child: const Text("Siguiente"),
-                      ),
-                    ],
-                  ),
-                ],
+                  : ListView.separated(
+                itemCount: currentUsers.length,
+                separatorBuilder: (_, __) => const Divider(),
+                itemBuilder: (context, index) {
+                  final user = currentUsers[index];
+                  return _buildUserTile(user, startIndex + index + 1);
+                },
               ),
+            ),
+
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _currentPage > 0
+                      ? () => setState(() => _currentPage--)
+                      : null,
+                  child: const Text("Anterior"),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  "Página ${_currentPage + 1} de $totalPages",
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: (_currentPage + 1) < totalPages
+                      ? () => setState(() => _currentPage++)
+                      : null,
+                  child: const Text("Siguiente"),
+                ),
+              ],
             ),
           ],
         ),
@@ -196,6 +175,70 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
       ),
       onPressed: () => _changeType(type),
       child: Text(label),
+    );
+  }
+
+  Widget _buildUserTile(TopUser user, int rank) {
+    bool isHovering = false;
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) => setState(() => isHovering = true),
+          onExit: (_) => setState(() => isHovering = false),
+          child: AnimatedScale(
+            scale: isHovering ? 1.05 : 1.0,
+            duration: const Duration(milliseconds: 200),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: AppColors.surface,
+                backgroundImage: (user.photoUrl != null && user.photoUrl!.isNotEmpty)
+                    ? MemoryImage(base64Decode(user.photoUrl!))
+                    : null,
+                child: (user.photoUrl == null || user.photoUrl!.isEmpty)
+                    ? const Icon(Icons.person, color: AppColors.textSecondary)
+                    : null,
+              ),
+              title: Text(
+                "#$rank  ${user.nickname}",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              subtitle: Text(
+                _getTimeLabel(user),
+                style: const TextStyle(color: AppColors.textSecondary),
+              ),
+              onTap: () async {
+                final loggedUser = await UserManager.getUser();
+
+                final isOwnProfile = (loggedUser != null && loggedUser.username == user.nickname);
+
+                print('Navegando a perfil de username: ${user.nickname}');
+
+                if (loggedUser == null && isOwnProfile) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ProfileDesktopPage(),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProfileDesktopPage(username: user.nickname),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
