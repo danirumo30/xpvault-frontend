@@ -33,6 +33,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   int _currentPage = 10;
 
   final List<String> steamGenres = [
+    'All',
     'Action',
     'Adventure',
     'Role-Playing (RPG)',
@@ -89,6 +90,8 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
         size: _pageSize,
         gameTitle: searchController.text,
       );
+    } else if (dropdownvalue.isNotEmpty) {
+      loadedGames = await _gameController.getGamesByGenre(genre: dropdownvalue, page: _currentPage, size: _pageSize); 
     } else {
       loadedGames = await _gameController.fetchGames(
         page: _currentPage,
@@ -144,6 +147,9 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                     textEditingController: searchController,
                     suffixIcon: IconButton(
                       onPressed: () {
+                        setState(() {
+                          dropdownvalue = "";
+                        });
                         _loadGames();
                       },
                       icon: Icon(Icons.search, color: AppColors.textMuted),
@@ -168,8 +174,15 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                     onChanged: (value) {
                       if (value is String) {
                         setState(() {
-                          dropdownvalue = value;
+                          searchController.clear();
+                          
+                          if (value == "All") {
+                            dropdownvalue = "";
+                          } else {
+                            dropdownvalue = value;
+                          }
                         });
+                        _loadGames();
                       }
                     },
                   ),

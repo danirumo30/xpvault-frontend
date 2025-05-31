@@ -12,6 +12,7 @@ import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
+import 'package:xpvault/screens/profile.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
@@ -37,57 +38,56 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
   bool _isSteamLoggedIn = false;
   String _token = "";
 
-@override
-void initState() {
-  super.initState();
-  _initAsync();
-}
+  @override
+  void initState() {
+    super.initState();
+    _initAsync();
+  }
 
-Future<void> _initAsync() async {
-  await handleSteamLogin();
-  await loadContentSequentially();
-}
+  Future<void> _initAsync() async {
+    await handleSteamLogin();
+    await loadContentSequentially();
+  }
 
-Future<void> handleSteamLogin() async {
-  final search = web.window.location.search;
-  final uri = Uri.parse(search.isNotEmpty ? search : '');
-  final steamId = uri.queryParameters['steamId'];
+  Future<void> handleSteamLogin() async {
+    final search = web.window.location.search;
+    final uri = Uri.parse(search.isNotEmpty ? search : '');
+    final steamId = uri.queryParameters['steamId'];
 
-  if (steamId != null && steamId.isNotEmpty && !_isSteamLoggedIn) {
-    print('Steam ID extraído al volver: $steamId');
+    if (steamId != null && steamId.isNotEmpty && !_isSteamLoggedIn) {
+      print('Steam ID extraído al volver: $steamId');
 
-    setState(() {
-      _isSteamLoggedIn = true;
-    });
-
-    // Asignamos steamId en UserManager (que debe actualizar el usuario guardado)
-    await UserManager.assignSteamIdToUser(steamId);
-
-    // Ahora recargamos el usuario actualizado
-    final user = await UserManager.getUser();
-
-    if (user != null) {
       setState(() {
-        _user = user;
+        _isSteamLoggedIn = true;
       });
 
-      final token = await TokenManager.getToken();
-      if (token != null) {
+      // Asignamos steamId en UserManager (que debe actualizar el usuario guardado)
+      await UserManager.assignSteamIdToUser(steamId);
+
+      // Ahora recargamos el usuario actualizado
+      final user = await UserManager.getUser();
+
+      if (user != null) {
         setState(() {
-          _token = token;
+          _user = user;
         });
-        print("DATOS DEL USUARIO A ACTUALIZAR: ${user.toJson()}");
-        await _userController.saveUser(user, _token);
+
+        final token = await TokenManager.getToken();
+        if (token != null) {
+          setState(() {
+            _token = token;
+          });
+          print("DATOS DEL USUARIO A ACTUALIZAR: ${user.toJson()}");
+          await _userController.saveUser(user, _token);
+        }
       }
+
+      // Limpia la URL sin parámetros
+      web.window.history.replaceState(null, '', '/');
+    } else {
+      print('No se encontró el Steam ID en la URL');
     }
-
-    // Limpia la URL sin parámetros
-    web.window.history.replaceState(null, '', '/');
-  } else {
-    print('No se encontró el Steam ID en la URL');
   }
-}
-
 
   Future<void> loadContentSequentially() async {
     final user = await UserManager.getUser();
@@ -164,16 +164,43 @@ Future<void> handleSteamLogin() async {
                       _user != null &&
                               _user!.profilePhoto != null &&
                               _user!.profilePhoto!.isNotEmpty
-                          ? CircleAvatar(
-                            radius: 24,
-                            backgroundImage: MemoryImage(
-                              base64Decode(_user!.profilePhoto!),
+                          ? MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap:
+                                  () => Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfilePage(),
+                                    ),
+                                  ),
+                              child: CircleAvatar(
+                                radius: 24,
+                                backgroundImage: MemoryImage(
+                                  base64Decode(_user!.profilePhoto!),
+                                ),
+                              ),
                             ),
                           )
-                          : const CircleAvatar(
-                            backgroundColor: AppColors.surface,
-                            radius: 24,
-                            child: Text("👤", style: TextStyle(fontSize: 24)),
+                          : MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap:
+                                  () => Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfilePage(),
+                                    ),
+                                  ),
+                              child: const CircleAvatar(
+                                backgroundColor: AppColors.surface,
+                                radius: 24,
+                                child: Text(
+                                  "👤",
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                              ),
+                            ),
                           ),
                     ],
                   ),

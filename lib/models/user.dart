@@ -5,7 +5,7 @@ class User {
   final String username;
   final String email;
   final String? profilePhoto;
-  final SteamUser? steamUser;
+  SteamUser? steamUser;
   final int totalTimeMoviesWatched;
   final int totalTimeEpisodesWatched;
   final int totalGames;
@@ -28,6 +28,8 @@ class User {
   });
 
   User copyWith({
+    String? username,
+    String? email,
     String? profilePhoto,
     SteamUser? steamUser,
     int? totalTimeMoviesWatched,
@@ -39,8 +41,8 @@ class User {
   }) {
     return User(
       id: id,
-      username: username,
-      email: email,
+      username: username ?? this.username,
+      email: email ?? this.email,
       profilePhoto: profilePhoto ?? this.profilePhoto,
       steamUser: steamUser ?? this.steamUser,
       totalTimeMoviesWatched:

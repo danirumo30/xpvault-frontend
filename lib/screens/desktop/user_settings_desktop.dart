@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:typed_data';
+import 'dart:convert';
+import 'dart:html' as html;
 
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/user_controller.dart';
@@ -7,6 +10,7 @@ import 'package:xpvault/models/user.dart';
 import 'package:xpvault/screens/login.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
+import 'package:xpvault/services/validation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_button.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
@@ -25,11 +29,30 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _repeatNewPasswordController =
       TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final UserController _userController = UserController();
 
-  bool _isSteamLoggedIn = false;
   bool passwordInvisible = true;
+  Uint8List? _imageBytes;
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameController.text = widget.user?.username ?? '';
+    _emailController.text = widget.user?.email ?? '';
+
+    // Cargar la imagen si existe
+    if (widget.user?.profilePhoto != null &&
+        widget.user!.profilePhoto!.isNotEmpty) {
+      try {
+        _imageBytes = base64Decode(widget.user!.profilePhoto!);
+      } catch (e) {
+        print("Error decoding profile image: $e");
+      }
+    }
+  }
 
   Future<void> _logout() async {
     await TokenManager.deleteToken();
@@ -38,6 +61,42 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
       context,
       MaterialPageRoute(builder: (_) => const LoginPage()),
     );
+  }
+
+  Future<void> _pickImage() async {
+    final uploadInput = html.FileUploadInputElement()..accept = 'image/*';
+    uploadInput.click();
+
+    uploadInput.onChange.listen((event) async {
+      final file = uploadInput.files?.first;
+      if (file != null) {
+        final reader = html.FileReader();
+        reader.readAsArrayBuffer(file);
+
+        reader.onLoadEnd.listen((e) async {
+          final bytes = reader.result as Uint8List;
+          setState(() {
+            _imageBytes = bytes;
+          });
+
+          final base64Image = base64Encode(bytes);
+          final updatedUser = widget.user!.copyWith(profilePhoto: base64Image);
+
+          final token = await TokenManager.getToken();
+          await UserManager.saveUser(updatedUser);
+          if (token != null) {
+            await _userController.saveUser(updatedUser, token);
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Profile image updated successfully"),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        });
+      }
+    });
   }
 
   @override
@@ -52,9 +111,29 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
               flex: 1,
               child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 75,
-                    //backgroundImage:,
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        CircleAvatar(
+                          radius: 75,
+                          backgroundImage:
+                              _imageBytes != null
+                                  ? MemoryImage(_imageBytes!)
+                                  : null,
+                          child:
+                              _imageBytes == null
+                                  ? const Icon(Icons.person, size: 75)
+                                  : null,
+                        ),
+                        const CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.white,
+                          child: Icon(Icons.edit, color: Colors.black),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Text(
@@ -98,20 +177,28 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
+
                       MyTextformfield(
                         hintText: "New password",
                         obscureText: passwordInvisible,
                         textEditingController: _newPasswordController,
                         validator: (value) {
+                          final validationMessage =
+                              ValidationService.passwordValidation(value);
+                          if (validationMessage != null) {
+                            return validationMessage;
+                          }
                           if (value == null || value.isEmpty) {
                             return "You must complete the field";
-                          } else if (value !=
-                              _repeatNewPasswordController.text) {
+                          }
+                          if (value != _repeatNewPasswordController.text) {
                             return "Passwords must match";
                           }
+                          return null;
                         },
                       ),
                       const SizedBox(height: 16),
+
                       MyTextformfield(
                         hintText: "Repeat password",
                         obscureText: passwordInvisible,
@@ -129,27 +216,47 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                           ),
                         ),
                         validator: (value) {
+                          final validationMessage =
+                              ValidationService.passwordValidation(value);
+                          if (validationMessage != null) {
+                            return validationMessage;
+                          }
                           if (value == null || value.isEmpty) {
                             return "You must complete the field";
-                          } else if (value != _newPasswordController.text) {
+                          }
+                          if (value != _newPasswordController.text) {
                             return "Passwords must match";
                           }
+                          return null;
                         },
                       ),
+
                       const SizedBox(height: 16),
+
                       MyButton(
-                        text: "Update password",
-                        fontSize: 25,
+                        text: "Update Password",
+                        fontSize: 18,
                         onTap: () async {
+                          if (_newPasswordController.text.isEmpty ||
+                              _repeatNewPasswordController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Please complete both password fields.",
+                                ),
+                                backgroundColor: AppColors.error,
+                              ),
+                            );
+                            return;
+                          }
+
                           if (formKey.currentState?.validate() ?? false) {
                             final updatedUser = widget.user!.copyWith(
                               password: _newPasswordController.text,
                             );
 
                             final token = await TokenManager.getToken();
-
                             await UserManager.saveUser(updatedUser);
-
                             if (token != null) {
                               await _userController.saveUser(
                                 updatedUser,
@@ -157,10 +264,13 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                               );
                             }
 
-                            // Opcional: mostrar un mensaje de éxito al usuario
+                            _newPasswordController.clear();
+                            _repeatNewPasswordController.clear();
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text("Password updated successfully"),
+                                backgroundColor: AppColors.success,
                               ),
                             );
                           }
@@ -178,19 +288,38 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      if (_isSteamLoggedIn)
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.green[100],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text(
-                            "Steam session successfully started.",
-                            style: TextStyle(fontSize: 16, color: Colors.green),
-                          ),
+
+                      if (widget.user?.steamUser?.steamId != null)
+                        MyButton(
+                          text: "Steam linked - Click to unlink",
+                          fontSize: 18,
+                          onTap: () async {
+                            final updatedUser = widget.user!.copyWith(
+                              steamUser: null,
+                            );
+
+                            final token = await TokenManager.getToken();
+                            await UserManager.saveUser(updatedUser);
+                            if (token != null) {
+                              await _userController.saveUser(
+                                updatedUser,
+                                token,
+                              );
+                            }
+
+                            setState(() {
+                              widget.user!.steamUser = null;
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Steam account unlinked"),
+                                backgroundColor: AppColors.success,
+                              ),
+                            );
+                          },
                         )
-                      else ...[
+                      else
                         MyButton(
                           text: "Go to Steam",
                           fontSize: 25,
@@ -199,7 +328,6 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                                 'http://localhost:5000/steam-auth/login';
                           },
                         ),
-                      ],
                     ],
                   ),
                 ),
