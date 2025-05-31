@@ -28,19 +28,17 @@ class UserManager {
   }
 
   static Future<void> assignSteamIdToUser(String steamId) async {
-    try {
-      final currentUser = await UserManager.getUser();
+    final user = await getUser();
+    if (user == null) return;
 
-      if (currentUser != null) {
-        final updatedUser = currentUser.copyWith(steamId: steamId);
-        await UserManager.saveUser(updatedUser);
-        print("Steam ID $steamId asignado al usuario ${updatedUser.username}");
-      } else {
-        print("No hay usuario guardado para actualizar.");
-      }
-    } catch (e) {
-      print("Error al asignar Steam ID: $e");
-    }
+    final updatedSteamUser = user.steamUser?.copyWith(steamId: steamId) ??
+        SteamUser(steamId: steamId);
+
+    final updatedUser = user.copyWith(
+      steamUser: updatedSteamUser,
+    );
+
+    await saveUser(updatedUser);
   }
 
   static Future<User?> getUserByUsername(String username) async {

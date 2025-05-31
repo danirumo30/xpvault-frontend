@@ -131,4 +131,28 @@ class UserController {
 
     return null;
   }
+
+  Future<bool> saveUser(User user, String token) async {
+    final url = Uri.parse('http://localhost:5000/users/save');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(user.toJson()),
+    );
+
+    print("Soy el saveUser ${response.statusCode}");
+    print(token);
+    if (response.statusCode == 200) {
+      print('Usuario guardado correctamente');
+      return true;
+    } else {
+      print('Error al guardar usuario: ${response.statusCode}');
+      print(response.body);
+      return false;
+    }
+  }
 }
