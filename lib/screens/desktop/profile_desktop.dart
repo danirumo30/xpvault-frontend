@@ -15,7 +15,9 @@ import 'package:xpvault/widgets/my_build_content_box.dart';
 import 'package:xpvault/widgets/my_build_section_title.dart';
 
 class ProfileDesktopPage extends StatefulWidget {
-  const ProfileDesktopPage({super.key});
+  final String? username;
+
+  const ProfileDesktopPage({super.key, this.username});
 
   @override
   State<ProfileDesktopPage> createState() => _ProfileDesktopPageState();
@@ -42,7 +44,12 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
   Future<void> _loadUserAndContent() async {
     setState(() => _loading = true);
 
-    final loadedUser = await UserManager.getUser();
+    User? loadedUser;
+    if (widget.username == null) {
+      loadedUser = await UserManager.getUser();
+    } else {
+      loadedUser = await UserManager.getUserByUsername(widget.username!);
+    }
 
     if (loadedUser == null) {
       setState(() {
@@ -80,17 +87,19 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
     }
 
     if (_user == null) {
-      return const DesktopLayout(
+      return DesktopLayout(
         title: "XPVAULT",
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.lock, color: AppColors.accent, size: 45),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
-                "You need to log in to access the profile",
-                style: TextStyle(
+                widget.username == null
+                    ? "You need to log in to access the profile"
+                    : "User '${widget.username}' not found",
+                style: const TextStyle(
                   color: AppColors.textPrimary,
                   fontSize: 20,
                 ),

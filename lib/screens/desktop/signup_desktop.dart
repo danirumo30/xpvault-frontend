@@ -30,6 +30,37 @@ class _SignupDesktopPageState extends State<SignupDesktopPage> {
     );
   }
 
+  Future<void> _handleSignup() async {
+    if (formKey.currentState?.validate() ?? false) {
+      final status = await signup();
+      if (!mounted) return;
+
+      if (status == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VerifyResendPage(
+              email: emailController.text,
+            ),
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Successful sign up!"),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Account could not be registered"),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DesktopLayout(
@@ -58,6 +89,10 @@ class _SignupDesktopPageState extends State<SignupDesktopPage> {
                     obscureText: false,
                     textEditingController: emailController,
                     validator: ValidationService.emailValidation,
+                    onFieldSubmitted: (_) {
+                      setState(() {});
+                      _handleSignup();
+                    },
                   ),
                   const SizedBox(height: 15),
                   MyTextformfield(
@@ -77,38 +112,18 @@ class _SignupDesktopPageState extends State<SignupDesktopPage> {
                             : Icons.visibility,
                       ),
                     ),
+                    onFieldSubmitted: (_) {
+                      setState(() {});
+                      _handleSignup();
+                    },
                   ),
                   const SizedBox(height: 20),
                   MyButton(
                     text: "Sign up",
                     fontSize: 20,
                     onTap: () async {
-                      if (formKey.currentState?.validate() ?? false) {
-                        if (await signup() == 200) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => VerifyResendPage(
-                                    email: emailController.text,
-                                  ),
-                            ),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Successful sign up!"),
-                              backgroundColor: AppColors.success,
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("account could not be registered"),
-                              backgroundColor: AppColors.error,
-                            ),
-                          );
-                        }
-                      }
+                      setState(() {});
+                      await _handleSignup();
                     },
                   ),
                   const SizedBox(height: 20),
