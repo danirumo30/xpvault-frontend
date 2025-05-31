@@ -122,17 +122,44 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
               children: [
                 if (_user!.profilePhoto != null &&
                     _user!.profilePhoto!.isNotEmpty)
+                     MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap:
+                          () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => UserSettingsPage(user: _user),
+                            ),
+                          ),
+                      child:
                   CircleAvatar(
                     radius: 36,
                     backgroundImage: MemoryImage(
                       base64Decode(_user!.profilePhoto!),
                     ),
                   )
+                    )
+                  )
                 else
-                  const CircleAvatar(
-                    backgroundColor: AppColors.surface,
-                    radius: 36,
-                    child: Text("👤", style: TextStyle(fontSize: 28)),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap:
+                          () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => UserSettingsPage(user: _user),
+                            ),
+                          ),
+                      child: const CircleAvatar(
+                        backgroundColor: AppColors.surface,
+                        radius: 36,
+                        child: Text("👤", style: TextStyle(fontSize: 28)),
+                      ),
+                    ),
                   ),
                 const SizedBox(width: 16),
                 Text(
