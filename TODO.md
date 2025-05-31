@@ -6,7 +6,6 @@
 - [ ] Arreglar boton de siguiente en juegos de steam.
 
 ### 👤 Perfil
-- [ ] Implementar subida de imagen de perfil en base64 y guardarla en la base de datos.
 - [ ] Añadir animaciones hover en las imagenes y cambio de cursor.
 
 ### 🏠 Home
