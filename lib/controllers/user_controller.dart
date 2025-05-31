@@ -103,4 +103,32 @@ class UserController {
 
     return [];
   }
+
+  Future<User?> getUserByUsername(String username) async {
+    final url = Uri.parse("http://localhost:5000/users/search?username=$username");
+
+    try {
+      final res = await http.get(url);
+
+      if (res.statusCode == 200 && res.body.isNotEmpty) {
+        final data = jsonDecode(res.body);
+
+        if (data is List && data.isNotEmpty) {
+          return User.fromJson(data[0]);
+        }
+
+        if (data is Map<String, dynamic>) {
+          return User.fromJson(data);
+        }
+
+        print("Formato de datos inesperado");
+      } else {
+        print("Usuario no encontrado o respuesta vacía");
+      }
+    } catch (e) {
+      print("Error al obtener usuario por username: $e");
+    }
+
+    return null;
+  }
 }

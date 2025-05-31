@@ -35,6 +35,35 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
     return await AuthController().resend(emailController.text);
   }
 
+  Future<void> _handleLogin() async {
+    if (formKey.currentState?.validate() ?? false) {
+      final status = await _login();
+      if (!mounted) return;
+
+      if (status == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Successful login!"),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Could not log in, try resending the verification code, create an account or try again later.",
+            ),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DesktopLayout(
@@ -63,6 +92,10 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
                     obscureText: false,
                     textEditingController: emailController,
                     validator: ValidationService.emailValidation,
+                    onFieldSubmitted: (_) {
+                      setState(() {});
+                      _handleLogin();
+                    },
                   ),
                   const SizedBox(height: 15),
                   MyTextformfield(
@@ -82,35 +115,18 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
                             : Icons.visibility,
                       ),
                     ),
+                    onFieldSubmitted: (_) {
+                      setState(() {});
+                      _handleLogin();
+                    },
                   ),
                   const SizedBox(height: 20),
                   MyButton(
                     text: "Login",
                     fontSize: 20,
                     onTap: () async {
-                      if (formKey.currentState?.validate() ?? false) {
-                        if (await _login() == 200) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Successful login!"),
-                              backgroundColor: AppColors.success,
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                "Could not log in, try resending the verification code, create an account or try again later.",
-                              ),
-                              backgroundColor: AppColors.error,
-                            ),
-                          );
-                        }
-                      }
+                      setState(() {});
+                      await _handleLogin();
                     },
                   ),
                   const SizedBox(height: 20),
@@ -123,10 +139,9 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder:
-                                  (context) => VerifyResendPage(
-                                    email: emailController.text,
-                                  ),
+                              builder: (context) => VerifyResendPage(
+                                email: emailController.text,
+                              ),
                             ),
                           );
                         } else {
@@ -139,11 +154,12 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
                         }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Enter your email address to resend the verification code"),
-                              backgroundColor: AppColors.error,
-                            ),
-                          );
+                          SnackBar(
+                            content: Text(
+                                "Enter your email address to resend the verification code"),
+                            backgroundColor: AppColors.error,
+                          ),
+                        );
                       }
                     },
                   ),

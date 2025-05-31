@@ -30,6 +30,35 @@ class _VerifyResendDesktopPageState extends State<VerifyResendDesktopPage> {
     return await AuthController().resend(widget.email);
   }
 
+  Future<void> _handleVerify() async {
+    if (formKey.currentState?.validate() ?? false) {
+      final status = await verifyCode();
+      if (!mounted) return;
+
+      if (status == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginPage(),
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Successful verify!"),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Verify code invalid"),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DesktopLayout(
@@ -63,36 +92,15 @@ class _VerifyResendDesktopPageState extends State<VerifyResendDesktopPage> {
                     obscureText: false,
                     textEditingController: codeController,
                     validator: ValidationService.verificationCodeValidation,
+                    onFieldSubmitted: (_) async {
+                      await _handleVerify();
+                    },
                   ),
                   const SizedBox(height: 20),
                   MyButton(
                     text: "Confirm",
                     fontSize: 20,
-                    onTap: () async {
-                      if (formKey.currentState?.validate() ?? false) {
-                        if (await verifyCode() == 200) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Successful verify!"),
-                              backgroundColor: AppColors.success,
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Verify code invalid"),
-                              backgroundColor: AppColors.error,
-                            ),
-                          );
-                        }
-                      }
-                    },
+                    onTap: _handleVerify,
                   ),
                   const SizedBox(height: 20),
                   RedirectMessage(

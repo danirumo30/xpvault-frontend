@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/game_controller.dart';
@@ -9,6 +10,7 @@ import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
+import 'package:xpvault/screens/desktop/profile_desktop.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
@@ -92,16 +94,11 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                         ),
                       const SizedBox(width: 12),
                       _user != null && _user!.profilePhoto != null && _user!.profilePhoto!.isNotEmpty
-                          ? CircleAvatar(
-                        radius: 24,
-                        backgroundImage: MemoryImage(
-                          base64Decode(_user!.profilePhoto!),
-                        ),
+                          ? _HoverableProfileAvatar(
+                        imageBytes: base64Decode(_user!.profilePhoto!),
                       )
-                          : const CircleAvatar(
-                        backgroundColor: AppColors.surface,
-                        radius: 24,
-                        child: Text("👤", style: TextStyle(fontSize: 24)),
+                          : const _HoverableProfileAvatar(
+                        imageBytes: null,
                       ),
                     ],
                   ),
@@ -136,6 +133,55 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HoverableProfileAvatar extends StatefulWidget {
+  final Uint8List? imageBytes;
+
+  const _HoverableProfileAvatar({Key? key, this.imageBytes}) : super(key: key);
+
+  @override
+  State<_HoverableProfileAvatar> createState() => _HoverableProfileAvatarState();
+}
+
+class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ProfileDesktopPage()),
+          );
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: _hovering ? 56 : 48,
+          height: _hovering ? 56 : 48,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: widget.imageBytes != null
+                ? DecorationImage(
+              image: MemoryImage(widget.imageBytes!),
+              fit: BoxFit.cover,
+            )
+                : null,
+            color: widget.imageBytes == null ? AppColors.surface : null,
+          ),
+          alignment: Alignment.center,
+          child: widget.imageBytes == null
+              ? const Text("👤", style: TextStyle(fontSize: 24))
+              : null,
+        ),
       ),
     );
   }
