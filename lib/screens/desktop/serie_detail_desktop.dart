@@ -77,16 +77,50 @@ class SerieDetailDesktopPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8.0,
-                          children: serie.genres
-                              .map((g) => Chip(
-                                    label: Text(g),
-                                    backgroundColor: AppColors.secondary,
-                                    labelStyle: const TextStyle(color: Colors.white),
-                                  ))
-                              .toList(),
-                        ),
+                        if (serie.genres.isNotEmpty)
+                          Wrap(
+                            spacing: 8.0,
+                            children: serie.genres
+                                .map((g) => Chip(
+                                      label: Text(g),
+                                      backgroundColor: AppColors.secondary,
+                                      labelStyle: const TextStyle(color: Colors.white),
+                                    ))
+                                .toList(),
+                          ),
+                        const SizedBox(height: 16),
+                        if (serie.firstAirDate != null)
+                          Text(
+                            "First aired: ${serie.firstAirDate}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        if (serie.voteAverage != null)
+                          Text(
+                            "Rating: ${serie.voteAverage!.toStringAsFixed(1)} / 10",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        if (serie.runtime != null)
+                          Text(
+                            "Episode duration: ${serie.runtime} minutes",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        if (serie.creators != null && serie.creators!.isNotEmpty)
+                          Text(
+                            "Created by: ${serie.creators!.join(', ')}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
                         const SizedBox(height: 16),
                         Text(
                           serie.description,

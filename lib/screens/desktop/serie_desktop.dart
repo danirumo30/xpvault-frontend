@@ -26,16 +26,24 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
 
   final SerieController serieController = SerieController();
 
-  void _showSerieDetails(Serie serie) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SerieDetailDesktopPage(
-          serie: serie,
-          returnPage: widget.returnPage,
+  void _showSerieDetails(Serie serie) async {
+    final fullSerie = await serieController.fetchSerieById(serie.tmbdId.toString());
+
+    if (fullSerie != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SerieDetailDesktopPage(
+            serie: fullSerie,
+            returnPage: widget.returnPage,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to load serie details")),
+      );
+    }
   }
 
   Future<void> _loadSeries() async {
