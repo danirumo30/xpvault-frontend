@@ -1,39 +1,16 @@
 # TODOList
 
-## 🧠 Funcionalidades a implementar
-
-### 🔍 Búsqueda
-- [ ] Arreglar boton de siguiente en juegos de steam.
-
-### 👤 Perfil
-- [ ] Implementar subida de imagen de perfil en base64 y guardarla en la base de datos.
-- [ ] Añadir animaciones hover en las imagenes y cambio de cursor.
+## 🧠 Funcionalidades a implementar.
 
 ### 🏠 Home
 - [ ] Añadir un botón "Ver todos" en la parte superior derecha de cada contenedor.
-- [ ] Añadir animaciones hover en las imagenes y cambio de cursor.
-- [ ] Al hacer logout y volver a iniciar sesion se buguea y no te deja acceder al perfil.
-- [ ] No se muestran los juegos/pelis/series populares en el GH PAGES pero si en local.
 
 ### 🎮 Conexión Back + Front
 - [ ] Implementar conexión del backend con el frontend para:
   - Películas
   - Series
 
-### 🏆 Ranking
-- [ ] Cambiar el ítem del menú "Last seen" por "Ranking".
-- [ ] Crear pestaña de ranking filtrable por:
-  - Top usuarios con más horas de películas
-  - Top usuarios con más horas de series
-  - Top usuarios con más horas de juegos
-
 ### 📱 Vistas móviles
-- [ ] Crear vistas:
-  - Usuarios/Amigos (foto + username)
-  - Ajustes perfil/cuenta
-  - Ranking
-- [ ] Modificar vistas:
-  - Detalles videojuegos
 - [ ] Adaptar vistas móviles para:
   - Steam
   - Películas
