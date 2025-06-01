@@ -1,31 +1,25 @@
-import 'steam_user.dart';
-
 class TopUser {
   final int id;
   final String nickname;
   final String? photoUrl;
   final int totalTime;
-  final SteamUser? steamUser;
 
   TopUser({
     required this.id,
     required this.nickname,
     this.photoUrl,
     required this.totalTime,
-    this.steamUser,
   });
 
   TopUser copyWith({
     String? photoUrl,
     int? totalTime,
-    SteamUser? steamUser,
   }) {
     return TopUser(
       id: id,
       nickname: nickname,
       photoUrl: photoUrl ?? this.photoUrl,
       totalTime: totalTime ?? this.totalTime,
-      steamUser: steamUser ?? this.steamUser,
     );
   }
 
@@ -35,9 +29,6 @@ class TopUser {
       nickname: json['nickname'] as String,
       photoUrl: json['photoUrl'] as String?,
       totalTime: json['totalTime'] as int? ?? 0,
-      steamUser: json['steamUser'] != null
-          ? SteamUser.fromJson(json['steamUser'])
-          : null,
     );
   }
 
@@ -46,6 +37,5 @@ class TopUser {
         'nickname': nickname,
         'photoUrl': photoUrl,
         'totalTime': totalTime,
-        'steamUser': steamUser?.toJson(),
       };
 }

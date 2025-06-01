@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:xpvault/models/basic_user.dart';
 import 'package:xpvault/models/top_user.dart';
 import 'package:xpvault/models/user.dart';
 import 'package:xpvault/services/token_manager.dart';
@@ -156,7 +157,7 @@ class UserController {
     }
   }
 
-  Future<List<User>> getAllUsers() async {
+  Future<List<BasicUser>> getAllUsers() async {
     final url = Uri.parse("http://localhost:5000/users/all");
 
     try {
@@ -164,7 +165,7 @@ class UserController {
 
       if (res.statusCode == 200 && res.body.isNotEmpty) {
         final List<dynamic> data = jsonDecode(res.body);
-        return data.map((json) => User.fromJson(json)).toList();
+        return data.map((json) => BasicUser.fromJson(json)).toList();
       } else if (res.statusCode == 404) {
         print("No se encontraron usuarios.");
       } else {
@@ -175,5 +176,104 @@ class UserController {
     }
 
     return [];
+  }
+
+  Future<List<BasicUser>> fetchUserFriends(String appUsername) async {
+    final url = "http://localhost:5000/users/profile/$appUsername/friends";
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final List data = json.decode(response.body);
+      return data.map((json) => BasicUser.fromJson(json)).toList();
+    } else {
+      return [];
+    }
+  }
+
+  Future<bool> addFriend(String username, String friendUsername) async {
+    final token = await TokenManager.getToken();
+    final url = Uri.parse(
+      "http://localhost:5000/users/$username/friends/add?friendUsername=$friendUsername",
+    );
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('Amigo agregado correctamente: $friendUsername');
+        return true;
+      } else {
+        print('Error al agregar amigo: ${response.statusCode}');
+        print(response.body);
+        return false;
+      }
+    } catch (e) {
+      print('Excepción al agregar amigo: $e');
+      return false;
+    }
+  }
+
+  Future<bool> deleteFriendFromUser(String username, String friendUsername) async {
+    final token = await TokenManager.getToken();
+    final url = Uri.parse(
+        "http://localhost:5000/users/$username/friends/delete?friendUsername=$friendUsername"
+    );
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('Amigo eliminado correctamente: $friendUsername');
+        return true;
+      } else {
+        print('Error al eliminar amigo: ${response.statusCode}');
+        print(response.body);
+        return false;
+      }
+    } catch (e) {
+      print('Excepción al eliminar amigo: $e');
+      return false;
+    }
+  }
+
+  Future<bool> isFriend(String username, String friendUsername) async {
+    final token = await TokenManager.getToken();
+    final url = Uri.parse(
+        "http://localhost:5000/users/$username/friends/is-friend?friendUsername=$friendUsername"
+    );
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        return jsonResponse['isFriend'] ?? false;
+      } else {
+        print('Error al verificar amistad: ${response.statusCode}');
+        print(response.body);
+        return false;
+      }
+    } catch (e) {
+      print('Excepción al verificar amistad: $e');
+      return false;
+    }
   }
 }

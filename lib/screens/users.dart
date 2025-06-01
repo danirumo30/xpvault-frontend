@@ -4,8 +4,13 @@ import 'package:xpvault/screens/desktop/users_desktop.dart';
 
 class UsersPage extends StatefulWidget {
   final String initialSearchTerm;
+  final String? viewFriendsOf;
 
-  const UsersPage({super.key, required this.initialSearchTerm});
+  const UsersPage({
+    super.key,
+    required this.initialSearchTerm,
+    this.viewFriendsOf,
+  });
 
   @override
   State<UsersPage> createState() => _UsersPageState();
@@ -17,7 +22,10 @@ class _UsersPageState extends State<UsersPage> {
     return Scaffold(
       body: ResponsiveLayout(
         mobileBody: Scaffold(),
-        desktopBody: UserSearchDesktopPage(initialSearchTerm: widget.initialSearchTerm),
+        desktopBody: UserSearchDesktopPage(
+          initialSearchTerm: widget.initialSearchTerm,
+          viewFriendsOf: widget.viewFriendsOf,
+        ),
       ),
     );
   }

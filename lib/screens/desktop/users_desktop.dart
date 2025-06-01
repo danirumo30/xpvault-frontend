@@ -3,14 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
-import 'package:xpvault/models/user.dart';
+import 'package:xpvault/models/basic_user.dart';
 import 'package:xpvault/screens/profile.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 class UserSearchDesktopPage extends StatefulWidget {
   final String? initialSearchTerm;
+  final String? viewFriendsOf;
 
-  const UserSearchDesktopPage({Key? key, this.initialSearchTerm}) : super(key: key);
+  const UserSearchDesktopPage({Key? key, this.initialSearchTerm, this.viewFriendsOf}) : super(key: key);
 
   @override
   State<UserSearchDesktopPage> createState() => _UserSearchDesktopPageState();
@@ -20,8 +21,8 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
   final UserController _userController = UserController();
   bool _loading = true;
 
-  List<User> _allUsers = [];
-  List<User> _filteredUsers = [];
+  List<BasicUser> _allUsers = [];
+  List<BasicUser> _filteredUsers = [];
   int _currentPage = 0;
   static const int _usersPerPage = 20;
 
@@ -41,11 +42,21 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
       _loading = true;
     });
 
-    List<User> users = await _userController.getAllUsers();
+    List<BasicUser> users;
+
+    if (widget.viewFriendsOf != null) {
+      users = await _userController.fetchUserFriends(widget.viewFriendsOf!);
+    } else {
+      users = await _userController.getAllUsers();
+    }
 
     setState(() {
       _allUsers = users;
-      _applyFilter(_searchController.text);
+      if (widget.viewFriendsOf == null) {
+        _applyFilter(_searchController.text);
+      } else {
+        _filteredUsers = users;
+      }
       _loading = false;
       _currentPage = 0;
     });
@@ -63,8 +74,8 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
     });
   }
 
-  String _getTimeLabel(User user) {
-    final minutes = user.totalTimePlayed + user.totalTimeEpisodesWatched + user.totalTimeMoviesWatched;
+  String _getTimeLabel(BasicUser user) {
+    final minutes = user.totalTimeMoviesWatched + user.totalTimeEpisodesWatched + user.totalTimePlayed;
     final hours = (minutes / 60).floor();
     final remainingMinutes = minutes % 60;
     return "$hours h ${remainingMinutes.toString().padLeft(2, '0')} min";
@@ -75,7 +86,7 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
     final int totalPages = (_filteredUsers.length / _usersPerPage).ceil();
     final int startIndex = _currentPage * _usersPerPage;
     final int endIndex = (_currentPage + 1) * _usersPerPage;
-    final List<User> currentUsers = _filteredUsers.sublist(
+    final List<BasicUser> currentUsers = _filteredUsers.sublist(
       startIndex,
       endIndex > _filteredUsers.length ? _filteredUsers.length : endIndex,
     );
@@ -87,31 +98,44 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: 400,
-              child: TextField(
-                controller: _searchController,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: "Buscar usuarios...",
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
-                  prefixIcon: const Icon(Icons.search, color: Colors.white70),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.white70),
+            if (widget.viewFriendsOf == null)
+              SizedBox(
+                width: 400,
+                child: TextField(
+                  controller: _searchController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: "Buscar usuarios...",
+                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+                    prefixIcon: const Icon(Icons.search, color: Colors.white70),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Colors.white70),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Colors.white54),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Colors.white),
+                    ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.white54),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.white),
+                  onChanged: (value) => _applyFilter(value),
+                ),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  "${widget.viewFriendsOf}'s Friends",
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                onChanged: (value) => _applyFilter(value),
               ),
-            ),
 
             const SizedBox(height: 24),
 
@@ -171,7 +195,7 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
     );
   }
 
-  Widget _buildUserTile(User user, int rank) {
+  Widget _buildUserTile(BasicUser user, int rank) {
     bool isHovering = false;
 
     return StatefulBuilder(
@@ -213,8 +237,7 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => ProfilePage(
-                      username: user.username,
-                      steamId: user.steamUser?.steamId,
+                      username: user.username
                     ),
                   ),
                 );
