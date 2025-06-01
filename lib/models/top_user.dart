@@ -1,4 +1,4 @@
-import 'steam_user.dart'; // Asegúrate de importar donde esté definido SteamUser
+import 'steam_user.dart';
 
 class TopUser {
   final int id;

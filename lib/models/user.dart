@@ -8,6 +8,8 @@ class User {
   SteamUser? steamUser;
   final int totalTimeMoviesWatched;
   final int totalTimeEpisodesWatched;
+  final int totalTimePlayed;
+  final int totalFriends;
   final int totalGames;
   final int totalMovies;
   final int totalEpisodes;
@@ -21,6 +23,8 @@ class User {
     this.steamUser,
     required this.totalTimeMoviesWatched,
     required this.totalTimeEpisodesWatched,
+    required this.totalTimePlayed,
+    required this.totalFriends,
     required this.totalGames,
     required this.totalMovies,
     required this.totalEpisodes,
@@ -34,6 +38,8 @@ class User {
     SteamUser? steamUser,
     int? totalTimeMoviesWatched,
     int? totalTimeEpisodesWatched,
+    int? totalTimePlayed,
+    int? totalFriends,
     int? totalGames,
     int? totalMovies,
     int? totalEpisodes,
@@ -49,6 +55,8 @@ class User {
           totalTimeMoviesWatched ?? this.totalTimeMoviesWatched,
       totalTimeEpisodesWatched:
           totalTimeEpisodesWatched ?? this.totalTimeEpisodesWatched,
+      totalTimePlayed: totalTimePlayed ?? this.totalTimePlayed,
+      totalFriends: totalFriends ?? this.totalFriends,
       totalGames: totalGames ?? this.totalGames,
       totalMovies: totalMovies ?? this.totalMovies,
       totalEpisodes: totalEpisodes ?? this.totalEpisodes,
@@ -67,6 +75,8 @@ class User {
           : null,
       totalTimeMoviesWatched: json['totalTimeMoviesWatched'] ?? 0,
       totalTimeEpisodesWatched: json['totalTimeEpisodesWatched'] ?? 0,
+      totalTimePlayed: json['totalTimePlayed'] ?? 0,
+      totalFriends: json['totalFriends'] ?? 0,
       totalGames: json['totalGames'] ?? 0,
       totalMovies: json['totalMovies'] ?? 0,
       totalEpisodes: json['totalEpisodes'] ?? 0,
@@ -83,6 +93,8 @@ class User {
       'steamUser': steamUser?.toJson(),
       'totalTimeMoviesWatched': totalTimeMoviesWatched,
       'totalTimeEpisodesWatched': totalTimeEpisodesWatched,
+      'totalTimePlayed': totalTimePlayed,
+      'totalFriends': totalFriends,
       'totalGames': totalGames,
       'totalMovies': totalMovies,
       'totalEpisodes': totalEpisodes,

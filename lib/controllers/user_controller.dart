@@ -155,5 +155,25 @@ class UserController {
       return false;
     }
   }
-  
+
+  Future<List<User>> getAllUsers() async {
+    final url = Uri.parse("http://localhost:5000/users/all");
+
+    try {
+      final res = await http.post(url);
+
+      if (res.statusCode == 200 && res.body.isNotEmpty) {
+        final List<dynamic> data = jsonDecode(res.body);
+        return data.map((json) => User.fromJson(json)).toList();
+      } else if (res.statusCode == 404) {
+        print("No se encontraron usuarios.");
+      } else {
+        print("Error inesperado: Código ${res.statusCode}");
+      }
+    } catch (e) {
+      print("Error al obtener todos los usuarios: $e");
+    }
+
+    return [];
+  }
 }
