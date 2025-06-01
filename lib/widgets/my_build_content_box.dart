@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:xpvault/screens/desktop/movie_detail_desktop.dart';
+import 'package:xpvault/screens/game_detail.dart';
+import 'package:xpvault/screens/movie_detail.dart';
 import 'package:xpvault/themes/app_color.dart';
 
-import '../screens/desktop/game_detail_desktop.dart';
 import 'my_netimagecontainer.dart';
 
 class MyBuildContentBox extends StatefulWidget {
   final List<dynamic> items;
   final bool showBodyLabel;
+  final Widget? returnPage;
 
   const MyBuildContentBox({
     super.key,
     required this.items,
-    this.showBodyLabel = true,
+    this.showBodyLabel = true, this.returnPage,
   });
 
   @override
@@ -64,14 +65,18 @@ class _MyBuildContentBoxState extends State<MyBuildContentBox> {
       );
     }
 
+    final ScrollController scrollController = ScrollController();
+
     return SizedBox(
-      height: 180,
+      height: 200, // Se incrementa un poco para dar espacio al scrollbar
       child: Scrollbar(
-        controller: _scrollController,
-        thumbVisibility: true,
-        trackVisibility: true,
+        controller: scrollController,
+        thumbVisibility: true, // Hace visible el scrollbar
+        trackVisibility: true, // Opcional: muestra la pista del scrollbar
+        thickness: 8,
+        radius: const Radius.circular(8),
         child: ListView.separated(
-          controller: _scrollController,
+          controller: scrollController,
           scrollDirection: Axis.horizontal,
           itemCount: widget.items.length,
           separatorBuilder: (_, __) => const SizedBox(width: 12),
@@ -112,7 +117,7 @@ class _MyBuildContentBoxState extends State<MyBuildContentBox> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        GameDetailDesktopPage(steamId: item.steamId),
+                        GameDetailPage(steamId: item.steamId, returnPage: widget.returnPage,),
                   ),
                 );
               };
@@ -122,7 +127,7 @@ class _MyBuildContentBoxState extends State<MyBuildContentBox> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        MovieDetailDesktopPage(movieId: item.tmbdId),
+                        MovieDetailPage(movieId: item.tmbdId, returnPage: widget.returnPage,),
                   ),
                 );
               };

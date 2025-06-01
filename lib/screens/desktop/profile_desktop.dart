@@ -14,11 +14,13 @@ import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
 import 'package:xpvault/widgets/my_build_section_title.dart';
+import 'package:xpvault/widgets/my_stats_card.dart';
 
 class ProfileDesktopPage extends StatefulWidget {
   final String? username;
+  final String? steamId;
 
-  const ProfileDesktopPage({super.key, this.username});
+  const ProfileDesktopPage({super.key, this.username, this.steamId});
 
   @override
   State<ProfileDesktopPage> createState() => _ProfileDesktopPageState();
@@ -63,8 +65,10 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
     _user = loadedUser;
 
     List<Game> games = [];
-    if (loadedUser.steamUser?.steamId != null && loadedUser.steamUser!.steamId!.isNotEmpty) {
-      games = (await _gameController.getTenUserGames(loadedUser.steamUser?.steamId!));
+    if (widget.steamId != null) {
+      games = await _gameController.getUserGames(widget.steamId);
+    } else if (loadedUser.steamUser != null && widget.username == null) {
+      games = await _gameController.getUserGames(loadedUser.steamUser!.steamId);
     }
 
     final movies = await _movieController.fetchUserMovies(loadedUser.username);
@@ -83,27 +87,22 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
     if (_loading) {
       return const DesktopLayout(
         title: "XPVAULT",
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: CircularProgressIndicator(color: AppColors.accent)),
       );
     }
 
     if (_user == null) {
-      return DesktopLayout(
+      return const DesktopLayout(
         title: "XPVAULT",
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.lock, color: AppColors.accent, size: 45),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Text(
-                widget.username == null
-                    ? "You need to log in to access the profile"
-                    : "User '${widget.username}' not found",
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 20,
-                ),
+                "You need to log in to access the profile",
+                style: TextStyle(color: AppColors.textPrimary, fontSize: 20),
               ),
             ],
           ),
@@ -118,50 +117,48 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Usuario con avatar y nombre
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (_user!.profilePhoto != null &&
-                    _user!.profilePhoto!.isNotEmpty)
-                     MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap:
-                          () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => UserSettingsPage(user: _user),
-                            ),
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () async {
+                      final currentUser = await UserManager.getUser();
+                      if (currentUser != null &&
+                          currentUser.username == _user!.username) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UserSettingsPage(user: _user),
                           ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("You can only edit your own profile"),
+                            backgroundColor: AppColors.warning,
+                          ),
+                        );
+                      }
+                    },
+                    child: CircleAvatar(
+                      radius: 36,
+                      backgroundColor: AppColors.surface,
+                      backgroundImage:
+                          (_user!.profilePhoto != null &&
+                                  _user!.profilePhoto!.isNotEmpty)
+                              ? MemoryImage(base64Decode(_user!.profilePhoto!))
+                              : null,
                       child:
-                  CircleAvatar(
-                    radius: 36,
-                    backgroundImage: MemoryImage(
-                      base64Decode(_user!.profilePhoto!),
-                    ),
-                  )
-                    )
-                  )
-                else
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap:
-                          () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => UserSettingsPage(user: _user),
-                            ),
-                          ),
-                      child: const CircleAvatar(
-                        backgroundColor: AppColors.surface,
-                        radius: 36,
-                        child: Text("👤", style: TextStyle(fontSize: 28)),
-                      ),
+                          (_user!.profilePhoto == null ||
+                                  _user!.profilePhoto!.isEmpty)
+                              ? const Text("👤", style: TextStyle(fontSize: 28))
+                              : null,
                     ),
                   ),
+                ),
                 const SizedBox(width: 16),
                 Text(
                   _user!.username,
@@ -175,66 +172,50 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
             ),
             const SizedBox(height: 24),
 
+            // Estadísticas
             Wrap(
               spacing: 24,
               runSpacing: 12,
               children: [
-                _buildStatCard("🎮 Tiempo J", _user!.totalTimePlayed),
-                _buildStatCard("🎬 Tiempo P", _user!.totalTimeMoviesWatched),
-                _buildStatCard("📺 Tiempo S", _user!.totalTimeEpisodesWatched),
-                _buildStatCard("👥 Amigos", _user!.totalFriends, isTime: false),
+                MyStatsCard(
+                  title: "🎮 Hours played",
+                  value: _user!.steamUser?.totalTimePlayed ?? 0,
+                  isTime: true,
+                ),
+                MyStatsCard(
+                  title: "🎬 Hours watched in movies",
+                  value: _user!.totalTimeMoviesWatched,
+                  isTime: true,
+                ),
+                MyStatsCard(
+                  title: "📺 Hours watched in series",
+                  value: _user!.totalTimeEpisodesWatched,
+                  isTime: true,
+                ),
+                MyStatsCard(title: "👥 Friends", value: 0, isTime: false),
               ],
             ),
             const SizedBox(height: 32),
 
+            // Contenido
             Expanded(
               child: ListView(
                 children: [
                   const MyBuildSectionTitle(title: "🎮 My Games"),
-                  MyBuildContentBox(items: _games, showBodyLabel: false),
+                  MyBuildContentBox(items: _games),
                   const SizedBox(height: 24),
 
                   const MyBuildSectionTitle(title: "🎬 My Movies"),
-                  MyBuildContentBox(items: _movies, showBodyLabel: false),
+                  MyBuildContentBox(items: _movies),
                   const SizedBox(height: 24),
 
                   const MyBuildSectionTitle(title: "📺 My Series"),
-                  MyBuildContentBox(items: _series, showBodyLabel: false),
+                  MyBuildContentBox(items: _series),
                 ],
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String title, int value, {bool isTime = true}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            isTime ? "$value h" : "$value",
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 16,
-            ),
-          ),
-        ],
       ),
     );
   }

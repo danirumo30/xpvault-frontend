@@ -3,76 +3,71 @@ import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
-import 'package:xpvault/models/movie.dart';
-import 'package:xpvault/controllers/movie_controller.dart';
-import 'package:xpvault/widgets/movie_grid.dart';
-import 'package:xpvault/screens/desktop/movie_detail_desktop.dart';
-import 'dart:async';
+import 'package:xpvault/models/serie.dart';
+import 'package:xpvault/controllers/serie_controller.dart';
+import 'package:xpvault/widgets/serie_grid.dart';
+import 'package:xpvault/screens/desktop/serie_detail_desktop.dart';
 
-class MoviesSeriesDesktop extends StatefulWidget {
+class SerieDesktopPage extends StatefulWidget {
   final Widget? returnPage;
 
-  const MoviesSeriesDesktop({super.key, this.returnPage});
+  const SerieDesktopPage({super.key, this.returnPage});
 
   @override
-  State<MoviesSeriesDesktop> createState() => _MoviesSeriesDesktopState();
+  State<SerieDesktopPage> createState() => _SerieDesktopPageState();
 }
 
-class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
-  List<Movie> movies = [];
+class _SerieDesktopPageState extends State<SerieDesktopPage> {
+  List<Serie> series = [];
   bool _isLoading = true;
   final TextEditingController searchController = TextEditingController();
   int _currentPage = 1;
   String dropdownValue = "";
 
-  void _showMovieDetails(Movie movie) {
+  final SerieController serieController = SerieController();
+
+  void _showSerieDetails(Serie serie) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MovieDetailDesktopPage(movieId: movie.tmbdId, returnPage: widget.returnPage,),
+        builder: (_) => SerieDetailDesktopPage(
+          serie: serie,
+          returnPage: widget.returnPage,
+        ),
       ),
     );
   }
 
-  final MovieController movieController = MovieController();
+  Future<void> _loadSeries() async {
+    setState(() => _isLoading = true);
 
-  Future<void> _initMovies() async {
-    await movieController.loadMoviesFromAssets('movies.json');
-    await _loadMovies();
+    List<Serie> loadedSeries;
+    if (searchController.text.trim().isNotEmpty) {
+      loadedSeries = await serieController.searchSerieByTitle(
+        searchController.text.trim(),
+        page: _currentPage,
+      );
+    } else {
+      loadedSeries = await serieController.fetchPopularSeries();
+    }
+
+    if (dropdownValue.isNotEmpty) {
+      loadedSeries = loadedSeries
+          .where((s) => s.genres.contains(dropdownValue))
+          .toList();
+    }
+
+    setState(() {
+      series = loadedSeries;
+      _isLoading = false;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _initMovies();
+    _loadSeries();
   }
-
-  Future<void> _loadMovies() async {
-    setState(() => _isLoading = true);
-
-    List<Movie> loadedMovies;
-    if (searchController.text.trim().isNotEmpty) {
-      loadedMovies = await movieController.searchMovieByTitle(
-        searchController.text.trim(),
-        page: _currentPage,
-      );
-    } else {
-      loadedMovies = await movieController.getPopularMovies(
-        page: _currentPage,
-      );
-    }
-
-    if (dropdownValue.isNotEmpty) {
-      loadedMovies =
-          loadedMovies.where((m) => m.genres.contains(dropdownValue)).toList();
-    }
-
-    setState(() {
-      movies = loadedMovies;
-      _isLoading = false;
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -89,14 +84,14 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                   flex: 2,
                   child: MyTextformfield(
                     textEditingController: searchController,
-                    hintText: "Search",
+                    hintText: "Search Series",
                     obscureText: false,
                     suffixIcon: Icon(Icons.search, color: AppColors.textMuted),
                     onFieldSubmitted: (value) {
                       setState(() {
                         _currentPage = 1;
                       });
-                      _loadMovies();
+                      _loadSeries();
                     },
                   ),
                 ),
@@ -106,18 +101,9 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                   child: MyDropdownbutton(
                     hint: dropdownValue.isEmpty ? "Select genre" : dropdownValue,
                     items: const [
-                      DropdownMenuItem(
-                        value: "Action",
-                        child: Text("Action"),
-                      ),
-                      DropdownMenuItem(
-                        value: "Horror",
-                        child: Text("Horror"),
-                      ),
-                      DropdownMenuItem(
-                        value: "Adventure",
-                        child: Text("Adventure"),
-                      ),
+                      DropdownMenuItem(value: "Drama", child: Text("Drama")),
+                      DropdownMenuItem(value: "Comedy", child: Text("Comedy")),
+                      DropdownMenuItem(value: "Sci-Fi", child: Text("Sci-Fi")),
                     ],
                     onChanged: (value) {
                       if (value is String) {
@@ -125,7 +111,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                           dropdownValue = value;
                           _currentPage = 1;
                         });
-                        _loadMovies();
+                        _loadSeries();
                       }
                     },
                   ),
@@ -151,7 +137,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Movies",
+                              "Series",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
@@ -160,10 +146,10 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                             ),
                             const SizedBox(height: 16),
                             Expanded(
-                              child: MovieGrid(
-                                movies: movies,
+                              child: SerieGrid(
+                                series: series,
                                 isLoading: _isLoading,
-                                onMovieTap: _showMovieDetails,
+                                onSerieTap: _showSerieDetails,
                               ),
                             ),
                           ],
@@ -193,9 +179,9 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            Expanded(
-                              child: const Center(
-                                child: Text("No movie selected"),
+                            const Expanded(
+                              child: Center(
+                                child: Text("No serie selected"),
                               ),
                             ),
                           ],

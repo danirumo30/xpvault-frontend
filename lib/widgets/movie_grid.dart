@@ -6,12 +6,13 @@ class MovieGrid extends StatelessWidget {
   final List<Movie> movies;
   final bool isLoading;
   final void Function(Movie) onMovieTap;
+  final Widget? returnPage;
 
   const MovieGrid({
     required this.movies,
     required this.isLoading,
     required this.onMovieTap,
-    super.key,
+    super.key, this.returnPage,
   });
 
   @override
@@ -35,7 +36,7 @@ class MovieGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final movie = movies[index];
         final poster = movie.posterUrl ?? '';
-        final year = movie.releaseDate?.split('-').first ?? 'Unknown';
+        final year = movie.releaseDate.split('-').first;
 
         return GestureDetector(
           onTap: () => onMovieTap(movie),

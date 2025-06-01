@@ -9,6 +9,8 @@ import 'package:xpvault/screens/ranking.dart';
 import 'package:xpvault/screens/steam.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
+import 'package:xpvault/screens/series.dart';
+
 
 class MainMenuWidget extends StatelessWidget {
   const MainMenuWidget({super.key});
@@ -72,15 +74,26 @@ class MainMenuWidget extends StatelessWidget {
             "Profile",
             style: TextStyle(color: AppColors.textPrimary),
           ),
-          onTap: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfilePage(),));
+          onTap: () async {
+            final user = await UserManager.getUser();
+
+            if (user != null) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(username: user.username),
+                ),
+              );
+            } else {
+              // Opcional: manejar el caso donde no hay usuario logueado
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("No user is currently logged in")),
+              );
+            }
           },
         ),
         ListTile(
-          leading: const Icon(
-            Icons.movie_creation_outlined,
-            color: AppColors.textPrimary,
-          ),
+          leading: const Icon(Icons.movie_creation_outlined, color: AppColors.textPrimary),
           title: const Text(
             "Cinema",
             style: TextStyle(color: AppColors.textPrimary),
@@ -88,7 +101,20 @@ class MainMenuWidget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MoviesSeriesPage()),
+              MaterialPageRoute(builder: (context) => MoviesSeriesPage(returnPage: MoviesSeriesPage())),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.tv, color: AppColors.textPrimary),
+          title: const Text(
+            "Series",
+            style: TextStyle(color: AppColors.textPrimary),
+          ),
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => SeriesPage()), // Cambia esto por tu pantalla de búsqueda de series
             );
           },
         ),
@@ -109,7 +135,7 @@ class MainMenuWidget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => SteamPage()),
+              MaterialPageRoute(builder: (context) => SteamPage(returnPage: SteamPage(returnPage: SteamPage()))),
             );
           },
         ),
