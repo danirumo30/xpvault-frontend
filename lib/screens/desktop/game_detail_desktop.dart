@@ -42,7 +42,7 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
         _isLoadingGame = false;
         gameNews = news;
         _hovering.addAll(List.generate(news.length, (_) => false));
-        _hoveringAchievements.addAll(List.generate(game.achievements?.length ?? 0, (_) => false));
+        _hoveringAchievements.addAll(List.generate(game.achievements.length, (_) => false));
         _searchingNews = false;
       });
     } else {
@@ -189,7 +189,7 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
             ),
             const SizedBox(height: 12),
 
-            (_game!.achievements == null || _game!.achievements!.isEmpty)
+            (_game!.achievements.isEmpty)
                 ? Text(
               "No achievements available.",
               style: TextStyle(color: AppColors.textSecondary),
@@ -197,7 +197,7 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
                 : Wrap(
               spacing: 16,
               runSpacing: 16,
-              children: _game!.achievements!.asMap().entries.map((entry) {
+              children: _game!.achievements.asMap().entries.map((entry) {
                 final index = entry.key;
                 final achievement = entry.value;
                 final imageUrl = _gameController.proxiedSteamImage(achievement.url);
@@ -298,7 +298,7 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.25),
+                                color: Colors.black.withValues(),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               )

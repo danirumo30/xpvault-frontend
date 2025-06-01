@@ -72,10 +72,25 @@ class MainMenuWidget extends StatelessWidget {
             "Profile",
             style: TextStyle(color: AppColors.textPrimary),
           ),
-          onTap: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfilePage(),));
+          onTap: () async {
+            final user = await UserManager.getUser();
+
+            if (user != null) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(username: user.username),
+                ),
+              );
+            } else {
+              // Opcional: manejar el caso donde no hay usuario logueado
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("No user is currently logged in")),
+              );
+            }
           },
         ),
+
         ListTile(
           leading: const Icon(
             Icons.movie_creation_outlined,

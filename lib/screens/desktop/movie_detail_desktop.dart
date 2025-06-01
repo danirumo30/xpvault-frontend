@@ -131,7 +131,12 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              CastWithNavigation(casting: _movie!.casting),
+                              
+                              // 🔧 Overflow fix: set fixed height
+                              SizedBox(
+                                height: 180, // Ajusta según necesidad
+                                child: CastWithNavigation(casting: _movie!.casting),
+                              ),
                             ],
                           ),
                         ),
@@ -157,8 +162,8 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                   height: 350,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.broken_image,
-                                      size: 100, color: AppColors.error),
+                                      const Icon(Icons.broken_image,
+                                          size: 100, color: AppColors.error),
                                 ),
                               ),
                             ),
@@ -177,8 +182,8 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                       height: 40,
                                       fit: BoxFit.cover,
                                       errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.person,
-                                          color: AppColors.textMuted),
+                                          const Icon(Icons.person,
+                                              color: AppColors.textMuted),
                                     ),
                                   )
                                 else
