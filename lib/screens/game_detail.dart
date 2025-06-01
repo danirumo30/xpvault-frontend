@@ -5,7 +5,9 @@ import 'package:xpvault/screens/mobile/home_mobile.dart';
 
 class GameDetailPage extends StatefulWidget {
   final int steamId;
-  const GameDetailPage({super.key, required this.steamId});
+  final Widget? returnPage;
+
+  const GameDetailPage({super.key, required this.steamId, this.returnPage});
 
   @override
   State<GameDetailPage> createState() => _GameDetailPage();
@@ -17,7 +19,7 @@ class _GameDetailPage extends State<GameDetailPage> {
     return Scaffold(
       body: ResponsiveLayout(
         mobileBody: HomeMobilePage(),
-        desktopBody: GameDetailDesktopPage(steamId: widget.steamId,),
+        desktopBody: GameDetailDesktopPage(steamId: widget.steamId,returnPage: widget.returnPage),
       ),
     );
   }

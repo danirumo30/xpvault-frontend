@@ -8,11 +8,12 @@ import 'my_netimagecontainer.dart';
 class MyBuildContentBox extends StatelessWidget {
   final List<dynamic> items;
   final bool showBodyLabel;
+  final Widget? returnPage;
 
   const MyBuildContentBox({
     super.key,
     required this.items,
-    this.showBodyLabel = true,
+    this.showBodyLabel = true, this.returnPage,
   });
 
   @override
@@ -97,7 +98,7 @@ class MyBuildContentBox extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        GameDetailPage(steamId: item.steamId),
+                        GameDetailPage(steamId: item.steamId, returnPage: returnPage,),
                   ),
                 );
               };
@@ -107,7 +108,7 @@ class MyBuildContentBox extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        MovieDetailPage(movieId: item.tmbdId),
+                        MovieDetailPage(movieId: item.tmbdId, returnPage: returnPage,),
                   ),
                 );
               };

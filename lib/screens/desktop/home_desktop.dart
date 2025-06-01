@@ -13,6 +13,7 @@ import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
 import 'package:xpvault/screens/desktop/profile_desktop.dart';
+import 'package:xpvault/screens/home.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
@@ -168,17 +169,17 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                   : ListView(
                 children: [
                   const MyBuildSectionTitle(title: "🎮 Featured Games"),
-                  MyBuildContentBox(items: featuredGames, showBodyLabel: false),
+                  MyBuildContentBox(items: featuredGames, showBodyLabel: false, returnPage: HomePage(),),
 
                   const SizedBox(height: 24),
 
                   const MyBuildSectionTitle(title: "🎬 Popular Movies"),
-                  MyBuildContentBox(items: popularMovies, showBodyLabel: false),
+                  MyBuildContentBox(items: popularMovies, showBodyLabel: false, returnPage: HomePage(),),
 
                   const SizedBox(height: 24),
 
                   const MyBuildSectionTitle(title: "📺 Popular Series"),
-                  MyBuildContentBox(items: popularSeries, showBodyLabel: false),
+                  MyBuildContentBox(items: popularSeries, showBodyLabel: false, returnPage: HomePage()),
                 ],
               ),
             ),

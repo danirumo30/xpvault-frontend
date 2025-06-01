@@ -7,8 +7,9 @@ import 'package:xpvault/layouts/desktop_layout.dart';
 
 class MovieDetailDesktopPage extends StatefulWidget {
   final int movieId;
+  final Widget? returnPage;
 
-  const MovieDetailDesktopPage({super.key, required this.movieId});
+  const MovieDetailDesktopPage({super.key, required this.movieId, this.returnPage});
 
   @override
   State<MovieDetailDesktopPage> createState() => _MovieDetailDesktopPageState();
@@ -38,7 +39,7 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: CircularProgressIndicator(color: AppColors.accent,)),
       );
     }
 
@@ -69,7 +70,7 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                 Align(
                   alignment: Alignment.topLeft,
                   child: TextButton.icon(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => widget.returnPage!,)),
                     icon: const Icon(Icons.arrow_back, color: AppColors.accent),
                     label: const Text(
                       'Back',

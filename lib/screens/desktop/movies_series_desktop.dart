@@ -10,7 +10,9 @@ import 'package:xpvault/screens/desktop/movie_detail_desktop.dart';
 import 'dart:async';
 
 class MoviesSeriesDesktop extends StatefulWidget {
-  const MoviesSeriesDesktop({super.key});
+  final Widget? returnPage;
+
+  const MoviesSeriesDesktop({super.key, this.returnPage});
 
   @override
   State<MoviesSeriesDesktop> createState() => _MoviesSeriesDesktopState();
@@ -27,7 +29,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MovieDetailDesktopPage(movieId: movie.tmbdId),
+        builder: (_) => MovieDetailDesktopPage(movieId: movie.tmbdId, returnPage: widget.returnPage,),
       ),
     );
   }

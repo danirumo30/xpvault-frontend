@@ -5,8 +5,9 @@ import 'package:xpvault/screens/mobile/home_mobile.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final int movieId;
+  final Widget? returnPage;
 
-  const MovieDetailPage({super.key, required this.movieId});
+  const MovieDetailPage({super.key, required this.movieId, this.returnPage});
 
   @override
   State<MovieDetailPage> createState() => _MovieDetailPage();
@@ -18,7 +19,7 @@ class _MovieDetailPage extends State<MovieDetailPage> {
     return Scaffold(
       body: ResponsiveLayout(
         mobileBody: HomeMobilePage(),
-        desktopBody: MovieDetailDesktopPage(movieId: widget.movieId,),
+        desktopBody: MovieDetailDesktopPage(movieId: widget.movieId, returnPage: widget.returnPage,),
       ),
     );
   }

@@ -103,7 +103,7 @@ class MainMenuWidget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MoviesSeriesPage()),
+              MaterialPageRoute(builder: (context) => MoviesSeriesPage(returnPage: MoviesSeriesPage(),)),
             );
           },
         ),
@@ -124,7 +124,7 @@ class MainMenuWidget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => SteamPage()),
+              MaterialPageRoute(builder: (context) => SteamPage(returnPage: SteamPage(returnPage: SteamPage()))),
             );
           },
         ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/game_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/game.dart';
-import 'package:xpvault/screens/desktop/game_detail_desktop.dart';
+import 'package:xpvault/screens/game_detail.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
@@ -10,7 +10,9 @@ import 'package:xpvault/widgets/my_netimagecontainer.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
 
 class SteamDesktopPage extends StatefulWidget {
-  const SteamDesktopPage({super.key});
+  final Widget? returnPage;
+
+  const SteamDesktopPage({super.key, this.returnPage});
 
   @override
   State<SteamDesktopPage> createState() => _SteamDesktopPageState();
@@ -37,7 +39,6 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   bool _isFirstTimeGenre = true;
 
   int _currentPage = 0;
-  int _totalGamesCount = 0;
 
   final List<String> steamGenres = [
     "All",
@@ -136,9 +137,6 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
 
   @override
   Widget build(BuildContext context) {
-    final int totalPages =
-    (games.length < _pageSize) ? _currentPage + 1 : _currentPage + 2;
-
     return DesktopLayout(
       title: "XPVAULT",
       body: Padding(
@@ -273,8 +271,9 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            GameDetailDesktopPage(
-                                                steamId: game.steamId),
+                                            GameDetailPage(
+                                                steamId: game.steamId,
+                                                returnPage: widget.returnPage,),
                                       ),
                                     ),
                                   );
@@ -364,9 +363,10 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            GameDetailDesktopPage(
+                                            GameDetailPage(
                                                 steamId:
-                                                game.steamId),
+                                                game.steamId,
+                                                returnPage: widget.returnPage,),
                                       ),
                                     ),
                                   );
