@@ -214,8 +214,7 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
                   MaterialPageRoute(
                     builder:
                         (_) => ProfilePage(
-                          username: user.nickname,
-                          steamId: user.steamUser?.steamId,
+                          username: user.nickname
                         ),
                   ),
                 );

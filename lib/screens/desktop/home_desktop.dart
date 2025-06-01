@@ -14,6 +14,7 @@ import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
 import 'package:xpvault/screens/desktop/profile_desktop.dart';
 import 'package:xpvault/screens/home.dart';
+import 'package:xpvault/screens/users.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
@@ -34,6 +35,7 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
   List<Serie> popularSeries = [];
   User? _user;
   final UserController _userController = UserController();
+  final TextEditingController _searchController = TextEditingController();
 
   bool isLoading = true;
   bool _isSteamLoggedIn = false;
@@ -43,6 +45,12 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
   void initState() {
     super.initState();
     _initAsync();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _initAsync() async {
@@ -110,6 +118,17 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
     });
   }
 
+  void _handleSearch() {
+    final query = _searchController.text.trim();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UsersPage(initialSearchTerm: query),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return DesktopLayout(
@@ -127,8 +146,14 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                   width: 600,
                   height: 40,
                   child: MyTextformfield(
-                    hintText: "Search friends 🔍",
+                    textEditingController: _searchController,
+                    hintText: "Search friends",
                     obscureText: false,
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search, color: AppColors.textMuted),
+                      onPressed: _handleSearch,
+                    ),
+                    onFieldSubmitted: (_) => _handleSearch(),
                   ),
                 ),
                 Padding(

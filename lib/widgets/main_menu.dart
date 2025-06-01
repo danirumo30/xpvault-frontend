@@ -7,6 +7,7 @@ import 'package:xpvault/screens/playstation.dart';
 import 'package:xpvault/screens/profile.dart';
 import 'package:xpvault/screens/ranking.dart';
 import 'package:xpvault/screens/steam.dart';
+import 'package:xpvault/screens/users.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 
@@ -159,6 +160,19 @@ class MainMenuWidget extends StatelessWidget {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const RankingPage()),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.emoji_people, color: AppColors.textPrimary),
+          title: const Text(
+            "Users",
+            style: TextStyle(color: AppColors.textPrimary),
+          ),
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const UsersPage(initialSearchTerm: "")),
             );
           },
         ),

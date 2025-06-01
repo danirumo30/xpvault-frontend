@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/game_controller.dart';
 import 'package:xpvault/controllers/movie_controller.dart';
 import 'package:xpvault/controllers/serie_controller.dart';
+import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
 import 'package:xpvault/screens/user_settings.dart';
+import 'package:xpvault/screens/users.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
@@ -30,13 +32,18 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
   final GameController _gameController = GameController();
   final MovieController _movieController = MovieController();
   final SerieController _serieController = SerieController();
+  final UserController _userController = UserController();
 
   User? _user;
   List<Game> _games = [];
   List<Movie> _movies = [];
   List<Serie> _series = [];
 
+  bool _hoveringTick = false;
+  bool _hoveringFriends = false;
   bool _loading = true;
+  bool _isFriend = false;
+  String? _currentUsername;
 
   @override
   void initState() {
@@ -54,6 +61,8 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
       loadedUser = await UserManager.getUserByUsername(widget.username!);
     }
 
+    if (!mounted) return;
+
     if (loadedUser == null) {
       setState(() {
         _user = null;
@@ -64,15 +73,30 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
 
     _user = loadedUser;
 
+    final currentUser = await UserManager.getUser();
+    if (!mounted) return;
+
+    _currentUsername = currentUser?.username;
+
+    if (_currentUsername != null && _currentUsername != _user!.username) {
+      _isFriend = await _userController.isFriend(_currentUsername!, _user!.username);
+    } else {
+      _isFriend = false;
+    }
+
+    if (!mounted) return;
+
     List<Game> games = [];
     if (widget.steamId != null) {
-      games = await _gameController.getUserGames(widget.steamId);
+      games = await _gameController.getTenUserGames(widget.steamId);
     } else if (loadedUser.steamUser != null && widget.username == null) {
-      games = await _gameController.getUserGames(loadedUser.steamUser!.steamId);
+      games = await _gameController.getTenUserGames(loadedUser.steamUser!.steamId);
     }
 
     final movies = await _movieController.fetchUserMovies(loadedUser.username);
     final series = await _serieController.fetchUserSeries(loadedUser.username);
+
+    if (!mounted) return;
 
     setState(() {
       _games = games;
@@ -117,7 +141,6 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Usuario con avatar y nombre
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -147,15 +170,15 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
                       radius: 36,
                       backgroundColor: AppColors.surface,
                       backgroundImage:
-                          (_user!.profilePhoto != null &&
-                                  _user!.profilePhoto!.isNotEmpty)
-                              ? MemoryImage(base64Decode(_user!.profilePhoto!))
-                              : null,
+                      (_user!.profilePhoto != null &&
+                          _user!.profilePhoto!.isNotEmpty)
+                          ? MemoryImage(base64Decode(_user!.profilePhoto!))
+                          : null,
                       child:
-                          (_user!.profilePhoto == null ||
-                                  _user!.profilePhoto!.isEmpty)
-                              ? const Text("👤", style: TextStyle(fontSize: 28))
-                              : null,
+                      (_user!.profilePhoto == null ||
+                          _user!.profilePhoto!.isEmpty)
+                          ? const Text("👤", style: TextStyle(fontSize: 28))
+                          : null,
                     ),
                   ),
                 ),
@@ -172,32 +195,133 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
             ),
             const SizedBox(height: 24),
 
-            // Estadísticas
-            Wrap(
-              spacing: 24,
-              runSpacing: 12,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                MyStatsCard(
-                  title: "🎮 Hours played",
-                  value: _user!.steamUser?.totalTimePlayed ?? 0,
-                  isTime: true,
+                Expanded(
+                  child: Wrap(
+                    spacing: 24,
+                    runSpacing: 12,
+                    children: [
+                      MyStatsCard(
+                        title: "🎮 Hours played",
+                        value: _user!.steamUser?.totalTimePlayed ?? 0,
+                        isTime: true,
+                      ),
+                      MyStatsCard(
+                        title: "🎬 Hours watched in movies",
+                        value: _user!.totalTimeMoviesWatched,
+                        isTime: true,
+                      ),
+                      MyStatsCard(
+                        title: "📺 Hours watched in series",
+                        value: _user!.totalTimeEpisodesWatched,
+                        isTime: true,
+                      ),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        onEnter: (_) => setState(() => _hoveringFriends = true),
+                        onExit: (_) => setState(() => _hoveringFriends = false),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UsersPage(
+                                  initialSearchTerm: "",
+                                  viewFriendsOf: _user!.username,
+                                ),
+                              ),
+                            );
+                          },
+                          child: AnimatedScale(
+                            scale: _hoveringFriends ? 1.05 : 1.0,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
+                            child: MyStatsCard(
+                              title: "👥 Friends",
+                              value: _user!.totalFriends,
+                              isTime: false,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                MyStatsCard(
-                  title: "🎬 Hours watched in movies",
-                  value: _user!.totalTimeMoviesWatched,
-                  isTime: true,
-                ),
-                MyStatsCard(
-                  title: "📺 Hours watched in series",
-                  value: _user!.totalTimeEpisodesWatched,
-                  isTime: true,
-                ),
-                MyStatsCard(title: "👥 Friends", value: 0, isTime: false),
+                if (_currentUsername != null && _currentUsername != _user!.username)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 24),
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      onEnter: (_) => setState(() => _hoveringTick = true),
+                      onExit: (_) => setState(() => _hoveringTick = false),
+                      child: GestureDetector(
+                        onTap: () async {
+                          bool success;
+                          final currentUsername = (await UserManager.getUser())?.username;
+
+                          if (currentUsername == null) {
+                            print('Error: No se pudo obtener el usuario actual');
+                            return;
+                          }
+
+                          if (_isFriend) {
+                            success = await _userController.deleteFriendFromUser(currentUsername, _user!.username);
+                          } else {
+                            success = await _userController.addFriend(currentUsername, _user!.username);
+                          }
+
+                          if (success) {
+                            setState(() {
+                              _isFriend = !_isFriend;
+                              _loading = true;
+                            });
+
+                            await _loadUserAndContent();
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  _isFriend ? "Friend added!" : "Friend removed!",
+                                ),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Something went wrong"),
+                                backgroundColor: AppColors.warning,
+                              ),
+                            );
+                          }
+                        },
+                        child: AnimatedScale(
+                          scale: _hoveringTick ? 1.3 : 1.0,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeInOut,
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _isFriend ? Colors.lightGreenAccent : Colors.grey,
+                            ),
+                            child: const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
             const SizedBox(height: 32),
 
-            // Contenido
             Expanded(
               child: ListView(
                 children: [
