@@ -26,6 +26,7 @@ class UserSettingsDesktopPage extends StatefulWidget {
 }
 
 class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
+  User? _user;
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _repeatNewPasswordController =
       TextEditingController();
@@ -40,14 +41,14 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
   @override
   void initState() {
     super.initState();
-    _usernameController.text = widget.user?.username ?? '';
-    _emailController.text = widget.user?.email ?? '';
+    _user = widget.user;
+    _usernameController.text = _user?.username ?? '';
+    _emailController.text = _user?.email ?? '';
 
     // Cargar la imagen si existe
-    if (widget.user?.profilePhoto != null &&
-        widget.user!.profilePhoto!.isNotEmpty) {
+    if (_user?.profilePhoto != null && _user!.profilePhoto!.isNotEmpty) {
       try {
-        _imageBytes = base64Decode(widget.user!.profilePhoto!);
+        _imageBytes = base64Decode(_user!.profilePhoto!);
       } catch (e) {
         print("Error decoding profile image: $e");
       }
@@ -80,13 +81,17 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
           });
 
           final base64Image = base64Encode(bytes);
-          final updatedUser = widget.user!.copyWith(profilePhoto: base64Image);
-
+          final updatedUser = _user!.copyWith(profilePhoto: base64Image);
+          print(updatedUser.toJson());
           final token = await TokenManager.getToken();
           await UserManager.saveUser(updatedUser);
           if (token != null) {
             await _userController.saveUser(updatedUser, token);
           }
+
+          setState(() {
+            _user = updatedUser;
+          });
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -94,6 +99,7 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
               backgroundColor: AppColors.success,
             ),
           );
+          await _logout();
         });
       }
     });
@@ -137,7 +143,7 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    widget.user!.username,
+                    _user?.username ?? '',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -146,7 +152,7 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    widget.user!.email,
+                    _user?.email ?? '',
                     style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.textSecondary,
@@ -251,7 +257,7 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                           }
 
                           if (formKey.currentState?.validate() ?? false) {
-                            final updatedUser = widget.user!.copyWith(
+                            final updatedUser = _user!.copyWith(
                               password: _newPasswordController.text,
                             );
 
@@ -263,6 +269,12 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                                 token,
                               );
                             }
+                            
+                            setState(() {
+                              _user = updatedUser;
+                            });
+
+                            print(_user?.toJson());
 
                             _newPasswordController.clear();
                             _repeatNewPasswordController.clear();
@@ -273,6 +285,7 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                                 backgroundColor: AppColors.success,
                               ),
                             );
+                            await _logout();
                           }
                         },
                       ),
@@ -289,15 +302,15 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                       ),
                       const SizedBox(height: 16),
 
-                      if (widget.user?.steamUser?.steamId != null)
+                      if (_user?.steamUser?.steamId != null)
                         MyButton(
                           text: "Steam linked - Click to unlink",
                           fontSize: 18,
                           onTap: () async {
-                            final updatedUser = widget.user!.copyWith(
-                              steamUser: null,
+                            final updatedUser = _user!.copyWith(
+                              setSteamUserToNull: true,
                             );
-
+                            print(updatedUser.toJson());
                             final token = await TokenManager.getToken();
                             await UserManager.saveUser(updatedUser);
                             if (token != null) {
@@ -308,7 +321,7 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                             }
 
                             setState(() {
-                              widget.user!.steamUser = null;
+                              _user = updatedUser;
                             });
 
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -317,6 +330,7 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                                 backgroundColor: AppColors.success,
                               ),
                             );
+                            await _logout();
                           },
                         )
                       else

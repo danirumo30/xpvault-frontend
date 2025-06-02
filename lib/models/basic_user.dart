@@ -1,21 +1,21 @@
-class TopUser {
+class BasicUser {
   final int id;
   final String nickname;
   final String? photoUrl;
   final int totalTime;
 
-  TopUser({
+  BasicUser({
     required this.id,
     required this.nickname,
     this.photoUrl,
     required this.totalTime,
   });
 
-  TopUser copyWith({
+  BasicUser copyWith({
     String? photoUrl,
     int? totalTime,
   }) {
-    return TopUser(
+    return BasicUser(
       id: id,
       nickname: nickname,
       photoUrl: photoUrl ?? this.photoUrl,
@@ -23,12 +23,12 @@ class TopUser {
     );
   }
 
-  factory TopUser.fromJson(Map<String, dynamic> json) {
-    return TopUser(
+  factory BasicUser.fromJson(Map<String, dynamic> json) {
+    return BasicUser(
       id: json['id'] as int,
       nickname: json['nickname'] as String,
       photoUrl: json['photoUrl'] as String?,
-      totalTime: json['totalTime'] as int? ?? 0,
+      totalTime: json['totalTime'] ?? 0,
     );
   }
 

@@ -19,7 +19,7 @@ class _ProfilePage extends State<ProfilePage> {
     return Scaffold(
       body: ResponsiveLayout(
         mobileBody: HomeMobilePage(),
-        desktopBody: ProfileDesktopPage(username: widget.username, steamId: widget.steamId,),
+        desktopBody: ProfileDesktopPage(username: widget.username, steamId: widget.steamId),
       ),
     );
   }
