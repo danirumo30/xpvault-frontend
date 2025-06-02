@@ -205,7 +205,7 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
                     children: [
                       MyStatsCard(
                         title: "🎮 Hours played",
-                        value: _user!.steamUser?.totalTimePlayed ?? 0,
+                        value: _user!.totalTimePlayed ?? 0,
                         isTime: true,
                       ),
                       MyStatsCard(
