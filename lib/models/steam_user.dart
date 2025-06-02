@@ -4,6 +4,7 @@ class SteamUser {
   final String? avatar;
   final String? profileUrl;
   final int totalTimePlayed;
+  final List<String>? ownedGames;
 
   SteamUser({
     this.steamId,
@@ -11,6 +12,7 @@ class SteamUser {
     this.avatar,
     this.profileUrl,
     this.totalTimePlayed = 0,
+    this.ownedGames,
   });
 
   SteamUser copyWith({
@@ -19,6 +21,7 @@ class SteamUser {
     String? avatar,
     String? profileUrl,
     int? totalTimePlayed,
+    List<String>? ownedGames,
   }) {
     return SteamUser(
       steamId: steamId ?? this.steamId,
@@ -26,6 +29,7 @@ class SteamUser {
       avatar: avatar ?? this.avatar,
       profileUrl: profileUrl ?? this.profileUrl,
       totalTimePlayed: totalTimePlayed ?? this.totalTimePlayed,
+      ownedGames: ownedGames ?? this.ownedGames,
     );
   }
 
@@ -36,16 +40,20 @@ class SteamUser {
       avatar: json['avatar'],
       profileUrl: json['profileUrl'],
       totalTimePlayed: json['totalTimePlayed'] ?? 0,
+      ownedGames: json['ownedGames'] != null
+          ? List<String>.from(json['ownedGames'])
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'steamId': steamId,
-      'nickname': nickname,
-      'avatar': avatar,
-      'profileUrl': profileUrl,
+      'nickname': nickname ?? '',
+      'avatar': avatar ?? '',
+      'profileUrl': profileUrl ?? '',
       'totalTimePlayed': totalTimePlayed,
+      'ownedGames': ownedGames,
     };
   }
 }

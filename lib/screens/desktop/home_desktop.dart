@@ -8,13 +8,13 @@ import 'package:xpvault/controllers/movie_controller.dart';
 import 'package:xpvault/controllers/serie_controller.dart';
 import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
+import 'package:xpvault/models/basic_user.dart';
 import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
 import 'package:xpvault/screens/desktop/profile_desktop.dart';
 import 'package:xpvault/screens/home.dart';
-import 'package:xpvault/screens/users.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
@@ -35,27 +35,31 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
   List<Serie> popularSeries = [];
   User? _user;
   final UserController _userController = UserController();
-  final TextEditingController _searchController = TextEditingController();
 
   bool isLoading = true;
   bool _isSteamLoggedIn = false;
   String _token = "";
 
+  // Para la búsqueda de usuarios:
+  final TextEditingController _searchController = TextEditingController();
+  List<BasicUser> _allUsers = [];
+  List<BasicUser> _filteredUsers = [];
+  bool _loadingUsers = true;
+
   @override
   void initState() {
     super.initState();
     _initAsync();
-  }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+    _searchController.addListener(() {
+      _applyUserFilter(_searchController.text);
+    });
   }
 
   Future<void> _initAsync() async {
     await handleSteamLogin();
     await loadContentSequentially();
+    await loadUsers();
   }
 
   Future<void> handleSteamLogin() async {
@@ -118,16 +122,48 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
     });
   }
 
-  void _handleSearch() {
-    final query = _searchController.text.trim();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => UsersPage(initialSearchTerm: query),
-      ),
-    );
+  Future<void> loadUsers() async {
+    setState(() {
+      _loadingUsers = true;
+    });
+
+    List<BasicUser> users = await _userController.getAllUsers();
+
+    setState(() {
+      _allUsers = users;
+      _filteredUsers = [];
+      _loadingUsers = false;
+    });
   }
 
+  void _applyUserFilter(String filter) {
+    if (filter.isEmpty) {
+      setState(() {
+        _filteredUsers = [];
+      });
+    } else {
+      setState(() {
+        _filteredUsers = _allUsers
+            .where((user) =>
+                user.nickname.toLowerCase().contains(filter.toLowerCase()))
+            .toList();
+      });
+    }
+  }
+
+  String _getTimeLabel(BasicUser user) {
+    final minutes =
+        user.totalTime;
+    final hours = (minutes / 60).floor();
+    final remainingMinutes = minutes % 60;
+    return "$hours h ${remainingMinutes.toString().padLeft(2, '0')} min";
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +173,8 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 0, top: 24, right: 32, bottom: 0),
+            padding:
+                const EdgeInsets.only(left: 0, top: 24, right: 32, bottom: 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -147,13 +184,8 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                   height: 40,
                   child: MyTextformfield(
                     textEditingController: _searchController,
-                    hintText: "Search friends",
+                    hintText: "Search friends...",
                     obscureText: false,
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.search, color: AppColors.textMuted),
-                      onPressed: _handleSearch,
-                    ),
-                    onFieldSubmitted: (_) => _handleSearch(),
                   ),
                 ),
                 Padding(
@@ -170,13 +202,15 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                           ),
                         ),
                       const SizedBox(width: 12),
-                      _user != null && _user!.profilePhoto != null && _user!.profilePhoto!.isNotEmpty
+                      _user != null &&
+                              _user!.profilePhoto != null &&
+                              _user!.profilePhoto!.isNotEmpty
                           ? _HoverableProfileAvatar(
-                        imageBytes: base64Decode(_user!.profilePhoto!),
-                      )
+                              imageBytes: base64Decode(_user!.profilePhoto!),
+                            )
                           : const _HoverableProfileAvatar(
-                        imageBytes: null,
-                      ),
+                              imageBytes: null,
+                            ),
                     ],
                   ),
                 ),
@@ -184,29 +218,103 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
             ),
           ),
 
+          const SizedBox(height: 16),
+
+          // Mostrar lista de usuarios solo si hay texto en búsqueda
+          if (_loadingUsers)
+            const Center(child: CircularProgressIndicator(color: AppColors.accent,))
+          else if (_searchController.text.isEmpty)
+            const SizedBox()
+          else if (_filteredUsers.isEmpty)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                "No se encontraron usuarios",
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          else
+            SizedBox(
+              height: 200,
+              child: ListView.separated(
+                itemCount: _filteredUsers.length,
+                separatorBuilder: (_, __) => const Divider(color: Colors.white24),
+                itemBuilder: (context, index) {
+                  final user = _filteredUsers[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: AppColors.surface,
+                      backgroundImage: (user.photoUrl != null &&
+                              user.photoUrl!.isNotEmpty)
+                          ? MemoryImage(base64Decode(user.photoUrl!))
+                          : null,
+                      child: (user.photoUrl == null ||
+                              user.photoUrl!.isEmpty)
+                          ? const Icon(Icons.person, color: Colors.white)
+                          : null,
+                    ),
+                    title: Text(
+                      user.nickname,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    subtitle: Text(
+                      _getTimeLabel(user),
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ProfileDesktopPage(
+                            username: user.nickname,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+
           const SizedBox(height: 32),
 
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator(color: AppColors.accent,))
                   : ListView(
-                children: [
-                  const MyBuildSectionTitle(title: "🎮 Featured Games"),
-                  MyBuildContentBox(items: featuredGames, showBodyLabel: false, returnPage: HomePage(),),
+                      children: [
+                        const MyBuildSectionTitle(title: "🎮 Featured Games"),
+                        MyBuildContentBox(
+                          items: featuredGames,
+                          showBodyLabel: false,
+                          returnPage: HomePage(),
+                        ),
 
-                  const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                  const MyBuildSectionTitle(title: "🎬 Popular Movies"),
-                  MyBuildContentBox(items: popularMovies, showBodyLabel: false, returnPage: HomePage(),),
+                        const MyBuildSectionTitle(title: "🎬 Popular Movies"),
+                        MyBuildContentBox(
+                          items: popularMovies,
+                          showBodyLabel: false,
+                          returnPage: HomePage(),
+                        ),
 
-                  const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                  const MyBuildSectionTitle(title: "📺 Popular Series"),
-                  MyBuildContentBox(items: popularSeries, showBodyLabel: false, returnPage: HomePage()),
-                ],
-              ),
+                        const MyBuildSectionTitle(title: "📺 Popular Series"),
+                        MyBuildContentBox(
+                          items: popularSeries,
+                          showBodyLabel: false,
+                          returnPage: HomePage(),
+                        ),
+                      ],
+                    ),
             ),
           ),
         ],
@@ -221,7 +329,8 @@ class _HoverableProfileAvatar extends StatefulWidget {
   const _HoverableProfileAvatar({Key? key, this.imageBytes}) : super(key: key);
 
   @override
-  State<_HoverableProfileAvatar> createState() => _HoverableProfileAvatarState();
+  State<_HoverableProfileAvatar> createState() =>
+      _HoverableProfileAvatarState();
 }
 
 class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
@@ -248,9 +357,7 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
             shape: BoxShape.circle,
             image: widget.imageBytes != null
                 ? DecorationImage(
-              image: MemoryImage(widget.imageBytes!),
-              fit: BoxFit.cover,
-            )
+                    image: MemoryImage(widget.imageBytes!), fit: BoxFit.cover)
                 : null,
             color: widget.imageBytes == null ? AppColors.surface : null,
           ),

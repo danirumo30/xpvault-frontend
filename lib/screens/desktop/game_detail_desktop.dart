@@ -4,6 +4,7 @@ import 'package:xpvault/controllers/game_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/news.dart';
+import 'package:xpvault/screens/desktop/steam_desktop.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 class GameDetailDesktopPage extends StatefulWidget {
@@ -384,7 +385,12 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
                       ),
                     );
                   } else {
-                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SteamDesktopPage(),
+                      ),
+                    );
                   }
                 },
                 child: const Text("Go Back", style: TextStyle(fontSize: 16)),

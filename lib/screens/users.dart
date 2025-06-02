@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/responsive_layout.dart';
-import 'package:xpvault/screens/desktop/users_desktop.dart';
 
 class UsersPage extends StatefulWidget {
   final String initialSearchTerm;
