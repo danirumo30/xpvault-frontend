@@ -18,7 +18,7 @@ class RankingDesktopPage extends StatefulWidget {
 enum RankingType { games, movies, series }
 
 class _RankingDesktopPageState extends State<RankingDesktopPage> {
-  RankingType _currentType = RankingType.games;
+  RankingType _currentType = RankingType.movies;
   final UserController _userController = UserController();
 
   bool _loading = true;
@@ -101,9 +101,9 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
                 Wrap(
                   spacing: 8,
                   children: [
-                    _buildFilterButton("🎮 Games", RankingType.games),
                     _buildFilterButton("🎬 Movies", RankingType.movies),
                     _buildFilterButton("📺 Series", RankingType.series),
+                    _buildFilterButton("🎮 Games", RankingType.games),
                   ],
                 ),
               ],

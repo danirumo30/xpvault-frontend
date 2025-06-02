@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/responsive_layout.dart';
 
+import 'desktop/user_searsh_desktop.dart';
+
 class UsersPage extends StatefulWidget {
   final String initialSearchTerm;
   final String? viewFriendsOf;
