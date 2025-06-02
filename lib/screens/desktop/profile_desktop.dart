@@ -89,7 +89,7 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
     List<Game> games = [];
     if (widget.steamId != null) {
       games = await _gameController.getTenUserGames(widget.steamId);
-    } else if (loadedUser.steamUser != null && widget.username == null) {
+    } else if (loadedUser.steamUser != null) {
       games = await _gameController.getTenUserGames(loadedUser.steamUser!.steamId);
     }
 

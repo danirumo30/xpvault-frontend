@@ -1,55 +1,41 @@
 class BasicUser {
   final int id;
-  final String username;
-  final String? profilePhoto;
-  final int totalTimeMoviesWatched;
-  final int totalTimeEpisodesWatched;
-  final int totalTimePlayed;
+  final String nickname;
+  final String? photoUrl;
+  final int totalTime;
 
   BasicUser({
     required this.id,
-    required this.username,
-    this.profilePhoto,
-    required this.totalTimeMoviesWatched,
-    required this.totalTimeEpisodesWatched,
-    required this.totalTimePlayed,
+    required this.nickname,
+    this.photoUrl,
+    required this.totalTime,
   });
 
   BasicUser copyWith({
-    String? profilePhoto,
-    int? totalTimeMoviesWatched,
-    int? totalTimeEpisodesWatched,
-    int? totalTimePlayed,
+    String? photoUrl,
+    int? totalTime,
   }) {
     return BasicUser(
       id: id,
-      username: username,
-      profilePhoto: profilePhoto ?? this.profilePhoto,
-      totalTimeMoviesWatched:
-        totalTimeMoviesWatched ?? this.totalTimeMoviesWatched,
-      totalTimeEpisodesWatched:
-        totalTimeEpisodesWatched ?? this.totalTimeEpisodesWatched,
-      totalTimePlayed: totalTimePlayed ?? this.totalTimePlayed,
+      nickname: nickname,
+      photoUrl: photoUrl ?? this.photoUrl,
+      totalTime: totalTime ?? this.totalTime,
     );
   }
 
   factory BasicUser.fromJson(Map<String, dynamic> json) {
     return BasicUser(
       id: json['id'] as int,
-      username: json['username'] as String,
-      profilePhoto: json['profilePhoto'] as String?,
-      totalTimeMoviesWatched: json['totalTimeMoviesWatched'] ?? 0,
-      totalTimeEpisodesWatched: json['totalTimeEpisodesWatched'] ?? 0,
-      totalTimePlayed: json['totalTimePlayed'] ?? 0,
+      nickname: json['nickname'] as String,
+      photoUrl: json['photoUrl'] as String?,
+      totalTime: json['totalTime'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'username': username,
-        'profilePhoto': profilePhoto,
-        'totalTimeMoviesWatched': totalTimeMoviesWatched,
-        'totalTimeEpisodesWatched': totalTimeEpisodesWatched,
-        'totalTimePlayed': totalTimePlayed,
+        'nickname': nickname,
+        'photoUrl': photoUrl,
+        'totalTime': totalTime,
       };
 }

@@ -68,14 +68,14 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
         _filteredUsers = List.from(_allUsers);
       } else {
         _filteredUsers = _allUsers.where((user) =>
-            user.username.toLowerCase().contains(filter.toLowerCase())).toList();
+            user.nickname.toLowerCase().contains(filter.toLowerCase())).toList();
       }
       _currentPage = 0;
     });
   }
 
   String _getTimeLabel(BasicUser user) {
-    final minutes = user.totalTimeMoviesWatched + user.totalTimeEpisodesWatched + user.totalTimePlayed;
+    final minutes = user.totalTime;
     final hours = (minutes / 60).floor();
     final remainingMinutes = minutes % 60;
     return "$hours h ${remainingMinutes.toString().padLeft(2, '0')} min";
@@ -210,10 +210,10 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: AppColors.surface,
-                backgroundImage: (user.profilePhoto != null && user.profilePhoto!.isNotEmpty)
-                    ? MemoryImage(base64Decode(user.profilePhoto!))
+                backgroundImage: (user.photoUrl != null && user.photoUrl!.isNotEmpty)
+                    ? MemoryImage(base64Decode(user.photoUrl!))
                     : null,
-                child: (user.profilePhoto == null || user.profilePhoto!.isEmpty)
+                child: (user.photoUrl == null || user.photoUrl!.isEmpty)
                     ? const Icon(
                   Icons.person,
                   color: Colors.white,
@@ -221,7 +221,7 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
                     : null,
               ),
               title: Text(
-                "#$rank  ${user.username}",
+                "#$rank  ${user.nickname}",
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -237,7 +237,7 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => ProfilePage(
-                      username: user.username
+                      username: user.nickname
                     ),
                   ),
                 );
