@@ -27432,19 +27432,14 @@ s.LH()},
 PU:function PU(a){this.a=a},
 lO:function lO(a,b){this.a=a
 this.b=b},
-aHM(a){var s,r=J.ay(a),q=A.cE(r.i(a,"id")),p=A.bL(r.i(a,"username")),o=A.c8(r.i(a,"profilePhoto")),n=r.i(a,"totalTimeMoviesWatched")
-if(n==null)n=0
-s=r.i(a,"totalTimeEpisodesWatched")
-if(s==null)s=0
-r=r.i(a,"totalTimePlayed")
-return new A.kK(q,p,o,n,s,r==null?0:r)},
-kK:function kK(a,b,c,d,e,f){var _=this
+aHM(a){var s=J.ay(a),r=A.cE(s.i(a,"id")),q=A.bL(s.i(a,"nickname")),p=A.c8(s.i(a,"photoUrl"))
+s=s.i(a,"totalTime")
+return new A.kK(r,q,p,s==null?0:s)},
+kK:function kK(a,b,c,d){var _=this
 _.a=a
 _.b=b
 _.c=c
-_.d=d
-_.e=e
-_.f=f},
+_.d=d},
 vM(a){var s,r,q,p,o,n,m="price",l="achievements",k=J.ay(a),j=k.i(a,"title")
 if(j==null)j="Sin t\xedtulo"
 s=k.i(a,"description")
@@ -93825,7 +93820,7 @@ gaN(a){return this.a},
 gcX(a){return this.b}}
 A.kK.prototype={
 fo(){var s=this
-return A.an(["id",s.a,"username",s.b,"profilePhoto",s.c,"totalTimeMoviesWatched",s.d,"totalTimeEpisodesWatched",s.e,"totalTimePlayed",s.f],t.N,t.z)}}
+return A.an(["id",s.a,"nickname",s.b,"photoUrl",s.c,"totalTime",s.d],t.N,t.z)}}
 A.eG.prototype={
 k(a){var s=this
 return"Game(title: "+s.a+", description: "+s.b+", price: "+s.r+", steamId: "+s.e+", screenshotUrl: "+A.k(s.c)+", headerUrl: "+A.k(s.d)+", genres: "+A.k(s.f)+", achievements: "+A.k(s.x)+")"},
@@ -94457,9 +94452,9 @@ A.ZJ.prototype={
 ar(){this.aI()
 this.jP()},
 jP(){return this.ae1()},
-ae1(){var s=0,r=A.x(t.H),q,p=this,o,n,m,l,k,j,i,h
+ae1(){var s=0,r=A.x(t.H),q,p=this,o,n,m,l,k,j,i
 var $async$jP=A.t(function(a,b){if(a===1)return A.u(b,r)
-while(true)switch(s){case 0:i={}
+while(true)switch(s){case 0:j={}
 p.P(new A.awY(p))
 o=p.a.c
 s=o==null?3:5
@@ -94491,25 +94486,24 @@ s=10
 break
 case 11:p.ax=!1
 case 10:if(p.c==null){s=1
-break}i.a=A.a([],t.c)
-o=p.a
-o.toString
-l=n.e
-s=l!=null&&o.c==null?13:14
+break}j.a=A.a([],t.c)
+p.a.toString
+o=n.e
+s=o!=null?13:14
 break
-case 13:h=i
+case 13:i=j
 s=15
-return A.q(p.d.xe(l.a),$async$jP)
-case 15:h.a=b
+return A.q(p.d.xe(o.a),$async$jP)
+case 15:i.a=b
 case 14:o=n.b
 s=16
 return A.q(p.e.AP(o),$async$jP)
-case 16:k=b
+case 16:l=b
 s=17
 return A.q(p.f.AQ(o),$async$jP)
-case 17:j=b
+case 17:k=b
 if(p.c==null){s=1
-break}p.P(new A.ax_(i,p,k,j))
+break}p.P(new A.ax_(j,p,l,k))
 case 1:return A.v(q,r)}})
 return A.w($async$jP,r)},
 I(a){var s,r,q,p,o,n,m,l=this,k=null
@@ -95301,7 +95295,7 @@ if(k&&l.length!==0){l.toString
 s=new A.j5(B.cU.cs(l))}else s=p
 s=A.a66(B.dD,s,!k||l.length===0?B.oN:p,p)
 r=A.aw("#"+this.d+"  "+m.b,p,p,p,p,B.lP,p,p)
-q=m.d+m.e+m.f
+q=m.d
 return A.dG(A.qh(A.ou(s,new A.aAN(a,m),A.aw(""+B.d.iE(q/60)+" h "+B.c.lS(B.f.k(B.f.bi(q,60)),2,"0")+" min",p,p,p,p,B.AO,p,p),r),B.W,B.M,n),B.aq,p,new A.aAO(o,b),new A.aAP(o,b),p)},
 $S:221}
 A.aAO.prototype={
