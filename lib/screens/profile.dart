@@ -4,7 +4,10 @@ import 'package:xpvault/screens/desktop/profile_desktop.dart';
 import 'package:xpvault/screens/mobile/home_mobile.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final String username;
+  final String? steamId;
+
+  const ProfilePage({super.key, required this.username, this.steamId});
 
   @override
   State<ProfilePage> createState() => _ProfilePage();
@@ -16,7 +19,7 @@ class _ProfilePage extends State<ProfilePage> {
     return Scaffold(
       body: ResponsiveLayout(
         mobileBody: HomeMobilePage(),
-        desktopBody: ProfileDesktopPage(),
+        desktopBody: ProfileDesktopPage(username: widget.username, steamId: widget.steamId),
       ),
     );
   }

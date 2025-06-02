@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/movie_controller.dart';
 import 'package:xpvault/models/movie.dart';
+import 'package:xpvault/screens/movies_series.dart';
 import 'package:xpvault/widgets/cast_with_navigation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 
 class MovieDetailDesktopPage extends StatefulWidget {
   final int movieId;
+  final Widget? returnPage;
 
-  const MovieDetailDesktopPage({super.key, required this.movieId});
+  const MovieDetailDesktopPage({
+    super.key,
+    required this.movieId,
+    this.returnPage,
+  });
 
   @override
   State<MovieDetailDesktopPage> createState() => _MovieDetailDesktopPageState();
@@ -38,7 +44,7 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: CircularProgressIndicator(color: AppColors.accent)),
       );
     }
 
@@ -69,7 +75,23 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                 Align(
                   alignment: Alignment.topLeft,
                   child: TextButton.icon(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      if (widget.returnPage != null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => widget.returnPage!,
+                          ),
+                        );
+                      } else {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MoviesSeriesPage(),
+                          ),
+                        );
+                      }
+                    },
                     icon: const Icon(Icons.arrow_back, color: AppColors.accent),
                     label: const Text(
                       'Back',
@@ -131,7 +153,14 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              CastWithNavigation(casting: _movie!.casting),
+
+                              // 🔧 Overflow fix: set fixed height
+                              SizedBox(
+                                height: 180, // Ajusta según necesidad
+                                child: CastWithNavigation(
+                                  casting: _movie!.casting,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -156,9 +185,13 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                   _movie!.posterUrl ?? '',
                                   height: 350,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.broken_image,
-                                      size: 100, color: AppColors.error),
+                                  errorBuilder:
+                                      (context, error, stackTrace) =>
+                                          const Icon(
+                                            Icons.broken_image,
+                                            size: 100,
+                                            color: AppColors.error,
+                                          ),
                                 ),
                               ),
                             ),
@@ -176,14 +209,20 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                       width: 40,
                                       height: 40,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.person,
-                                          color: AppColors.textMuted),
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              const Icon(
+                                                Icons.person,
+                                                color: AppColors.textMuted,
+                                              ),
                                     ),
                                   )
                                 else
-                                  const Icon(Icons.person,
-                                      size: 40, color: AppColors.textMuted),
+                                  const Icon(
+                                    Icons.person,
+                                    size: 40,
+                                    color: AppColors.textMuted,
+                                  ),
                                 const SizedBox(width: 8),
                                 Text(
                                   director?.name ?? "Director desconocido",

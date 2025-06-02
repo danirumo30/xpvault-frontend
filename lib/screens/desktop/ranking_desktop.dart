@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/top_user.dart';
-import 'package:xpvault/screens/desktop/profile_desktop.dart';
+import 'package:xpvault/screens/profile.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 
@@ -18,7 +18,7 @@ class RankingDesktopPage extends StatefulWidget {
 enum RankingType { games, movies, series }
 
 class _RankingDesktopPageState extends State<RankingDesktopPage> {
-  RankingType _currentType = RankingType.games;
+  RankingType _currentType = RankingType.movies;
   final UserController _userController = UserController();
 
   bool _loading = true;
@@ -27,13 +27,10 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
   int _currentPage = 0;
   static const int _usersPerPage = 20;
 
-  String? _currentLoggedUsername;
-
   @override
   void initState() {
     super.initState();
     _loadUsers();
-    _loadCurrentUser();
   }
 
   Future<void> _loadUsers() async {
@@ -47,20 +44,15 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
         users = await _userController.getTopTvSeries();
         break;
       case RankingType.games:
-      default:
         users = await _userController.getTopGames();
     }
+
+    await UserManager.saveTopUsers(users);
+
     setState(() {
       _users = users;
       _currentPage = 0;
       _loading = false;
-    });
-  }
-
-  Future<void> _loadCurrentUser() async {
-    final user = await UserManager.getUser();
-    setState(() {
-      _currentLoggedUsername = user?.username;
     });
   }
 
@@ -109,9 +101,9 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
                 Wrap(
                   spacing: 8,
                   children: [
-                    _buildFilterButton("🎮 Games", RankingType.games),
                     _buildFilterButton("🎬 Movies", RankingType.movies),
                     _buildFilterButton("📺 Series", RankingType.series),
+                    _buildFilterButton("🎮 Games", RankingType.games),
                   ],
                 ),
               ],
@@ -119,16 +111,17 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
             const SizedBox(height: 24),
 
             Expanded(
-              child: _loading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.separated(
-                itemCount: currentUsers.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (context, index) {
-                  final user = currentUsers[index];
-                  return _buildUserTile(user, startIndex + index + 1);
-                },
-              ),
+              child:
+                  _loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.separated(
+                        itemCount: currentUsers.length,
+                        separatorBuilder: (_, __) => const Divider(),
+                        itemBuilder: (context, index) {
+                          final user = currentUsers[index];
+                          return _buildUserTile(user, startIndex + index + 1);
+                        },
+                      ),
             ),
 
             const SizedBox(height: 16),
@@ -136,23 +129,23 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: _currentPage > 0
-                      ? () => setState(() => _currentPage--)
-                      : null,
+                  onPressed:
+                      _currentPage > 0
+                          ? () => setState(() => _currentPage--)
+                          : null,
                   child: const Text("Anterior"),
                 ),
                 const SizedBox(width: 16),
                 Text(
                   "Página ${_currentPage + 1} de $totalPages",
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: const TextStyle(color: AppColors.textSecondary),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
-                  onPressed: (_currentPage + 1) < totalPages
-                      ? () => setState(() => _currentPage++)
-                      : null,
+                  onPressed:
+                      (_currentPage + 1) < totalPages
+                          ? () => setState(() => _currentPage++)
+                          : null,
                   child: const Text("Siguiente"),
                 ),
               ],
@@ -169,9 +162,7 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? AppColors.accent : AppColors.surface,
         foregroundColor: isSelected ? Colors.white : AppColors.textPrimary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       onPressed: () => _changeType(type),
       child: Text(label),
@@ -193,12 +184,17 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: AppColors.surface,
-                backgroundImage: (user.photoUrl != null && user.photoUrl!.isNotEmpty)
-                    ? MemoryImage(base64Decode(user.photoUrl!))
-                    : null,
-                child: (user.photoUrl == null || user.photoUrl!.isEmpty)
-                    ? const Icon(Icons.person, color: AppColors.textSecondary)
-                    : null,
+                backgroundImage:
+                    (user.photoUrl != null && user.photoUrl!.isNotEmpty)
+                        ? MemoryImage(base64Decode(user.photoUrl!))
+                        : null,
+                child:
+                    (user.photoUrl == null || user.photoUrl!.isEmpty)
+                        ? const Icon(
+                          Icons.person,
+                          color: AppColors.textSecondary,
+                        )
+                        : null,
               ),
               title: Text(
                 "#$rank  ${user.nickname}",
@@ -213,27 +209,15 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
                 style: const TextStyle(color: AppColors.textSecondary),
               ),
               onTap: () async {
-                final loggedUser = await UserManager.getUser();
-
-                final isOwnProfile = (loggedUser != null && loggedUser.username == user.nickname);
-
-                print('Navegando a perfil de username: ${user.nickname}');
-
-                if (loggedUser == null && isOwnProfile) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ProfileDesktopPage(),
-                    ),
-                  );
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ProfileDesktopPage(username: user.nickname),
-                    ),
-                  );
-                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (_) => ProfilePage(
+                          username: user.nickname
+                        ),
+                  ),
+                );
               },
             ),
           ),

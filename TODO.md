@@ -1,30 +1,26 @@
 # TODOList
 
-## 🧠 Funcionalidades a implementar
-
-### 🔍 Búsqueda
-- [ ] Optimizar busquedas de solo juegos.
+## 🧠 Funcionalidades a implementar.
 
 ### 🏠 Home
 - [ ] Añadir un botón "Ver todos" en la parte superior derecha de cada contenedor.
 
+### 🙍🏻‍♂️Perfil
+- [ ] Al loguear con steam avisar con un mensaje de color rojo o verder de los que salen abajo si ha salido bien o mal.
+
 ### 🎮 Conexión Back + Front
 - [ ] Implementar conexión del backend con el frontend para:
-  - Películas
-  - Series
+    - Películas
+    - Series
 
 ### 📱 Vistas móviles
-- [ ] Crear vistas:
-  - Usuarios/Amigos (foto + username)
-  - Ajustes perfil/cuenta
-  - Ranking
 - [ ] Adaptar vistas móviles para:
-  - Steam
-  - Películas
-  - Series
-  - Verificación
-  - Perfil
-  - Ranking
+    - Steam
+    - Películas
+    - Series
+    - Verificación
+    - Perfil
+    - Ranking
 
 ---
 

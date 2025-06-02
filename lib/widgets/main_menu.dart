@@ -7,6 +7,7 @@ import 'package:xpvault/screens/playstation.dart';
 import 'package:xpvault/screens/profile.dart';
 import 'package:xpvault/screens/ranking.dart';
 import 'package:xpvault/screens/steam.dart';
+import 'package:xpvault/screens/users.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 
@@ -72,10 +73,25 @@ class MainMenuWidget extends StatelessWidget {
             "Profile",
             style: TextStyle(color: AppColors.textPrimary),
           ),
-          onTap: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfilePage(),));
+          onTap: () async {
+            final user = await UserManager.getUser();
+
+            if (user != null) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(username: user.username),
+                ),
+              );
+            } else {
+              // Opcional: manejar el caso donde no hay usuario logueado
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("No user is currently logged in")),
+              );
+            }
           },
         ),
+
         ListTile(
           leading: const Icon(
             Icons.movie_creation_outlined,
@@ -88,7 +104,7 @@ class MainMenuWidget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MoviesSeriesPage()),
+              MaterialPageRoute(builder: (context) => MoviesSeriesPage(returnPage: MoviesSeriesPage(),)),
             );
           },
         ),
@@ -109,7 +125,7 @@ class MainMenuWidget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => SteamPage()),
+              MaterialPageRoute(builder: (context) => SteamPage(returnPage: SteamPage(returnPage: SteamPage()))),
             );
           },
         ),
@@ -144,6 +160,19 @@ class MainMenuWidget extends StatelessWidget {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const RankingPage()),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.emoji_people, color: AppColors.textPrimary),
+          title: const Text(
+            "Users",
+            style: TextStyle(color: AppColors.textPrimary),
+          ),
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const UsersPage(initialSearchTerm: "")),
             );
           },
         ),

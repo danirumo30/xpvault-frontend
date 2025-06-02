@@ -4,13 +4,18 @@ import 'package:xpvault/controllers/game_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/news.dart';
-import 'package:xpvault/screens/steam.dart';
+import 'package:xpvault/screens/desktop/steam_desktop.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 class GameDetailDesktopPage extends StatefulWidget {
   final int steamId;
+  final Widget? returnPage;
 
-  const GameDetailDesktopPage({super.key, required this.steamId});
+  const GameDetailDesktopPage({
+    super.key,
+    required this.steamId,
+    this.returnPage,
+  });
 
   @override
   State<GameDetailDesktopPage> createState() => _GameDetailDesktopPageState();
@@ -42,7 +47,9 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
         _isLoadingGame = false;
         gameNews = news;
         _hovering.addAll(List.generate(news.length, (_) => false));
-        _hoveringAchievements.addAll(List.generate(game.achievements?.length ?? 0, (_) => false));
+        _hoveringAchievements.addAll(
+          List.generate(game.achievements.length, (_) => false),
+        );
         _searchingNews = false;
       });
     } else {
@@ -66,13 +73,12 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoadingGame) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (_game == null) {
-      return Scaffold(
+      return DesktopLayout(
+        title: "XPVAULT",
         body: Center(
           child: Text(
             "Game not found",
@@ -104,7 +110,11 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
                     width: double.infinity,
                     height: 320,
                     color: Colors.grey,
-                    child: const Icon(Icons.broken_image, size: 64, color: Colors.white),
+                    child: const Icon(
+                      Icons.broken_image,
+                      size: 64,
+                      color: Colors.white,
+                    ),
                   );
                 },
               ),
@@ -136,7 +146,7 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
 
             // Price
             Text(
-              "Price: ${( _game!.price / 100).toStringAsFixed(2)} €",
+              "Price: ${(_game!.price / 100).toStringAsFixed(2)} €",
               style: const TextStyle(
                 color: Colors.greenAccent,
                 fontSize: 16,
@@ -159,21 +169,25 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
             Wrap(
               spacing: 10,
               runSpacing: 10,
-              children: _game!.genres
-                  .map(
-                    (tag) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.blueGrey[800],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    tag,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              )
-                  .toList(),
+              children:
+                  _game!.genres
+                      .map(
+                        (tag) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey[800],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            tag,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      )
+                      .toList(),
             ),
 
             const SizedBox(height: 36),
@@ -189,62 +203,70 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
             ),
             const SizedBox(height: 12),
 
-            (_game!.achievements == null || _game!.achievements!.isEmpty)
+            (_game!.achievements.isEmpty)
                 ? Text(
-              "No achievements available.",
-              style: TextStyle(color: AppColors.textSecondary),
-            )
+                  "No achievements available.",
+                  style: TextStyle(color: AppColors.textSecondary),
+                )
                 : Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: _game!.achievements!.asMap().entries.map((entry) {
-                final index = entry.key;
-                final achievement = entry.value;
-                final imageUrl = _gameController.proxiedSteamImage(achievement.url);
-                final isHovered = _hoveringAchievements[index];
+                  spacing: 16,
+                  runSpacing: 16,
+                  children:
+                      _game!.achievements.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final achievement = entry.value;
+                        final imageUrl = _gameController.proxiedSteamImage(
+                          achievement.url,
+                        );
+                        final isHovered = _hoveringAchievements[index];
 
-                return MouseRegion(
-                  onEnter: (_) {
-                    setState(() => _hoveringAchievements[index] = true);
-                  },
-                  onExit: (_) {
-                    setState(() => _hoveringAchievements[index] = false);
-                  },
-                  child: AnimatedScale(
-                    scale: isHovered ? 1.1 : 1.0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 96,
-                          height: 96,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            image: DecorationImage(
-                              image: NetworkImage(imageUrl),
-                              fit: BoxFit.cover,
-                              onError: (error, stackTrace) {
-                                debugPrint('Image load error: $error');
-                              },
+                        return MouseRegion(
+                          onEnter: (_) {
+                            setState(() => _hoveringAchievements[index] = true);
+                          },
+                          onExit: (_) {
+                            setState(
+                              () => _hoveringAchievements[index] = false,
+                            );
+                          },
+                          child: AnimatedScale(
+                            scale: isHovered ? 1.1 : 1.0,
+                            duration: const Duration(milliseconds: 200),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 96,
+                                  height: 96,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    image: DecorationImage(
+                                      image: NetworkImage(imageUrl),
+                                      fit: BoxFit.cover,
+                                      onError: (error, stackTrace) {
+                                        debugPrint('Image load error: $error');
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                SizedBox(
+                                  width: 96,
+                                  child: Text(
+                                    achievement.name,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        SizedBox(
-                          width: 96,
-                          child: Text(
-                            achievement.name,
-                            style: const TextStyle(color: Colors.white, fontSize: 14),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+                        );
+                      }).toList(),
+                ),
 
             const SizedBox(height: 36),
 
@@ -267,72 +289,76 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
               )
             else
               Column(
-                children: gameNews.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final newsItem = entry.value;
-                  final isHovered = _hovering[index];
+                children:
+                    gameNews.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final newsItem = entry.value;
+                      final isHovered = _hovering[index];
 
-                  return MouseRegion(
-                    onEnter: (_) {
-                      setState(() => _hovering[index] = true);
-                    },
-                    onExit: (_) {
-                      setState(() => _hovering[index] = false);
-                    },
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: () async {
-                        final uri = Uri.tryParse(newsItem.url.trim());
-                        if (uri != null && await canLaunchUrl(uri)) {
-                          await launchUrl(uri, mode: LaunchMode.externalApplication);
-                        }
-                      },
-                      child: AnimatedScale(
-                        scale: isHovered ? 1.02 : 1.0,
-                        duration: const Duration(milliseconds: 200),
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey[900],
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.25),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              )
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                newsItem.title,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                      return MouseRegion(
+                        onEnter: (_) {
+                          setState(() => _hovering[index] = true);
+                        },
+                        onExit: (_) {
+                          setState(() => _hovering[index] = false);
+                        },
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: () async {
+                            final uri = Uri.tryParse(newsItem.url.trim());
+                            if (uri != null && await canLaunchUrl(uri)) {
+                              await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            }
+                          },
+                          child: AnimatedScale(
+                            scale: isHovered ? 1.02 : 1.0,
+                            duration: const Duration(milliseconds: 200),
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey[900],
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                newsItem.contents,
-                                maxLines: 4,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize: 14,
-                                  height: 1.5,
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    newsItem.title,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    newsItem.contents,
+                                    maxLines: 4,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 14,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                }).toList(),
+                      );
+                    }).toList(),
               ),
 
             const SizedBox(height: 40),
@@ -342,21 +368,32 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => SteamPage()),
-                  );
+                  if (widget.returnPage != null) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => widget.returnPage!,
+                      ),
+                    );
+                  } else {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SteamDesktopPage(),
+                      ),
+                    );
+                  }
                 },
-                child: const Text(
-                  "Go Back",
-                  style: TextStyle(fontSize: 16),
-                ),
+                child: const Text("Go Back", style: TextStyle(fontSize: 16)),
               ),
             ),
           ],
