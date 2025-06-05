@@ -60,7 +60,8 @@ class SerieDetailDesktopPage extends StatelessWidget {
                         serie.posterUrl!,
                         height: 300,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 100),
+                        errorBuilder: (_, __, ___) =>
+                            const Icon(Icons.broken_image, size: 100),
                       ),
                     ),
                   const SizedBox(width: 24),
@@ -84,51 +85,163 @@ class SerieDetailDesktopPage extends StatelessWidget {
                                 .map((g) => Chip(
                                       label: Text(g),
                                       backgroundColor: AppColors.secondary,
-                                      labelStyle: const TextStyle(color: Colors.white),
+                                      labelStyle:
+                                          const TextStyle(color: Colors.white),
                                     ))
                                 .toList(),
                           ),
                         const SizedBox(height: 16),
-                        if (serie.firstAirDate != null)
-                          Text(
-                            "First aired: ${serie.firstAirDate}",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: AppColors.textMuted,
-                            ),
-                          ),
-                        if (serie.voteAverage != null)
-                          Text(
-                            "Rating: ${serie.voteAverage!.toStringAsFixed(1)} / 10",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: AppColors.textMuted,
-                            ),
-                          ),
-                        if (serie.runtime != null)
-                          Text(
-                            "Episode duration: ${serie.runtime} minutes",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: AppColors.textMuted,
-                            ),
-                          ),
-                        if (serie.creators != null && serie.creators!.isNotEmpty)
-                          Text(
-                            "Created by: ${serie.creators!.join(', ')}",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: AppColors.textMuted,
-                            ),
-                          ),
-                        const SizedBox(height: 16),
                         Text(
                           serie.description,
-                          style: const TextStyle(fontSize: 16, color: AppColors.textMuted),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: AppColors.textMuted,
+                          ),
                         ),
                       ],
                     ),
                   ),
+                ],
+              ),
+            ),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (serie.totalSeasons != null && serie.totalEpisodes != null)
+                    Text(
+                      'Seasons (${serie.totalSeasons}) - Episodes: ${serie.totalEpisodes}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  const SizedBox(height: 8),
+                  if (serie.seasons != null && serie.seasons!.isNotEmpty)
+                    ...serie.seasons!
+                        .map(
+                          (s) => Text(
+                            '• ${s.name}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  const SizedBox(height: 16),
+                  if (serie.totalTime != null)
+                    Text(
+                      'Total viewing time: ${serie.totalTime} min',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  const SizedBox(height: 24),
+                  if (serie.directors != null && serie.directors!.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Directors:',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 16,
+                          children: serie.directors!
+                              .map(
+                                (d) => Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ClipOval(
+                                      child: Image.network(
+                                        d.photoUrl ?? '',
+                                        width: 64,
+                                        height: 64,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) =>
+                                            const Icon(Icons.person, size: 64),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      d.name,
+                                      style: const TextStyle(
+                                        color: AppColors.textMuted,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 24),
+                  if (serie.casting != null && serie.casting!.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Main Cast:',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 16,
+                          runSpacing: 16,
+                          children: serie.casting!
+                              .map(
+                                (a) => Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.network(
+                                        a.photoUrl ?? '',
+                                        width: 64,
+                                        height: 96,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) =>
+                                            const Icon(Icons.person, size: 64),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      a.name,
+                                      style: const TextStyle(
+                                        color: AppColors.textMuted,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      a.character,
+                                      style: const TextStyle(
+                                        color: AppColors.textMuted,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),

@@ -27,8 +27,9 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
   final SerieController serieController = SerieController();
 
   void _showSerieDetails(Serie serie) async {
+    print('Serie completa: ${serie}.');
+    print('tmbdId: ${serie.tmbdId}');
     final fullSerie = await serieController.fetchSerieById(serie.tmbdId.toString());
-
     if (fullSerie != null) {
       Navigator.push(
         context,
@@ -58,6 +59,9 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
     } else {
       loadedSeries = await serieController.fetchPopularSeries();
     }
+    print(loadedSeries.first.tmbdId);
+    print(loadedSeries.first.title);
+    print(loadedSeries.first.posterUrl);
 
     if (dropdownValue.isNotEmpty) {
       loadedSeries = loadedSeries
