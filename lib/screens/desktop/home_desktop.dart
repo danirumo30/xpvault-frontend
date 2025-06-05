@@ -97,6 +97,16 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
 
       // Limpia la URL sin parámetros
       web.window.history.replaceState(null, '', '/');
+      Future.microtask(() {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Steam account successfully linked"),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      });
     } else {
       print('No se encontró el Steam ID en la URL');
     }
@@ -143,17 +153,20 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
       });
     } else {
       setState(() {
-        _filteredUsers = _allUsers
-            .where((user) =>
-                user.nickname.toLowerCase().contains(filter.toLowerCase()))
-            .toList();
+        _filteredUsers =
+            _allUsers
+                .where(
+                  (user) => user.nickname.toLowerCase().contains(
+                    filter.toLowerCase(),
+                  ),
+                )
+                .toList();
       });
     }
   }
 
   String _getTimeLabel(BasicUser user) {
-    final minutes =
-        user.totalTime;
+    final minutes = user.totalTime;
     final hours = (minutes / 60).floor();
     final remainingMinutes = minutes % 60;
     return "$hours h ${remainingMinutes.toString().padLeft(2, '0')} min";
@@ -173,8 +186,12 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding:
-                const EdgeInsets.only(left: 0, top: 24, right: 32, bottom: 0),
+            padding: const EdgeInsets.only(
+              left: 0,
+              top: 24,
+              right: 32,
+              bottom: 0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -206,11 +223,9 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                               _user!.profilePhoto != null &&
                               _user!.profilePhoto!.isNotEmpty
                           ? _HoverableProfileAvatar(
-                              imageBytes: base64Decode(_user!.profilePhoto!),
-                            )
-                          : const _HoverableProfileAvatar(
-                              imageBytes: null,
-                            ),
+                            imageBytes: base64Decode(_user!.profilePhoto!),
+                          )
+                          : const _HoverableProfileAvatar(imageBytes: null),
                     ],
                   ),
                 ),
@@ -222,7 +237,9 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
 
           // Mostrar lista de usuarios solo si hay texto en búsqueda
           if (_loadingUsers)
-            const Center(child: CircularProgressIndicator(color: AppColors.accent,))
+            const Center(
+              child: CircularProgressIndicator(color: AppColors.accent),
+            )
           else if (_searchController.text.isEmpty)
             const SizedBox()
           else if (_filteredUsers.isEmpty)
@@ -238,20 +255,21 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
               height: 200,
               child: ListView.separated(
                 itemCount: _filteredUsers.length,
-                separatorBuilder: (_, __) => const Divider(color: Colors.white24),
+                separatorBuilder:
+                    (_, __) => const Divider(color: Colors.white24),
                 itemBuilder: (context, index) {
                   final user = _filteredUsers[index];
                   return ListTile(
                     leading: CircleAvatar(
                       backgroundColor: AppColors.surface,
-                      backgroundImage: (user.photoUrl != null &&
-                              user.photoUrl!.isNotEmpty)
-                          ? MemoryImage(base64Decode(user.photoUrl!))
-                          : null,
-                      child: (user.photoUrl == null ||
-                              user.photoUrl!.isEmpty)
-                          ? const Icon(Icons.person, color: Colors.white)
-                          : null,
+                      backgroundImage:
+                          (user.photoUrl != null && user.photoUrl!.isNotEmpty)
+                              ? MemoryImage(base64Decode(user.photoUrl!))
+                              : null,
+                      child:
+                          (user.photoUrl == null || user.photoUrl!.isEmpty)
+                              ? const Icon(Icons.person, color: Colors.white)
+                              : null,
                     ),
                     title: Text(
                       user.nickname,
@@ -269,9 +287,9 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ProfileDesktopPage(
-                            username: user.nickname,
-                          ),
+                          builder:
+                              (_) =>
+                                  ProfileDesktopPage(username: user.nickname),
                         ),
                       );
                     },
@@ -285,36 +303,41 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: isLoading
-                  ? const Center(child: CircularProgressIndicator(color: AppColors.accent,))
-                  : ListView(
-                      children: [
-                        const MyBuildSectionTitle(title: "🎮 Featured Games"),
-                        MyBuildContentBox(
-                          items: featuredGames,
-                          showBodyLabel: false,
-                          returnPage: HomePage(),
+              child:
+                  isLoading
+                      ? const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.accent,
                         ),
+                      )
+                      : ListView(
+                        children: [
+                          const MyBuildSectionTitle(title: "🎮 Featured Games"),
+                          MyBuildContentBox(
+                            items: featuredGames,
+                            showBodyLabel: false,
+                            returnPage: HomePage(),
+                          ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        const MyBuildSectionTitle(title: "🎬 Popular Movies"),
-                        MyBuildContentBox(
-                          items: popularMovies,
-                          showBodyLabel: false,
-                          returnPage: HomePage(),
-                        ),
+                          const MyBuildSectionTitle(title: "🎬 Popular Movies"),
+                          MyBuildContentBox(
+                            items: popularMovies,
+                            showBodyLabel: false,
+                            returnPage: HomePage(),
+                          ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        const MyBuildSectionTitle(title: "📺 Popular Series"),
-                        MyBuildContentBox(
-                          items: popularSeries,
-                          showBodyLabel: false,
-                          returnPage: HomePage(),
-                        ),
-                      ],
-                    ),
+                          const MyBuildSectionTitle(title: "📺 Popular Series"),
+                          MyBuildContentBox(
+                            items: popularSeries,
+                            showBodyLabel: false,
+                            returnPage: HomePage(),
+                          ),
+                        ],
+                      ),
             ),
           ),
         ],
@@ -355,16 +378,20 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
           height: _hovering ? 56 : 48,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            image: widget.imageBytes != null
-                ? DecorationImage(
-                    image: MemoryImage(widget.imageBytes!), fit: BoxFit.cover)
-                : null,
+            image:
+                widget.imageBytes != null
+                    ? DecorationImage(
+                      image: MemoryImage(widget.imageBytes!),
+                      fit: BoxFit.cover,
+                    )
+                    : null,
             color: widget.imageBytes == null ? AppColors.surface : null,
           ),
           alignment: Alignment.center,
-          child: widget.imageBytes == null
-              ? const Text("👤", style: TextStyle(fontSize: 24))
-              : null,
+          child:
+              widget.imageBytes == null
+                  ? const Text("👤", style: TextStyle(fontSize: 24))
+                  : null,
         ),
       ),
     );
