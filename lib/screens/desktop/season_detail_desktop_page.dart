@@ -64,7 +64,7 @@ class SeasonDetailDesktopPage extends StatelessWidget {
               itemCount: seasonDetail.episodes.length,
               itemBuilder: (context, index) {
                 final episode = seasonDetail.episodes[index];
-                final durationMinutes = (episode.totalTime / 60).round();
+                final durationMinutes = episode.totalTime.toString();
 
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),
@@ -87,10 +87,9 @@ class SeasonDetailDesktopPage extends StatelessWidget {
                 );
               },
             ),
-
             const SizedBox(height: 24),
             Text(
-              'Duración total de la temporada: ${(seasonDetail.totalTime / 60).round()} min',
+              'Duración total de la temporada: ${seasonDetail.totalTime} min',
               style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: AppColors.textPrimary),
             ),
           ],
