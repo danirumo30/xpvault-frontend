@@ -18,9 +18,12 @@ class SerieDetailDesktopPage extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: Text(serie.title),
+        title: Text(
+          serie.title,
+          style: const TextStyle(color: Colors.white),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
             if (returnPage != null) {
               Navigator.pushReplacement(
@@ -85,12 +88,47 @@ class SerieDetailDesktopPage extends StatelessWidget {
                                 .map((g) => Chip(
                                       label: Text(g),
                                       backgroundColor: AppColors.secondary,
-                                      labelStyle:
-                                          const TextStyle(color: Colors.white),
+                                      labelStyle: const TextStyle(color: Colors.white),
                                     ))
                                 .toList(),
                           ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
+                        if (serie.releaseDate != null || serie.rating != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: Row(
+                              children: [
+                                if (serie.releaseDate != null)
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today,
+                                          color: AppColors.accent, size: 16),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        serie.releaseDate!,
+                                        style: const TextStyle(
+                                            color: AppColors.textMuted),
+                                      ),
+                                    ],
+                                  ),
+                                if (serie.releaseDate != null && serie.rating != null)
+                                  const SizedBox(width: 16),
+                                if (serie.rating != null)
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.star,
+                                          color: Colors.amber, size: 16),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        serie.rating!.toStringAsFixed(1),
+                                        style: const TextStyle(
+                                            color: AppColors.textMuted),
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                          ),
                         Text(
                           serie.description,
                           style: const TextStyle(
@@ -121,21 +159,31 @@ class SerieDetailDesktopPage extends StatelessWidget {
                     ),
                   const SizedBox(height: 8),
                   if (serie.seasons != null && serie.seasons!.isNotEmpty)
-                    ...serie.seasons!
-                        .map(
-                          (s) => Text(
-                            '• ${s.name}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: AppColors.textMuted,
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(bottom: 24),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: serie.seasons!
+                            .map(
+                              (s) => Text(
+                                '• ${s.name}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
                   if (serie.totalTime != null)
                     Text(
-                      'Total viewing time: ${serie.totalTime} min',
+                      'Total viewing time: ${serie.totalTime! ~/ 60}h ${serie.totalTime! % 60}m',
                       style: const TextStyle(
                         fontSize: 16,
                         color: AppColors.textMuted,
@@ -143,105 +191,161 @@ class SerieDetailDesktopPage extends StatelessWidget {
                     ),
                   const SizedBox(height: 24),
                   if (serie.directors != null && serie.directors!.isNotEmpty)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Directors:',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(bottom: 24),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Directors:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 16,
-                          children: serie.directors!
-                              .map(
-                                (d) => Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ClipOval(
-                                      child: Image.network(
-                                        d.photoUrl ?? '',
-                                        width: 64,
-                                        height: 64,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) =>
-                                            const Icon(Icons.person, size: 64),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 16,
+                            children: serie.directors!
+                                .map(
+                                  (d) => Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ClipOval(
+                                        child: d.photoUrl != null &&
+                                                d.photoUrl!.isNotEmpty
+                                            ? Image.network(
+                                                d.photoUrl!,
+                                                width: 64,
+                                                height: 64,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (_, __, ___) =>
+                                                    const Icon(Icons.person,
+                                                        size: 64),
+                                              )
+                                            : Container(
+                                                width: 64,
+                                                height: 64,
+                                                color: AppColors.secondary,
+                                                child: Center(
+                                                  child: Text(
+                                                    d.name.isNotEmpty
+                                                        ? d.name[0]
+                                                        : '?',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      d.name,
-                                      style: const TextStyle(
-                                        color: AppColors.textMuted,
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        d.name,
+                                        style: const TextStyle(
+                                          color: AppColors.textMuted,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ],
+                                    ],
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ],
+                      ),
                     ),
-                  const SizedBox(height: 24),
                   if (serie.casting != null && serie.casting!.isNotEmpty)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Main Cast:',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(bottom: 24),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Main Cast:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 16,
-                          runSpacing: 16,
-                          children: serie.casting!
-                              .map(
-                                (a) => Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image.network(
-                                        a.photoUrl ?? '',
-                                        width: 64,
-                                        height: 96,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) =>
-                                            const Icon(Icons.person, size: 64),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 16,
+                            runSpacing: 16,
+                            children: serie.casting!
+                                .map(
+                                  (a) => Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: a.photoUrl != null &&
+                                                a.photoUrl!.isNotEmpty
+                                            ? Image.network(
+                                                a.photoUrl!,
+                                                width: 64,
+                                                height: 96,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (_, __, ___) =>
+                                                    const Icon(Icons.person,
+                                                        size: 64),
+                                              )
+                                            : Container(
+                                                width: 64,
+                                                height: 96,
+                                                color: AppColors.secondary,
+                                                child: Center(
+                                                  child: Text(
+                                                    a.name.isNotEmpty
+                                                        ? a.name[0]
+                                                        : '?',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      a.name,
-                                      style: const TextStyle(
-                                        color: AppColors.textMuted,
-                                        fontWeight: FontWeight.bold,
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        a.name,
+                                        style: const TextStyle(
+                                          color: AppColors.textMuted,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      a.character,
-                                      style: const TextStyle(
-                                        color: AppColors.textMuted,
-                                        fontSize: 12,
+                                      Text(
+                                        a.character,
+                                        style: const TextStyle(
+                                          color: AppColors.textMuted,
+                                          fontSize: 12,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ],
+                                    ],
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ],
+                      ),
                     ),
-                  const SizedBox(height: 24),
                 ],
               ),
             ),
