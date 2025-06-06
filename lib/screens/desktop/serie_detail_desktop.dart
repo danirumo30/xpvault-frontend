@@ -2,28 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/screens/desktop/season_detail_desktop_page.dart';
+import 'package:xpvault/controllers/season_controller.dart';
 
 class SerieDetailDesktopPage extends StatelessWidget {
   final Serie serie;
   final Widget? returnPage;
 
-  const SerieDetailDesktopPage({
-    super.key,
+  SerieDetailDesktopPage({
+    Key? key,
     required this.serie,
     this.returnPage,
-  });
+  }) : super(key: key);
 
-  void _showSeasonDetail(BuildContext context, Season season) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SeasonDetailDesktopPage(
-          season: season,
-          returnPage: this, // o la página desde donde vuelves, si quieres
-        ),
-      ),
+  final SeasonController seasonController = SeasonController();
+
+  void _showSeasonDetail(BuildContext context, Season season) async {
+    print("Season name: ${season.name}");
+    print("Season tmbdId: ${season.tmbdId}");
+    print("Show ID: ${season.showId}");
+    
+    final seasonDetail = await seasonController.fetchSeasonById(
+      season.showId.toString(),
+      season.tmbdId,
     );
+
+    print("Fetched detail title: ${seasonDetail?.title}");
+
+    if (seasonDetail != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SeasonDetailDesktopPage(
+            seasonDetail: seasonDetail,
+            returnPage: this, // referencia válida al volver a esta pantalla
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to load season details")),
+      );
+    }
   }
+
 
 
   @override

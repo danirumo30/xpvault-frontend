@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/season_detail.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 class SeasonDetailDesktopPage extends StatelessWidget {
-  final Season season;
+  final SeasonDetail seasonDetail;
   final Widget? returnPage;
 
   const SeasonDetailDesktopPage({
     super.key,
-    required this.season,
+    required this.seasonDetail,
     this.returnPage,
   });
 
@@ -19,7 +18,10 @@ class SeasonDetailDesktopPage extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: Text(season.name, style: const TextStyle(color: Colors.white)),
+        title: Text(
+          'Temporada ${seasonDetail.seasonNumber}: ${seasonDetail.title}',
+          style: const TextStyle(color: Colors.white),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
@@ -34,13 +36,63 @@ class SeasonDetailDesktopPage extends StatelessWidget {
           },
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Season: ${season.name}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-            // Añade más detalles de la temporada aquí
+            Text(
+              'Descripción:',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              seasonDetail.description,
+              style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: 24),
+
+            Text(
+              'Episodios (${seasonDetail.episodesCount}):',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: 12),
+
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: seasonDetail.episodes.length,
+              itemBuilder: (context, index) {
+                final episode = seasonDetail.episodes[index];
+                final durationMinutes = (episode.totalTime / 60).round();
+
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  color: AppColors.primary.withOpacity(0.2),
+                  child: ListTile(
+                    title: Text(
+                      'Episodio ${episode.episodeNumber}: ${episode.title}',
+                      style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(episode.description, style: const TextStyle(color: AppColors.textSecondary)),
+                        const SizedBox(height: 4),
+                        Text('Duración: $durationMinutes min', style: const TextStyle(color: AppColors.textSecondary)),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 24),
+            Text(
+              'Duración total de la temporada: ${(seasonDetail.totalTime / 60).round()} min',
+              style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: AppColors.textPrimary),
+            ),
           ],
         ),
       ),
