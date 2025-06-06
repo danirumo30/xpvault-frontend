@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/themes/app_color.dart';
+import 'package:xpvault/screens/desktop/season_detail_desktop_page.dart';
 
 class SerieDetailDesktopPage extends StatelessWidget {
   final Serie serie;
@@ -11,6 +12,19 @@ class SerieDetailDesktopPage extends StatelessWidget {
     required this.serie,
     this.returnPage,
   });
+
+  void _showSeasonDetail(BuildContext context, Season season) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SeasonDetailDesktopPage(
+          season: season,
+          returnPage: this, // o la página desde donde vuelves, si quieres
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -169,16 +183,23 @@ class SerieDetailDesktopPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: serie.seasons!
-                            .map(
-                              (s) => Text(
-                                '• ${s.name}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: AppColors.textMuted,
+                          .map(
+                            (s) => InkWell(
+                              onTap: () => _showSeasonDetail(context, s),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  '• ${s.name}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: AppColors.textMuted,
+                                    decoration: TextDecoration.underline, // para que parezca clicable
+                                  ),
                                 ),
                               ),
-                            )
-                            .toList(),
+                            ),
+                          )
+                          .toList(),
                       ),
                     ),
                   if (serie.totalTime != null)
