@@ -4,7 +4,7 @@ import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/screens/desktop/season_detail_desktop_page.dart';
 import 'package:xpvault/controllers/season_controller.dart';
 
-class SerieDetailDesktopPage extends StatelessWidget {
+class SerieDetailDesktopPage extends StatefulWidget {
   final Serie serie;
   final Widget? returnPage;
 
@@ -14,7 +14,14 @@ class SerieDetailDesktopPage extends StatelessWidget {
     this.returnPage,
   });
 
+  @override
+  State<SerieDetailDesktopPage> createState() => _SerieDetailDesktopPageState();
+}
+
+class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
   final SeasonController seasonController = SeasonController();
+
+  bool _seen = false;
 
   void _showSeasonDetail(BuildContext context, Season season) async {
     print("Season name: ${season.name}");
@@ -34,7 +41,7 @@ class SerieDetailDesktopPage extends StatelessWidget {
         MaterialPageRoute(
           builder: (_) => SeasonDetailDesktopPage(
             seasonDetail: seasonDetail,
-            returnPage: this,
+            returnPage: widget,
           ),
         ),
       );
@@ -45,9 +52,9 @@ class SerieDetailDesktopPage extends StatelessWidget {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final serie = widget.serie;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -59,10 +66,10 @@ class SerieDetailDesktopPage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
-            if (returnPage != null) {
+            if (widget.returnPage != null) {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => returnPage!),
+                MaterialPageRoute(builder: (_) => widget.returnPage!),
               );
             } else {
               Navigator.pop(context);
@@ -85,8 +92,33 @@ class SerieDetailDesktopPage extends StatelessWidget {
                   child: const Center(child: Icon(Icons.broken_image, size: 40)),
                 ),
               ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Checkbox(
+                  value: _seen,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _seen = value ?? false;
+                      // AQUÍ SE HACE EL TEMA DE GUARDAR EN BASE DE DATOS Y TAL
+                    });
+                  },
+                  activeColor: AppColors.accent,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  'Mark as seen',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -140,8 +172,7 @@ class SerieDetailDesktopPage extends StatelessWidget {
                                       const SizedBox(width: 4),
                                       Text(
                                         serie.releaseDate!,
-                                        style: const TextStyle(
-                                            color: AppColors.textMuted),
+                                        style: const TextStyle(color: AppColors.textMuted),
                                       ),
                                     ],
                                   ),
@@ -150,13 +181,11 @@ class SerieDetailDesktopPage extends StatelessWidget {
                                 if (serie.rating != null)
                                   Row(
                                     children: [
-                                      const Icon(Icons.star,
-                                          color: Colors.amber, size: 16),
+                                      const Icon(Icons.star, color: Colors.amber, size: 16),
                                       const SizedBox(width: 4),
                                       Text(
                                         serie.rating!.toStringAsFixed(1),
-                                        style: const TextStyle(
-                                            color: AppColors.textMuted),
+                                        style: const TextStyle(color: AppColors.textMuted),
                                       ),
                                     ],
                                   ),
@@ -205,23 +234,23 @@ class SerieDetailDesktopPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: serie.seasons!
-                          .map(
-                            (s) => InkWell(
-                              onTap: () => _showSeasonDetail(context, s),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(
-                                  '• ${s.name}',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: AppColors.textMuted,
-                                    decoration: TextDecoration.underline,
+                            .map(
+                              (s) => InkWell(
+                                onTap: () => _showSeasonDetail(context, s),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(
+                                    '• ${s.name}',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: AppColors.textMuted,
+                                      decoration: TextDecoration.underline,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          )
-                          .toList(),
+                            )
+                            .toList(),
                       ),
                     ),
                   if (serie.totalTime != null)
