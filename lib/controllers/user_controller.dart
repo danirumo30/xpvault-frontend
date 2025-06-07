@@ -276,4 +276,170 @@ class UserController {
       return false;
     }
   }
+
+  Future<bool> deleteMovieFromUser(String username, int movieId) async {
+    final token = await TokenManager.getToken();
+    final url = Uri.parse(
+      "http://localhost:5000/users/$username/movies/delete?movieId=$movieId",
+    );
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print("Película eliminada correctamente.");
+        return true;
+      } else {
+        print("Error al eliminar película: ${response.statusCode}");
+        print(response.body);
+      }
+    } catch (e) {
+      print("Excepción al eliminar película: $e");
+    }
+    return false;
+  }
+
+  Future<bool> deleteTvSerieFromUser(String username, int tvSerieId) async {
+    final token = await TokenManager.getToken();
+    final url = Uri.parse(
+      "http://localhost:5000/users/$username/tv-series/delete?tvSerieId=$tvSerieId",
+    );
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print("Serie eliminada correctamente.");
+        return true;
+      } else {
+        print("Error al eliminar serie: ${response.statusCode}");
+        print(response.body);
+      }
+    } catch (e) {
+      print("Excepción al eliminar serie: $e");
+    }
+    return false;
+  }
+
+  Future<bool> isMovieAdded(String username, int movieId) async {
+    final token = await TokenManager.getToken();
+    final url = Uri.parse(
+      "http://localhost:5000/users/$username/movies/is-added?movieId=$movieId",
+    );
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        return jsonResponse["isMovieAdded"] ?? false;
+      } else {
+        print("Error al comprobar si la película está añadida: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Excepción al comprobar si la película está añadida: $e");
+    }
+    return false;
+  }
+
+  Future<bool> isTvSerieAdded(String username, int tvSerieId) async {
+    final token = await TokenManager.getToken();
+    final url = Uri.parse(
+      "http://localhost:5000/users/$username/tv-series/is-added?tvSerieId=$tvSerieId",
+    );
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        return jsonResponse["isTvSerieAdded"] ?? false;
+      } else {
+        print("Error al comprobar si la serie está añadida: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Excepción al comprobar si la serie está añadida: $e");
+    }
+    return false;
+  }
+
+  Future<bool> addMovieToUser(String username, int movieId, {String language = "en"}) async {
+    final token = await TokenManager.getToken();
+    final url = Uri.parse("http://localhost:5000/users/$username/movies/add?movieId=$movieId");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept-Language': language,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print("Película añadida correctamente.");
+        return true;
+      } else {
+        print("Error al añadir película: ${response.statusCode}");
+        print(response.body);
+        return false;
+      }
+    } catch (e) {
+      print("Excepción al añadir película: $e");
+      return false;
+    }
+  }
+
+  Future<bool> addTvSerieToUser(String username, int tvSerieId, {String language = "en"}) async {
+    final token = await TokenManager.getToken();
+    final url = Uri.parse("http://localhost:5000/users/$username/tv-series/add?tvSerieId=$tvSerieId");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept-Language': language,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print("Serie añadida correctamente.");
+        return true;
+      } else {
+        print("Error al añadir serie: ${response.statusCode}");
+        print(response.body);
+        return false;
+      }
+    } catch (e) {
+      print("Excepción al añadir serie: $e");
+      return false;
+    }
+  }
 }

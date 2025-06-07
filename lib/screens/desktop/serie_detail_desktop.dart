@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/serie_controller.dart';
+import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/models/serie.dart';
+import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/screens/desktop/season_detail_desktop_page.dart';
 import 'package:xpvault/controllers/season_controller.dart';
@@ -22,16 +24,30 @@ class SerieDetailDesktopPage extends StatefulWidget {
 class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
   final SeasonController seasonController = SeasonController();
   final SerieController _serieController = SerieController();
+  final _userController = UserController();
 
   Serie? _serie;
+  bool _hoveringSerieTick = false;
+  bool _hasSerie = false;
 
   @override
   void initState() {
     super.initState();
-    _loadMovie();
+    _loadSerie();
+    _checkUserHasSerie();
   }
 
-  Future<void> _loadMovie() async {
+  Future<void> _checkUserHasSerie() async {
+    final currentUser = await UserManager.getUser();
+    if (currentUser != null && _serie != null) {
+      final has = await _userController.isTvSerieAdded(currentUser.username, _serie!.tmbdId);
+      setState(() {
+        _hasSerie = has;
+      });
+    }
+  }
+
+  Future<void> _loadSerie() async {
     final serie = await _serieController.fetchSerieById(widget.serieId.toString());
     setState(() {
       _serie = serie;
@@ -92,6 +108,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
         title: Text(
           serie.title,
           style: const TextStyle(color: Colors.white),
+          textAlign: TextAlign.left,
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
@@ -109,6 +126,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,  // alineación a la izquierda en toda la columna principal
           children: [
             if (serie.headerUrl != null)
               Image.network(
@@ -136,7 +154,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                         height: 300,
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) =>
-                            const Icon(Icons.broken_image, size: 100),
+                        const Icon(Icons.broken_image, size: 100),
                       ),
                     ),
                   const SizedBox(width: 24),
@@ -151,6 +169,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
                           ),
+                          textAlign: TextAlign.left,
                         ),
                         const SizedBox(height: 8),
                         if (serie.genres.isNotEmpty)
@@ -158,10 +177,10 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                             spacing: 8.0,
                             children: serie.genres
                                 .map((g) => Chip(
-                                      label: Text(g),
-                                      backgroundColor: AppColors.secondary,
-                                      labelStyle: const TextStyle(color: Colors.white),
-                                    ))
+                              label: Text(g),
+                              backgroundColor: AppColors.secondary,
+                              labelStyle: const TextStyle(color: Colors.white),
+                            ))
                                 .toList(),
                           ),
                         const SizedBox(height: 12),
@@ -169,6 +188,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 12.0),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 if (serie.releaseDate != null)
                                   Row(
@@ -206,8 +226,73 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                             fontSize: 16,
                             color: AppColors.textMuted,
                           ),
+                          textAlign: TextAlign.left,
                         ),
                       ],
+                    ),
+                  ),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    onEnter: (_) => setState(() => _hoveringSerieTick = true),
+                    onExit: (_) => setState(() => _hoveringSerieTick = false),
+                    child: GestureDetector(
+                      onTap: () async {
+                        final currentUser = await UserManager.getUser();
+                        if (currentUser == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Login to add series."),
+                              backgroundColor: AppColors.warning,
+                            ),
+                          );
+                          return;
+                        }
+
+                        bool success;
+                        if (_hasSerie) {
+                          success = await _userController.deleteTvSerieFromUser(currentUser.username, _serie!.tmbdId);
+                        } else {
+                          success = await _userController.addTvSerieToUser(currentUser.username, _serie!.tmbdId);
+                        }
+
+                        if (success) {
+                          setState(() {
+                            _hasSerie = !_hasSerie;
+                          });
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(_hasSerie ? "Serie added successfully!" : "Serie deleted successfully!"),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Something went wrong"),
+                              backgroundColor: AppColors.warning,
+                            ),
+                          );
+                        }
+                      },
+                      child: AnimatedScale(
+                        scale: _hoveringSerieTick ? 1.3 : 1.0,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _hasSerie ? Colors.lightGreenAccent : Colors.grey,
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -217,7 +302,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start, // izquierda
                 children: [
                   if (serie.totalSeasons != null && serie.totalEpisodes != null)
                     Text(
@@ -227,6 +312,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
+                      textAlign: TextAlign.left,
                     ),
                   const SizedBox(height: 8),
                   if (serie.seasons != null && serie.seasons!.isNotEmpty)
@@ -238,24 +324,25 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start, // izquierda
                         children: serie.seasons!
                             .map(
                               (s) => InkWell(
-                                onTap: () => _showSeasonDetail(context, s),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Text(
-                                    '• ${s.name}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: AppColors.textMuted,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
+                            onTap: () => _showSeasonDetail(context, s),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text(
+                                '• ${s.name}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.textMuted,
+                                  decoration: TextDecoration.underline,
                                 ),
+                                textAlign: TextAlign.left,
                               ),
-                            )
+                            ),
+                          ),
+                        )
                             .toList(),
                       ),
                     ),
@@ -266,6 +353,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                         fontSize: 16,
                         color: AppColors.textMuted,
                       ),
+                      textAlign: TextAlign.left,
                     ),
                   const SizedBox(height: 24),
                   if (serie.directors != null && serie.directors!.isNotEmpty)
@@ -277,7 +365,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start, // izquierda
                         children: [
                           const Text(
                             'Directors:',
@@ -286,6 +374,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary,
                             ),
+                            textAlign: TextAlign.left,
                           ),
                           const SizedBox(height: 8),
                           Wrap(
@@ -293,49 +382,51 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                             children: serie.directors!
                                 .map(
                                   (d) => Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ClipOval(
-                                        child: d.photoUrl != null &&
-                                                d.photoUrl!.isNotEmpty
-                                            ? Image.network(
-                                                d.photoUrl!,
-                                                width: 64,
-                                                height: 64,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (_, __, ___) =>
-                                                    const Icon(Icons.person,
-                                                        size: 64),
-                                              )
-                                            : Container(
-                                                width: 64,
-                                                height: 64,
-                                                color: AppColors.secondary,
-                                                child: Center(
-                                                  child: Text(
-                                                    d.name.isNotEmpty
-                                                        ? d.name[0]
-                                                        : '?',
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 24,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        d.name,
-                                        style: const TextStyle(
-                                          color: AppColors.textMuted,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipOval(
+                                    child: d.photoUrl != null &&
+                                        d.photoUrl!.isNotEmpty
+                                        ? Image.network(
+                                      d.photoUrl!,
+                                      width: 64,
+                                      height: 64,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) =>
+                                      const Icon(Icons.person,
+                                          size: 64),
+                                    )
+                                        : Container(
+                                      width: 64,
+                                      height: 64,
+                                      color: AppColors.secondary,
+                                      child: Center(
+                                        child: Text(
+                                          d.name.isNotEmpty
+                                              ? d.name[0]
+                                              : '?',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 24,
+                                            fontWeight:
+                                            FontWeight.bold,
+                                          ),
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                )
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    d.name,
+                                    style: const TextStyle(
+                                      color: AppColors.textMuted,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
+                              ),
+                            )
                                 .toList(),
                           ),
                         ],
@@ -350,7 +441,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start, // izquierda
                         children: [
                           const Text(
                             'Main Cast:',
@@ -359,6 +450,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary,
                             ),
+                            textAlign: TextAlign.left,
                           ),
                           const SizedBox(height: 8),
                           Wrap(
@@ -367,58 +459,72 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                             children: serie.casting!
                                 .map(
                                   (a) => Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: a.photoUrl != null &&
-                                                a.photoUrl!.isNotEmpty
-                                            ? Image.network(
-                                                a.photoUrl!,
-                                                width: 64,
-                                                height: 96,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (_, __, ___) =>
-                                                    const Icon(Icons.person,
-                                                        size: 64),
-                                              )
-                                            : Container(
-                                                width: 64,
-                                                height: 96,
-                                                color: AppColors.secondary,
-                                                child: Center(
-                                                  child: Text(
-                                                    a.name.isNotEmpty
-                                                        ? a.name[0]
-                                                        : '?',
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 24,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        a.name,
-                                        style: const TextStyle(
-                                          color: AppColors.textMuted,
-                                          fontWeight: FontWeight.bold,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: a.photoUrl != null &&
+                                        a.photoUrl!.isNotEmpty
+                                        ? Image.network(
+                                      a.photoUrl!,
+                                      width: 64,
+                                      height: 96,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) =>
+                                      const Icon(Icons.person,
+                                          size: 64),
+                                    )
+                                        : Container(
+                                      width: 64,
+                                      height: 96,
+                                      color: AppColors.secondary,
+                                      child: Center(
+                                        child: Text(
+                                          a.name.isNotEmpty
+                                              ? a.name[0]
+                                              : '?',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 24,
+                                            fontWeight:
+                                            FontWeight.bold,
+                                          ),
                                         ),
                                       ),
-                                      Text(
-                                        a.character,
-                                        style: const TextStyle(
-                                          color: AppColors.textMuted,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                )
+                                  const SizedBox(height: 4),
+                                  SizedBox(
+                                    width: 64,
+                                    child: Text(
+                                      a.name,
+                                      style: const TextStyle(
+                                        color: AppColors.textMuted,
+                                        fontSize: 12,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 64,
+                                    child: Text(
+                                      a.character ?? '',
+                                      style: const TextStyle(
+                                        color: AppColors.textMuted,
+                                        fontSize: 10,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
                                 .toList(),
                           ),
                         ],

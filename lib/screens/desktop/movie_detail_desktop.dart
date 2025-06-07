@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/movie_controller.dart';
+import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/screens/movies_series.dart';
+import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/widgets/cast_with_navigation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
@@ -22,9 +24,12 @@ class MovieDetailDesktopPage extends StatefulWidget {
 
 class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
   final MovieController _movieController = MovieController();
+  final UserController _userController = UserController();
 
   Movie? _movie;
   bool _isLoading = true;
+  bool _hoveringMovieTick = false;
+  bool _hasMovie = false;
 
   @override
   void initState() {
@@ -38,6 +43,13 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
       _movie = movie;
       _isLoading = false;
     });
+    final currentUser = await UserManager.getUser();
+    if (currentUser != null) {
+      final hasMovie = await _userController.isMovieAdded(currentUser.username, movie!.tmbdId);
+      setState(() {
+        _hasMovie = hasMovie;
+      });
+    }
   }
 
   @override
@@ -90,33 +102,101 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                     ),
                   ),
                 const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: TextButton.icon(
-                    onPressed: () {
-                      if (widget.returnPage != null) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => widget.returnPage!,
-                          ),
-                        );
-                      } else {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MoviesSeriesPage(),
-                          ),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.arrow_back, color: AppColors.accent),
-                    label: const Text(
-                      'Back',
-                      style: TextStyle(color: AppColors.accent),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton.icon(
+                      onPressed: () {
+                        if (widget.returnPage != null) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => widget.returnPage!,
+                            ),
+                          );
+                        } else {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MoviesSeriesPage(),
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.arrow_back, color: AppColors.accent),
+                      label: const Text(
+                        'Back',
+                        style: TextStyle(color: AppColors.accent),
+                      ),
                     ),
-                  ),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      onEnter: (_) => setState(() => _hoveringMovieTick = true),
+                      onExit: (_) => setState(() => _hoveringMovieTick = false),
+                      child: GestureDetector(
+                        onTap: () async {
+                          final currentUser = await UserManager.getUser();
+                          if (currentUser == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Login to add movies."),
+                                backgroundColor: AppColors.warning,
+                              ),
+                            );
+                            return;
+                          }
+
+                          bool success;
+                          if (_hasMovie) {
+                            success = await _userController.deleteMovieFromUser(currentUser.username, _movie!.tmbdId);
+                          } else {
+                            success = await _userController.addMovieToUser(currentUser.username, _movie!.tmbdId);
+                          }
+
+                          if (success) {
+                            setState(() {
+                              _hasMovie = !_hasMovie;
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(_hasMovie ? "Movie added successfully!" : "Movie deleted successfully!"),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Something went wrong"),
+                                backgroundColor: AppColors.warning,
+                              ),
+                            );
+                          }
+                        },
+                        child: AnimatedScale(
+                          scale: _hoveringMovieTick ? 1.3 : 1.0,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeInOut,
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _hasMovie ? Colors.lightGreenAccent : Colors.grey,
+                            ),
+                            child: const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+
                 const SizedBox(height: 16),
                 Expanded(
                   child: Row(
@@ -174,18 +254,18 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                               ),
                               const SizedBox(height: 8),
                               _movie!.casting.isNotEmpty
-                                ? SizedBox(
-                                    height: 180,
-                                    child: CastWithNavigation(casting: _movie!.casting),
-                                  )
-                                : const Text(
-                                    'Cast not found',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontStyle: FontStyle.italic,
-                                      color: AppColors.textMuted,
-                                    ),
-                                  ),
+                                  ? SizedBox(
+                                height: 180,
+                                child: CastWithNavigation(casting: _movie!.casting),
+                              )
+                                  : const Text(
+                                'Cast not found',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.italic,
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
                               const SizedBox(height: 24),
                             ],
                           ),
@@ -216,7 +296,7 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                       height: 350,
                                       fit: BoxFit.cover,
                                       errorBuilder: (context, error, stackTrace) =>
-                                          const Icon(Icons.broken_image, size: 100, color: AppColors.error),
+                                      const Icon(Icons.broken_image, size: 100, color: AppColors.error),
                                     ),
                                   ),
                                 ),
@@ -235,7 +315,7 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                           height: 40,
                                           fit: BoxFit.cover,
                                           errorBuilder: (context, error, stackTrace) =>
-                                              const Icon(Icons.person, color: AppColors.textMuted),
+                                          const Icon(Icons.person, color: AppColors.textMuted),
                                         ),
                                       )
                                     else
@@ -243,7 +323,7 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                     const SizedBox(width: 8),
                                     Flexible(
                                       child: Text(
-                                        director?.name ?? "Director desconocido",
+                                        director?.name ?? "Director unknown",
                                         style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
                                       ),
                                     ),
