@@ -85,7 +85,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
       title: "XPVAULT",
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,  // alineación a la izquierda en toda la columna principal
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20,),
             Padding(

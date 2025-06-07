@@ -296,7 +296,7 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
             const Padding(
               padding: EdgeInsets.all(16),
               child: Text(
-                "No se encontraron usuarios",
+                "No users found",
                 style: TextStyle(color: Colors.white),
               ),
             )

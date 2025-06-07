@@ -26,7 +26,7 @@ class AuthController {
 
       return res.statusCode;
     } catch (e) {
-      print("Error en el registro: $e");
+      print("Error while register: $e");
     }
     return -1;
   }
@@ -46,7 +46,7 @@ class AuthController {
       print(res.statusCode);
       return res.statusCode;
     } catch (e) {
-      print("Error en el registro: $e");
+      print("Error while register: $e");
     }
     return -1;
   }
@@ -63,7 +63,7 @@ class AuthController {
       print(res.body);
       return res.statusCode;
     } catch (e) {
-      print("Error en el registro: $e");
+      print("Error while register: $e");
     }
     return -1;
   }
@@ -81,7 +81,7 @@ class AuthController {
       );
       return res.statusCode;
     } catch (e) {
-      print("Error en el registro: $e");
+      print("Error while register: $e");
     }
     return -1;
   }

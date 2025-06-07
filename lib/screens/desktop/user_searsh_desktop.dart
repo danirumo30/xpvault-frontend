@@ -105,7 +105,7 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
                   controller: _searchController,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: "Buscar usuarios...",
+                    hintText: "Find users...",
                     hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
                     prefixIcon: const Icon(Icons.search, color: Colors.white70),
                     border: OutlineInputBorder(
@@ -145,7 +145,7 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
                   : currentUsers.isEmpty
                   ? const Center(
                 child: Text(
-                  "No se encontraron usuarios",
+                  "No users found",
                   style: TextStyle(color: Colors.white),
                 ),
               )
@@ -170,7 +170,7 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text("Anterior"),
+                  child: const Text("Previous"),
                 ),
                 const SizedBox(width: 16),
                 Text(
@@ -185,7 +185,7 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text("Siguiente"),
+                  child: const Text("Next"),
                 ),
               ],
             ),
