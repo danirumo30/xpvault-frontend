@@ -15,7 +15,6 @@ import 'package:xpvault/screens/users.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
-import 'package:xpvault/widgets/my_build_section_title.dart';
 import 'package:xpvault/widgets/my_stats_card.dart';
 
 class ProfileDesktopPage extends StatefulWidget {
@@ -328,10 +327,10 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
                   MyBuildContentBox(items: _games, title: "🎮 My Games"),
                   const SizedBox(height: 45),
 
-                  MyBuildContentBox(items: _movies, title: "🎬 My Movies"),
+                  MyBuildContentBox(items: _movies, title: "🎬 My Movies", username: _user!.username),
                   const SizedBox(height: 45),
 
-                  MyBuildContentBox(items: _series, title: "📺 My Series"),
+                  MyBuildContentBox(items: _series, title: "📺 My Series", username: _user!.username,),
                 ],
               ),
             ),

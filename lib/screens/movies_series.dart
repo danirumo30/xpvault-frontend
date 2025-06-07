@@ -4,8 +4,9 @@ import 'package:xpvault/screens/desktop/movies_series_desktop.dart';
 
 class MoviesSeriesPage extends StatefulWidget {
   final Widget? returnPage;
+  final String? profileUsername;
 
-  const MoviesSeriesPage({super.key, this.returnPage});
+  const MoviesSeriesPage({super.key, this.returnPage, this.profileUsername});
 
   @override
   State<MoviesSeriesPage> createState() => _MoviesSeriesPageState();
@@ -17,8 +18,12 @@ class _MoviesSeriesPageState extends State<MoviesSeriesPage> {
     return Scaffold(
       body: ResponsiveLayout(
         mobileBody: Scaffold(),
-        desktopBody: MoviesSeriesDesktop(returnPage: widget.returnPage),
+        desktopBody: MoviesSeriesDesktop(
+          returnPage: widget.returnPage,
+          profileUsername: widget.profileUsername,
+        ),
       ),
     );
   }
 }
+

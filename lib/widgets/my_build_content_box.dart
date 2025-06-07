@@ -14,6 +14,7 @@ class MyBuildContentBox extends StatelessWidget {
   final bool showBodyLabel;
   final Widget? returnPage;
   final String? title;
+  final String? username;
 
   const MyBuildContentBox({
     super.key,
@@ -21,6 +22,7 @@ class MyBuildContentBox extends StatelessWidget {
     this.showBodyLabel = true,
     this.returnPage,
     this.title,
+    this.username,
   });
 
   @override
@@ -47,7 +49,7 @@ class MyBuildContentBox extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MoviesSeriesPage(),
+              builder: (context) => MoviesSeriesPage(profileUsername: username),
             ),
           );
         };
@@ -56,7 +58,7 @@ class MyBuildContentBox extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SeriesPage(),
+              builder: (context) => SeriesPage(username: username),
             ),
           );
         };
@@ -68,13 +70,11 @@ class MyBuildContentBox extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Mostrar siempre título y botón "Show All" si hay acción
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Título a la izquierda
               Text(
                 title ?? '',
                 style: const TextStyle(
@@ -83,7 +83,6 @@ class MyBuildContentBox extends StatelessWidget {
                   fontSize: 18,
                 ),
               ),
-              // Botón "Show All" solo si hay items y acción
               if (!isEmpty && onShowAllTap != null)
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
@@ -113,7 +112,6 @@ class MyBuildContentBox extends StatelessWidget {
           ),
         ),
 
-        // Mostrar mensaje si vacío, o la lista horizontal si hay contenido
         if (isEmpty)
           Container(
             height: 120,
@@ -131,7 +129,7 @@ class MyBuildContentBox extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                "Contenido próximamente...",
+                "Content soon...",
                 style: TextStyle(
                   color: AppColors.textMuted,
                   fontSize: 16,
@@ -165,19 +163,19 @@ class MyBuildContentBox extends StatelessWidget {
                   if (typeStr == 'Game') {
                     title = item.title;
                     imageUrl = item.screenshotUrl;
-                    bodyText = "Juego";
+                    bodyText = "Game";
                   } else if (typeStr == 'Movie') {
                     title = item.title;
                     imageUrl = item.posterUrl;
-                    bodyText = "Película";
+                    bodyText = "Movie";
                   } else if (typeStr == 'Serie') {
                     title = item.title;
                     imageUrl = item.posterUrl;
                     bodyText = "Serie";
                   } else if (typeStr == 'Achievement') {
-                    title = item.name ?? 'Desconocido';
+                    title = item.name ?? 'Unknown';
                     imageUrl = item.url;
-                    bodyText = "Logro";
+                    bodyText = "Achievement";
                   } else if (typeStr == 'Casting') {
                     title = item.name;
                     imageUrl = item.photoUrl;
@@ -191,7 +189,7 @@ class MyBuildContentBox extends StatelessWidget {
                     imageUrl = item.photoUrl;
                     bodyText = showBodyLabel ? 'Director' : '';
                   } else {
-                    title = 'Desconocido';
+                    title = 'Unknown';
                     imageUrl = null;
                     bodyText = '';
                   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
+import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
@@ -11,40 +12,64 @@ import 'dart:async';
 
 class MoviesSeriesDesktop extends StatefulWidget {
   final Widget? returnPage;
+  final String? profileUsername;
 
-  const MoviesSeriesDesktop({super.key, this.returnPage});
+  const MoviesSeriesDesktop({super.key, this.returnPage, this.profileUsername});
 
   @override
   State<MoviesSeriesDesktop> createState() => _MoviesSeriesDesktopState();
 }
 
 class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
+  String? _profileUsername;
+  String? _loggedInUsername;
   List<Movie> movies = [];
+  List<Movie> myMovies = [];
   bool _isLoading = true;
+  bool _isLoadingMyMovies = false;
+  bool _isUserLoggedIn = false;
+
   final TextEditingController searchController = TextEditingController();
   int _currentPage = 1;
   String dropdownValue = "";
 
-  void _showMovieDetails(Movie movie) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MovieDetailDesktopPage(movieId: movie.tmbdId, returnPage: widget.returnPage,),
-      ),
-    );
+  final MovieController movieController = MovieController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initUserContext();
+    _initMovies();
   }
 
-  final MovieController movieController = MovieController();
+  Future<void> _initUserContext() async {
+    final currentUser = await UserManager.getUser();
+    setState(() {
+      _isUserLoggedIn = currentUser != null;
+      _loggedInUsername = currentUser?.username;
+      _profileUsername = widget.profileUsername ?? _loggedInUsername;
+    });
+    if (_profileUsername != null) {
+      await _loadMyOwnedMovies(_profileUsername!);
+    }
+  }
 
   Future<void> _initMovies() async {
     await movieController.loadMoviesFromAssets('movies.json');
     await _loadMovies();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _initMovies();
+  Future<void> _loadMyOwnedMovies(String username) async {
+    setState(() {
+      _isLoadingMyMovies = true;
+    });
+
+    final loadedMovies = await movieController.fetchUserMovies(username);
+
+    setState(() {
+      myMovies = loadedMovies;
+      _isLoadingMyMovies = false;
+    });
   }
 
   Future<void> _loadMovies() async {
@@ -74,20 +99,25 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
   }
 
   Future<void> _searchByGenre(String genre) async {
-    print(genre);
     setState(() => _isLoading = true);
     List<Movie> loadedMovies = await movieController.getMoviesByGenre(genre, page: _currentPage);
-    print(loadedMovies.length);
 
     setState(() {
       movies = loadedMovies;
       dropdownValue = genre;
-      // Al buscar por género ignoramos el texto en el campo de búsqueda
       searchController.clear();
       _isLoading = false;
     });
   }
 
+  void _showMovieDetails(Movie movie) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MovieDetailDesktopPage(movieId: movie.tmbdId, returnPage: widget.returnPage),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,6 +186,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Movies (public)
                   Expanded(
                     flex: 2,
                     child: Padding(
@@ -192,11 +223,11 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                                 ElevatedButton(
                                   onPressed: _currentPage > 1
                                       ? () {
-                                          setState(() {
-                                            _currentPage--;
-                                          });
-                                          _loadMovies();
-                                        }
+                                    setState(() {
+                                      _currentPage--;
+                                    });
+                                    _loadMovies();
+                                  }
                                       : null,
                                   child: const Text("Previous"),
                                 ),
@@ -223,6 +254,8 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                       ),
                     ),
                   ),
+
+                  // My Movies (propias)
                   Expanded(
                     flex: 1,
                     child: Padding(
@@ -237,7 +270,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Last seen",
+                              "My Movies",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
@@ -246,10 +279,102 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                             ),
                             const SizedBox(height: 16),
                             Expanded(
-                              child: const Center(
-                                child: Text("No movie selected"),
+                              child: !_isUserLoggedIn
+                                  ? Center(
+                                child: Text(
+                                  "Please log in to view your movies.",
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                                  : _isLoadingMyMovies
+                                  ? Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.accent,
+                                ),
+                              )
+                                  : myMovies.isEmpty
+                                  ? Center(
+                                child: Text(
+                                  "You have no movies.",
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                                  : GridView.builder(
+                                itemCount: myMovies.length,
+                                gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 1,
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 10,
+                                  childAspectRatio: 5,
+                                ),
+                                itemBuilder: (context, index) {
+                                  final movie = myMovies[index];
+                                  final imageUrl = (movie.posterUrl?.trim().isNotEmpty ?? false)
+                                      ? movie.posterUrl!
+                                      : 'https://via.placeholder.com/150';
+
+                                  bool isHovered = false;
+
+                                  return StatefulBuilder(
+                                    builder: (context, setStateHover) {
+                                      return MouseRegion(
+                                        cursor: SystemMouseCursors.click,
+                                        onEnter: (_) => setStateHover(() => isHovered = true),
+                                        onExit: (_) => setStateHover(() => isHovered = false),
+                                        child: AnimatedScale(
+                                          scale: isHovered ? 1.05 : 1.0,
+                                          duration: const Duration(milliseconds: 200),
+                                          curve: Curves.easeInOut,
+                                          child: GestureDetector(
+                                            onTap: () => _showMovieDetails(movie),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColors.secondary,
+                                                borderRadius: BorderRadius.circular(8),
+                                                image: DecorationImage(
+                                                  image: NetworkImage(imageUrl),
+                                                  fit: BoxFit.cover,
+                                                  colorFilter: ColorFilter.mode(
+                                                    Colors.black.withOpacity(0.4),
+                                                    BlendMode.darken,
+                                                  ),
+                                                ),
+                                              ),
+                                              padding: const EdgeInsets.all(12),
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                movie.title,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                             ),
+                            const SizedBox(height: 8),
+                            if (_isUserLoggedIn && _profileUsername != null)
+                              ElevatedButton(
+                                onPressed: () => _loadMyOwnedMovies(_profileUsername!),
+                                child: const Text("Reload My Movies"),
+                              ),
                           ],
                         ),
                       ),

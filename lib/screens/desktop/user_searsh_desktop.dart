@@ -174,7 +174,7 @@ class _UserSearchDesktopPageState extends State<UserSearchDesktopPage> {
                 ),
                 const SizedBox(width: 16),
                 Text(
-                  "Página ${_currentPage + 1} de $totalPages",
+                  "Page ${_currentPage + 1} of $totalPages",
                   style: const TextStyle(color: Colors.white70),
                 ),
                 const SizedBox(width: 16),

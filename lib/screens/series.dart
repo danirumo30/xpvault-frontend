@@ -5,8 +5,9 @@ import 'package:xpvault/screens/mobile/home_mobile.dart';
 
 class SeriesPage extends StatefulWidget {
   final Widget? returnPage;
+  final String? username;
 
-  const SeriesPage({super.key, this.returnPage});
+  const SeriesPage({super.key, this.returnPage, this.username});
 
   @override
   State<SeriesPage> createState() => _SeriesPageState();
@@ -18,7 +19,10 @@ class _SeriesPageState extends State<SeriesPage> {
     return Scaffold(
       body: ResponsiveLayout(
         mobileBody: HomeMobilePage(),
-        desktopBody: SerieDesktopPage(returnPage: widget.returnPage),
+        desktopBody: SerieDesktopPage(
+          returnPage: widget.returnPage,
+          username: widget.username,
+        ),
       ),
     );
   }

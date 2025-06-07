@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/screens/serie_detail.dart';
+import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
@@ -10,19 +11,25 @@ import 'package:xpvault/widgets/serie_grid.dart';
 
 class SerieDesktopPage extends StatefulWidget {
   final Widget? returnPage;
+  final String? username;
 
-  const SerieDesktopPage({super.key, this.returnPage});
+  const SerieDesktopPage({super.key, this.returnPage, this.username});
 
   @override
   State<SerieDesktopPage> createState() => _SerieDesktopPageState();
 }
 
 class _SerieDesktopPageState extends State<SerieDesktopPage> {
+  String? _profileUsername;
+  String? _loggedInUsername;
+  bool _isUserLoggedIn = false;
   List<Serie> series = [];
   bool _isLoading = true;
   final TextEditingController searchController = TextEditingController();
   int _currentPage = 1;
   String dropdownValue = "";
+  List<Serie> mySeries = [];
+  bool _isLoadingMySeries = false;
 
   final SerieController serieController = SerieController();
 
@@ -76,9 +83,42 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
     });
   }
 
+  Future<void> _initUserContext() async {
+    String? username = widget.username;
+
+    if (username == null) {
+      final currentUser = await UserManager.getUser();
+      username = currentUser?.username;
+    }
+
+    setState(() {
+      _isUserLoggedIn = username != null;
+      _loggedInUsername = username;
+      _profileUsername = username;
+    });
+
+    if (_profileUsername != null) {
+      await _loadMyOwnedSeries(_profileUsername!);
+    }
+  }
+
+  Future<void> _loadMyOwnedSeries(String username) async {
+    setState(() {
+      _isLoadingMySeries = true;
+    });
+
+    final loadedSeries = await serieController.fetchUserSeries(username);
+
+    setState(() {
+      mySeries = loadedSeries;
+      _isLoadingMySeries = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _initUserContext();
     _searchByTitle("");
   }
 
@@ -237,7 +277,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Last seen",
+                              "My Series",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
@@ -245,9 +285,15 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            const Expanded(
-                              child: Center(
-                                child: Text("No serie selected"),
+                            Expanded(
+                              child: _isLoadingMySeries
+                                  ? const Center(child: CircularProgressIndicator())
+                                  : mySeries.isEmpty
+                                  ? const Center(child: Text("No series found"))
+                                  : SerieGrid(
+                                series: mySeries,
+                                isLoading: false,
+                                onSerieTap: _showSerieDetails,
                               ),
                             ),
                           ],
