@@ -68,17 +68,17 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
     final steamId = uri.queryParameters['steamId'];
 
     if (steamId != null && steamId.isNotEmpty && !_isSteamLoggedIn) {
-      print('Steam ID extraído al volver: $steamId');
+      print('Steam ID extracted on return: $steamId');
 
       setState(() {
         _isSteamLoggedIn = true;
       });
 
-      // Asignamos steamId en UserManager (que debe actualizar el usuario guardado)
+      // Assign steamId locally
       await UserManager.assignSteamIdToUser(steamId);
 
-      // Ahora recargamos el usuario actualizado
-      final user = await UserManager.getUser();
+      // Reload user from local
+      var user = await UserManager.getUser();
 
       if (user != null) {
         setState(() {
@@ -90,25 +90,75 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
           setState(() {
             _token = token;
           });
-          print("DATOS DEL USUARIO A ACTUALIZAR: ${user.toJson()}");
-          await _userController.saveUser(user, _token);
+
+          print("USER DATA TO UPDATE: ${user.toJson()}");
+
+          // Try to save user in backend
+          final saved = await _userController.saveUser(user, _token);
+
+          if (saved) {
+            // Fetch updated user from backend
+            final updatedUser = await _userController.getUserByUsername(user.username);
+
+            if (updatedUser != null) {
+              print("UpdatedUser steamUser: ${updatedUser.steamUser}, Expected steamId: $steamId");
+              await UserManager.saveUser(updatedUser);
+
+              setState(() {
+                _user = updatedUser;
+              });
+              if (updatedUser.steamUser != null) {
+                // Steam user was assigned successfully
+                Future.microtask(() {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Steam account successfully linked"),
+                      backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                });
+              } else {
+                // Steam user field null or different => failed assignment
+                Future.microtask(() {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        "Could not link Steam account because another XPVault user already has this Steam user assigned.",
+                      ),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                      duration: Duration(seconds: 4),
+                    ),
+                  );
+                });
+              }
+            } else {
+              print("Failed to get updated user from backend");
+            }
+          } else {
+            print("Could not save user to backend");
+            // Optionally, aquí también podrías mostrar un error general si quieres.
+          }
         }
       }
 
-      // Limpia la URL sin parámetros
+      // Clear URL parameters
       web.window.history.replaceState(null, '', '/');
+    } else if (search.isNotEmpty && (steamId == null || steamId.isEmpty)) {
+      print('No Steam ID found in URL');
+
       Future.microtask(() {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Steam account successfully linked"),
-            backgroundColor: Colors.green,
+            content: Text("No Steam ID found in URL. Unable to link Steam account."),
+            backgroundColor: Colors.orange,
             behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 3),
+            duration: Duration(seconds: 4),
           ),
         );
       });
-    } else {
-      print('No se encontró el Steam ID en la URL');
     }
   }
 
