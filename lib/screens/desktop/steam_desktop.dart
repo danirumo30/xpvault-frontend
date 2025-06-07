@@ -393,7 +393,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                     _loadGames();
                   }
                       : null,
-                  child: const Text("Anterior"),
+                  child: const Text("Previous"),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
@@ -405,7 +405,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                     _loadGames();
                   }
                       : null,
-                  child: const Text("Siguiente"),
+                  child: const Text("Next"),
                 ),
               ],
             ),

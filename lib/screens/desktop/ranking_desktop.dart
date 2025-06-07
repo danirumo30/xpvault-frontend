@@ -133,7 +133,7 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
                       _currentPage > 0
                           ? () => setState(() => _currentPage--)
                           : null,
-                  child: const Text("Anterior"),
+                  child: const Text("Previous"),
                 ),
                 const SizedBox(width: 16),
                 Text(
@@ -146,7 +146,7 @@ class _RankingDesktopPageState extends State<RankingDesktopPage> {
                       (_currentPage + 1) < totalPages
                           ? () => setState(() => _currentPage++)
                           : null,
-                  child: const Text("Siguiente"),
+                  child: const Text("Next"),
                 ),
               ],
             ),

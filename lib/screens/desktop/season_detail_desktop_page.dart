@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xpvault/controllers/season_controller.dart';  // Tu controller para temporadas
+import 'package:xpvault/controllers/season_controller.dart';
 import 'package:xpvault/models/season_detail.dart';
 import 'package:xpvault/themes/app_color.dart';
 

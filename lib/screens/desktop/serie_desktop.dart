@@ -45,7 +45,6 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
     }
   }
 
-  // Función exclusiva para buscar por título
   Future<void> _searchByTitle(String title) async {
     setState(() => _isLoading = true);
     List<Serie> loadedSeries;
@@ -58,12 +57,11 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
 
     setState(() {
       series = loadedSeries;
-      dropdownValue = ""; // Limpiamos selección de género al buscar por título
+      dropdownValue = "";
       _isLoading = false;
     });
   }
 
-  // Función exclusiva para buscar por género
   Future<void> _searchByGenre(String genre) async {
     print(genre);
     setState(() => _isLoading = true);
@@ -73,7 +71,6 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
     setState(() {
       series = loadedSeries;
       dropdownValue = genre;
-      // Al buscar por género ignoramos el texto en el campo de búsqueda
       searchController.clear();
       _isLoading = false;
     });
@@ -82,7 +79,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
   @override
   void initState() {
     super.initState();
-    _searchByTitle(""); // Cargar series populares inicialmente
+    _searchByTitle("");
   }
 
   @override

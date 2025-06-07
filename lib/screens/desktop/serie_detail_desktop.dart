@@ -113,7 +113,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,  // alineación a la izquierda en toda la columna principal
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (serie.headerUrl != null)
               Image.network(
