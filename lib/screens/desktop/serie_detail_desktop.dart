@@ -164,7 +164,9 @@ class SerieDetailDesktopPage extends StatelessWidget {
                             ),
                           ),
                         Text(
-                          serie.description,
+                          (serie.description?.isNotEmpty ?? false)
+                              ? serie.description!
+                              : 'No description available',
                           style: const TextStyle(
                             fontSize: 16,
                             color: AppColors.textMuted,

@@ -47,7 +47,9 @@ class SeasonDetailDesktopPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              seasonDetail.description ?? 'No description available',
+              (seasonDetail.description?.isNotEmpty ?? false)
+                  ? seasonDetail.description!
+                  : 'No description available',
               style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
             ),
             const SizedBox(height: 24),
@@ -79,7 +81,9 @@ class SeasonDetailDesktopPage extends StatelessWidget {
                       children: [
                         const SizedBox(height: 4),
                         Text(
-                          episode.description ?? 'No description available',
+                          (seasonDetail.description?.isNotEmpty ?? false)
+                              ? seasonDetail.description!
+                              : 'No description available',
                           style: const TextStyle(color: AppColors.textSecondary)),
                         const SizedBox(height: 4),
                         Text('Duración: $durationMinutes min', style: const TextStyle(color: AppColors.textSecondary)),
