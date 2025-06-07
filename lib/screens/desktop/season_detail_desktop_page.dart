@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/season_controller.dart';  // Tu controller para temporadas
+import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/season_detail.dart';
 import 'package:xpvault/themes/app_color.dart';
 
@@ -42,13 +43,15 @@ class _SeasonDetailDesktopPageState extends State<SeasonDetailDesktopPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
+      return DesktopLayout(
+        title: "XPVAULT",
         body: Center(child: CircularProgressIndicator(color: AppColors.accent)),
       );
     }
 
     if (_seasonDetail == null) {
-      return Scaffold(
+      return DesktopLayout(
+        title: "XPVAULT",
         body: Center(
           child: Text(
             "Season not found",
@@ -60,28 +63,8 @@ class _SeasonDetailDesktopPageState extends State<SeasonDetailDesktopPage> {
 
     final season = _seasonDetail!;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        title: Text(
-          'Season ${season.seasonNumber}: ${season.title}',
-          style: const TextStyle(color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () {
-            if (widget.returnPage != null) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => widget.returnPage!),
-              );
-            } else {
-              Navigator.pop(context);
-            }
-          },
-        ),
-      ),
+    return DesktopLayout(
+      title: "XPVAULT",
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(

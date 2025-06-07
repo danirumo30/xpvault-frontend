@@ -78,7 +78,7 @@ class _HoverSerieCardState extends State<_HoverSerieCard> {
               boxShadow: _isHovered
                   ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -94,7 +94,7 @@ class _HoverSerieCardState extends State<_HoverSerieCard> {
                       ? ClipRRect(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
                     child: Image.network(
-                      widget.serie.posterUrl!,
+                      widget.serie.posterUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
                     ),

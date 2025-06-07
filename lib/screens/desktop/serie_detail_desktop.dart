@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/serie_controller.dart';
 import 'package:xpvault/controllers/user_controller.dart';
+import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/screens/season_detail.dart';
 import 'package:xpvault/services/user_manager.dart';
@@ -11,7 +12,7 @@ class SerieDetailDesktopPage extends StatefulWidget {
   final int serieId;
   final Widget? returnPage;
 
-  SerieDetailDesktopPage({
+  const SerieDetailDesktopPage({
     super.key,
     required this.serieId,
     this.returnPage,
@@ -49,7 +50,6 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
 
   Future<void> _loadSerie() async {
     final serie = await _serieController.fetchSerieById(widget.serieId.toString());
-    print('Seasons loaded: ${serie?.seasons?.length ?? 0}');
     setState(() {
       _serie = serie;
     });
@@ -75,75 +75,34 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
     final serie = _serie;
 
     if (serie == null) {
-      return Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.primary,
-          title: const Text('Loading...'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
+      return DesktopLayout(
+        title: "XPVAULT",
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        title: Text(
-          serie.title,
-          style: const TextStyle(color: Colors.white),
-          textAlign: TextAlign.left,
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () {
-            if (widget.returnPage != null) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => widget.returnPage!),
-              );
-            } else {
-              Navigator.pop(context);
-            }
-          },
-        ),
-      ),
+    return DesktopLayout(
+      title: "XPVAULT",
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,  // alineación a la izquierda en toda la columna principal
           children: [
-            if (serie.headerUrl != null)
-              Image.network(
-                serie.headerUrl!,
-                width: double.infinity,
-                height: 250,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  height: 250,
-                  color: Colors.grey,
-                  child: const Center(child: Icon(Icons.broken_image, size: 40)),
-                ),
-              ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (serie.posterUrl != null)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        serie.posterUrl!,
-                        height: 300,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) =>
-                        const Icon(Icons.broken_image, size: 100),
-                      ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      serie.posterUrl,
+                      height: 300,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) =>
+                      const Icon(Icons.broken_image, size: 100),
                     ),
+                  ),
                   const SizedBox(width: 24),
                   Expanded(
                     child: Column(
@@ -171,43 +130,39 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                                 .toList(),
                           ),
                         const SizedBox(height: 12),
-                        if (serie.releaseDate != null || serie.rating != null)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 12.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                if (serie.releaseDate != null)
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.calendar_today,
-                                          color: AppColors.accent, size: 16),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        serie.releaseDate!,
-                                        style: const TextStyle(color: AppColors.textMuted),
-                                      ),
-                                    ],
-                                  ),
-                                if (serie.releaseDate != null && serie.rating != null)
-                                  const SizedBox(width: 16),
-                                if (serie.rating != null)
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.star, color: Colors.amber, size: 16),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        serie.rating!.toStringAsFixed(1),
-                                        style: const TextStyle(color: AppColors.textMuted),
-                                      ),
-                                    ],
-                                  ),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.calendar_today,
+                                        color: AppColors.accent, size: 16),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      serie.releaseDate,
+                                      style: const TextStyle(color: AppColors.textMuted),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(width: 16),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.star, color: Colors.amber, size: 16),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      serie.rating.toStringAsFixed(1),
+                                      style: const TextStyle(color: AppColors.textMuted),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
                         Text(
-                          (serie.description?.isNotEmpty ?? false)
-                              ? serie.description!
+                          (serie.description.isNotEmpty)
+                              ? serie.description
                               : 'No description available',
                           style: const TextStyle(
                             fontSize: 16,
@@ -291,18 +246,17 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start, // izquierda
                 children: [
-                  if (serie.totalSeasons != null && serie.totalEpisodes != null)
-                    Text(
-                      'Seasons (${serie.totalSeasons}) - Episodes: ${serie.totalEpisodes}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                      textAlign: TextAlign.left,
+                  Text(
+                    'Seasons (${serie.totalSeasons}) - Episodes: ${serie.totalEpisodes}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
                     ),
+                    textAlign: TextAlign.left,
+                  ),
                   const SizedBox(height: 8),
-                  if (serie.seasons != null && serie.seasons!.isNotEmpty)
+                  if (serie.seasons.isNotEmpty)
                     Container(
                       padding: const EdgeInsets.all(16),
                       margin: const EdgeInsets.only(bottom: 24),
@@ -312,7 +266,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start, // izquierda
-                        children: serie.seasons!
+                        children: serie.seasons
                             .map(
                               (s) => InkWell(
                             onTap: () => _showSeasonDetail(context, s),
@@ -333,17 +287,16 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                             .toList(),
                       ),
                     ),
-                  if (serie.totalTime != null)
-                    Text(
-                      'Total viewing time: ${serie.totalTime! ~/ 60}h ${serie.totalTime! % 60}m',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: AppColors.textMuted,
-                      ),
-                      textAlign: TextAlign.left,
+                  Text(
+                    'Total viewing time: ${serie.totalTime ~/ 60}h ${serie.totalTime % 60}m',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: AppColors.textMuted,
                     ),
+                    textAlign: TextAlign.left,
+                  ),
                   const SizedBox(height: 24),
-                  if (serie.directors != null && serie.directors!.isNotEmpty)
+                  if (serie.directors.isNotEmpty)
                     Container(
                       padding: const EdgeInsets.all(16),
                       margin: const EdgeInsets.only(bottom: 24),
@@ -366,17 +319,16 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                           const SizedBox(height: 8),
                           Wrap(
                             spacing: 16,
-                            children: serie.directors!
+                            children: serie.directors
                                 .map(
                                   (d) => Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ClipOval(
-                                    child: d.photoUrl != null &&
-                                        d.photoUrl!.isNotEmpty
+                                    child: d.photoUrl.isNotEmpty
                                         ? Image.network(
-                                      d.photoUrl!,
+                                      d.photoUrl,
                                       width: 64,
                                       height: 64,
                                       fit: BoxFit.cover,
@@ -419,7 +371,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                         ],
                       ),
                     ),
-                  if (serie.casting != null && serie.casting!.isNotEmpty)
+                  if (serie.casting.isNotEmpty)
                     Container(
                       padding: const EdgeInsets.all(16),
                       margin: const EdgeInsets.only(bottom: 24),
@@ -443,7 +395,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                           Wrap(
                             spacing: 16,
                             runSpacing: 16,
-                            children: serie.casting!
+                            children: serie.casting
                                 .map(
                                   (a) => Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -451,10 +403,9 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
-                                    child: a.photoUrl != null &&
-                                        a.photoUrl!.isNotEmpty
+                                    child: a.photoUrl.isNotEmpty
                                         ? Image.network(
-                                      a.photoUrl!,
+                                      a.photoUrl,
                                       width: 64,
                                       height: 96,
                                       fit: BoxFit.cover,
@@ -498,7 +449,7 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                                   SizedBox(
                                     width: 64,
                                     child: Text(
-                                      a.character ?? '',
+                                      a.character,
                                       style: const TextStyle(
                                         color: AppColors.textMuted,
                                         fontSize: 10,

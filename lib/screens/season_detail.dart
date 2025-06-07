@@ -3,7 +3,6 @@ import 'package:xpvault/layouts/responsive_layout.dart';
 import 'package:xpvault/screens/desktop/season_detail_desktop_page.dart';
 import 'package:xpvault/screens/mobile/home_mobile.dart';
 
-import 'package:xpvault/models/season_detail.dart';
 
 class SeasonDetailPage extends StatefulWidget {
   final int serieId;

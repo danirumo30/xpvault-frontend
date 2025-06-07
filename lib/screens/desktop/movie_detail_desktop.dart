@@ -55,13 +55,15 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
+      return DesktopLayout(
+        title: "XPVAULT",
         body: Center(child: CircularProgressIndicator(color: AppColors.accent)),
       );
     }
 
     if (_movie == null) {
-      return Scaffold(
+      return DesktopLayout(
+        title: "XPVAULT",
         body: Center(
           child: Text(
             "Movie not found",
@@ -84,23 +86,6 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (_movie!.headerUrl != null && _movie!.headerUrl!.isNotEmpty)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      _movie!.headerUrl!,
-                      width: double.infinity,
-                      height: 200,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        height: 200,
-                        color: AppColors.border,
-                        child: const Center(
-                          child: Icon(Icons.broken_image, size: 60, color: AppColors.error),
-                        ),
-                      ),
-                    ),
-                  ),
                 const SizedBox(height: 16),
 
                 Row(
@@ -235,8 +220,8 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                (_movie!.description?.isNotEmpty ?? false)
-                                    ? _movie!.description!
+                                (_movie!.description.isNotEmpty)
+                                    ? _movie!.description
                                     : 'No description available',
                                 style: const TextStyle(
                                   fontSize: 16,

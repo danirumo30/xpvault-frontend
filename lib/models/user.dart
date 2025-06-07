@@ -110,7 +110,6 @@ class User {
       'totalTimePlayed': totalTimePlayed,
       'totalTimeMoviesWatched': totalTimeMoviesWatched,
       'totalTimeEpisodesWatched': totalTimeEpisodesWatched,
-      'totalTimePlayed': totalTimePlayed,
       'totalFriends': totalFriends,
       'totalGames': totalGames,
       'totalMovies': totalMovies,
