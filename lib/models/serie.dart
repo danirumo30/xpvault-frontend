@@ -1,6 +1,6 @@
 class Serie {
   final String title;
-  final String description;
+  final String? description;
   final String? posterUrl;
   final String? headerUrl;
   final int tmbdId;
