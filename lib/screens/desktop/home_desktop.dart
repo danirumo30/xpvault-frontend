@@ -362,30 +362,29 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                       )
                       : ListView(
                         children: [
-                          const MyBuildSectionTitle(title: "🎮 Featured Games"),
                           MyBuildContentBox(
                             items: featuredGames,
                             showBodyLabel: false,
                             returnPage: HomePage(),
+                            title: "🎮 Featured Games",
                           ),
-
                           const SizedBox(height: 24),
 
-                          const MyBuildSectionTitle(title: "🎬 Popular Movies"),
                           MyBuildContentBox(
                             items: popularMovies,
                             showBodyLabel: false,
                             returnPage: HomePage(),
+                            title: "🎬 Popular Movies",
                           ),
-
                           const SizedBox(height: 24),
 
-                          const MyBuildSectionTitle(title: "📺 Popular Series"),
                           MyBuildContentBox(
                             items: popularSeries,
                             showBodyLabel: false,
                             returnPage: HomePage(),
+                            title: "📺 Popular Series",
                           ),
+                          const SizedBox(height: 24),
                         ],
                       ),
             ),

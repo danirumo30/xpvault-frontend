@@ -7,6 +7,7 @@ import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/widgets/cast_with_navigation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
+import 'package:xpvault/widgets/my_build_content_box.dart';
 
 class MovieDetailDesktopPage extends StatefulWidget {
   final int movieId;
@@ -229,19 +230,13 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                 ),
                               ),
                               const SizedBox(height: 24),
-                              const Text(
-                                "Cast:",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
                               _movie!.casting.isNotEmpty
                                   ? SizedBox(
-                                height: 180,
-                                child: CastWithNavigation(casting: _movie!.casting),
+                                child: MyBuildContentBox(
+                                  items: _movie!.casting,
+                                  showBodyLabel: false,
+                                  title: "Cast",
+                                ),
                               )
                                   : const Text(
                                 'Cast not found',

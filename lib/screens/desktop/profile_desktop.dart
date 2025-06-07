@@ -325,16 +325,13 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
             Expanded(
               child: ListView(
                 children: [
-                  const MyBuildSectionTitle(title: "🎮 My Games"),
-                  MyBuildContentBox(items: _games),
-                  const SizedBox(height: 24),
+                  MyBuildContentBox(items: _games, title: "🎮 My Games"),
+                  const SizedBox(height: 45),
 
-                  const MyBuildSectionTitle(title: "🎬 My Movies"),
-                  MyBuildContentBox(items: _movies),
-                  const SizedBox(height: 24),
+                  MyBuildContentBox(items: _movies, title: "🎬 My Movies"),
+                  const SizedBox(height: 45),
 
-                  const MyBuildSectionTitle(title: "📺 My Series"),
-                  MyBuildContentBox(items: _series),
+                  MyBuildContentBox(items: _series, title: "📺 My Series"),
                 ],
               ),
             ),

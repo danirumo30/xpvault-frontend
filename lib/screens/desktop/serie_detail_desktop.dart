@@ -7,6 +7,7 @@ import 'package:xpvault/screens/season_detail.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/controllers/season_controller.dart';
+import 'package:xpvault/widgets/my_build_content_box.dart';
 
 class SerieDetailDesktopPage extends StatefulWidget {
   final int serieId;
@@ -84,26 +85,30 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
     return DesktopLayout(
       title: "XPVAULT",
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Row(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // --- HEADER ---
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Poster
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                     child: Image.network(
                       serie.posterUrl,
-                      height: 300,
+                      height: 320,
+                      width: 220,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                      const Icon(Icons.broken_image, size: 100),
+                      errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 120),
                     ),
                   ),
-                  const SizedBox(width: 24),
+                  const SizedBox(width: 32),
+
+                  // Info
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,68 +116,79 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                         Text(
                           serie.title,
                           style: const TextStyle(
-                            fontSize: 32,
+                            fontSize: 36,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
                           ),
-                          textAlign: TextAlign.left,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
+
+                        // Genres chips
                         if (serie.genres.isNotEmpty)
                           Wrap(
-                            spacing: 8.0,
-                            children: serie.genres
-                                .map((g) => Chip(
+                            spacing: 10,
+                            runSpacing: 6,
+                            children: serie.genres.map((g) => Chip(
                               label: Text(g),
                               backgroundColor: AppColors.secondary,
-                              labelStyle: const TextStyle(color: Colors.white),
-                            ))
-                                .toList(),
+                              labelStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            )).toList(),
                           ),
-                        const SizedBox(height: 12),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+
+                        const SizedBox(height: 18),
+
+                        // Release date & rating
+                        Row(
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.calendar_today,
-                                        color: AppColors.accent, size: 16),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      serie.releaseDate,
-                                      style: const TextStyle(color: AppColors.textMuted),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(width: 16),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.star, color: Colors.amber, size: 16),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      serie.rating.toStringAsFixed(1),
-                                      style: const TextStyle(color: AppColors.textMuted),
-                                    ),
-                                  ],
+                                const Icon(Icons.calendar_today, color: AppColors.accent, size: 18),
+                                const SizedBox(width: 6),
+                                Text(
+                                  serie.releaseDate,
+                                  style: const TextStyle(
+                                    color: AppColors.textMuted,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
+                            const SizedBox(width: 24),
+                            Row(
+                              children: [
+                                const Icon(Icons.star, color: Colors.amber, size: 18),
+                                const SizedBox(width: 6),
+                                Text(
+                                  serie.rating.toStringAsFixed(1),
+                                  style: const TextStyle(
+                                    color: AppColors.textMuted,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Description
                         Text(
-                          (serie.description.isNotEmpty)
-                              ? serie.description
-                              : 'No description available',
+                          (serie.description.isNotEmpty) ? serie.description : 'No description available',
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 17,
+                            height: 1.4,
                             color: AppColors.textMuted,
                           ),
-                          textAlign: TextAlign.left,
                         ),
                       ],
                     ),
                   ),
+
+                  const SizedBox(width: 24),
+
+                  // Add / Remove serie button
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
                     onEnter: (_) => setState(() => _hoveringSerieTick = true),
@@ -192,9 +208,11 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
 
                         bool success;
                         if (_hasSerie) {
-                          success = await _userController.deleteTvSerieFromUser(currentUser.username, _serie!.tmbdId);
+                          success = await _userController.deleteTvSerieFromUser(
+                              currentUser.username, _serie!.tmbdId);
                         } else {
-                          success = await _userController.addTvSerieToUser(currentUser.username, _serie!.tmbdId);
+                          success = await _userController.addTvSerieToUser(
+                              currentUser.username, _serie!.tmbdId);
                         }
 
                         if (success) {
@@ -204,7 +222,9 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(_hasSerie ? "Serie added successfully!" : "Serie deleted successfully!"),
+                              content: Text(_hasSerie
+                                  ? "Serie added successfully!"
+                                  : "Serie deleted successfully!"),
                               backgroundColor: Colors.green,
                             ),
                           );
@@ -222,16 +242,23 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                         duration: const Duration(milliseconds: 200),
                         curve: Curves.easeInOut,
                         child: Container(
-                          width: 32,
-                          height: 32,
+                          width: 40,
+                          height: 40,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: _hasSerie ? Colors.lightGreenAccent : Colors.grey,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
                           child: const Icon(
                             Icons.check,
                             color: Colors.white,
-                            size: 20,
+                            size: 24,
                           ),
                         ),
                       ),
@@ -239,239 +266,172 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                   ),
                 ],
               ),
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // izquierda
-                children: [
-                  Text(
-                    'Seasons (${serie.totalSeasons}) - Episodes: ${serie.totalEpisodes}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                  const SizedBox(height: 8),
-                  if (serie.seasons.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      margin: const EdgeInsets.only(bottom: 24),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(12),
+
+              const SizedBox(height: 32),
+              const Divider(height: 2, thickness: 1),
+
+              // --- Seasons & Summary ---
+              const SizedBox(height: 24),
+
+              Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                color: AppColors.surface,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Seasons (${serie.totalSeasons})',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // izquierda
-                        children: serie.seasons
-                            .map(
-                              (s) => InkWell(
-                            onTap: () => _showSeasonDetail(context, s),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Text(
-                                '• ${s.name}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: AppColors.textMuted,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                          ),
-                        )
-                            .toList(),
+                      const Spacer(),
+                      Text(
+                        'Episodes: ${serie.totalEpisodes}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: AppColors.textMuted,
+                        ),
                       ),
-                    ),
-                  Text(
-                    'Total viewing time: ${serie.totalTime ~/ 60}h ${serie.totalTime % 60}m',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: AppColors.textMuted,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                  const SizedBox(height: 24),
-                  if (serie.directors.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      margin: const EdgeInsets.only(bottom: 24),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // izquierda
+                      const SizedBox(width: 40),
+                      Row(
                         children: [
-                          const Text(
-                            'Directors:',
-                            style: TextStyle(
+                          const Icon(Icons.schedule, color: AppColors.secondary),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${serie.totalTime ~/ 60}h ${serie.totalTime % 60}m',
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: AppColors.secondary,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 16,
-                            children: serie.directors
-                                .map(
-                                  (d) => Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipOval(
-                                    child: d.photoUrl.isNotEmpty
-                                        ? Image.network(
-                                      d.photoUrl,
-                                      width: 64,
-                                      height: 64,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) =>
-                                      const Icon(Icons.person,
-                                          size: 64),
-                                    )
-                                        : Container(
-                                      width: 64,
-                                      height: 64,
-                                      color: AppColors.secondary,
-                                      child: Center(
-                                        child: Text(
-                                          d.name.isNotEmpty
-                                              ? d.name[0]
-                                              : '?',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 24,
-                                            fontWeight:
-                                            FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    d.name,
-                                    style: const TextStyle(
-                                      color: AppColors.textMuted,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                            )
-                                .toList(),
                           ),
                         ],
                       ),
-                    ),
-                  if (serie.casting.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      margin: const EdgeInsets.only(bottom: 24),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // izquierda
-                        children: [
-                          const Text(
-                            'Main Cast:',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 16,
-                            runSpacing: 16,
-                            children: serie.casting
-                                .map(
-                                  (a) => Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: a.photoUrl.isNotEmpty
-                                        ? Image.network(
-                                      a.photoUrl,
-                                      width: 64,
-                                      height: 96,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) =>
-                                      const Icon(Icons.person,
-                                          size: 64),
-                                    )
-                                        : Container(
-                                      width: 64,
-                                      height: 96,
-                                      color: AppColors.secondary,
-                                      child: Center(
-                                        child: Text(
-                                          a.name.isNotEmpty
-                                              ? a.name[0]
-                                              : '?',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 24,
-                                            fontWeight:
-                                            FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  SizedBox(
-                                    width: 64,
-                                    child: Text(
-                                      a.name,
-                                      style: const TextStyle(
-                                        color: AppColors.textMuted,
-                                        fontSize: 12,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 64,
-                                    child: Text(
-                                      a.character,
-                                      style: const TextStyle(
-                                        color: AppColors.textMuted,
-                                        fontSize: 10,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                                .toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 24),
+
+              // --- Seasons list ---
+              if (serie.seasons.isNotEmpty) ...[
+                Text(
+                  'Seasons',
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                Wrap(
+                  spacing: 20,
+                  runSpacing: 20,
+                  children: serie.seasons.map((s) {
+                    bool isHovering = false;
+
+                    return StatefulBuilder(
+                      builder: (context, setLocalState) {
+                        return MouseRegion(
+                          onEnter: (_) => setLocalState(() => isHovering = true),
+                          onExit: (_) => setLocalState(() => isHovering = false),
+                          cursor: SystemMouseCursors.click,
+                          child: AnimatedScale(
+                            scale: isHovering ? 1.05 : 1.0,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
+                            child: InkWell(
+                              onTap: () => _showSeasonDetail(context, s),
+                              borderRadius: BorderRadius.circular(14),
+                              child: Container(
+                                width: 200,
+                                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surface,
+                                  borderRadius: BorderRadius.circular(14),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.08),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.tv, color: AppColors.accent),
+                                    const SizedBox(width: 14),
+                                    Expanded(
+                                      child: Text(
+                                        s.name,
+                                        style: const TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
+              ],
+
+              const SizedBox(height: 40),
+
+              // --- Directors ---
+              if (serie.directors.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  color: AppColors.surface,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: MyBuildContentBox(
+                      items: serie.directors,
+                      showBodyLabel: false,
+                      title: "Directors",
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 36),
+              ],
+
+              // --- Main Cast ---
+              if (serie.casting.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  color: AppColors.surface,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: MyBuildContentBox(
+                      items: serie.casting,
+                      showBodyLabel: false,
+                      title: "Casting",
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+              ],
+            ],
+          ),
         ),
       ),
     );
