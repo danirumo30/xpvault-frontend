@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:xpvault/controllers/serie_controller.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/screens/desktop/season_detail_desktop_page.dart';
 import 'package:xpvault/controllers/season_controller.dart';
 
 class SerieDetailDesktopPage extends StatefulWidget {
-  final Serie serie;
+  final int serieId;
   final Widget? returnPage;
 
   SerieDetailDesktopPage({
     super.key,
-    required this.serie,
+    required this.serieId,
     this.returnPage,
   });
 
@@ -20,8 +21,22 @@ class SerieDetailDesktopPage extends StatefulWidget {
 
 class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
   final SeasonController seasonController = SeasonController();
+  final SerieController _serieController = SerieController();
 
-  bool _seen = false;
+  Serie? _serie;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMovie();
+  }
+
+  Future<void> _loadMovie() async {
+    final serie = await _serieController.fetchSerieById(widget.serieId.toString());
+    setState(() {
+      _serie = serie;
+    });
+  }
 
   void _showSeasonDetail(BuildContext context, Season season) async {
     print("Season name: ${season.name}");
@@ -54,7 +69,22 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
 
   @override
   Widget build(BuildContext context) {
-    final serie = widget.serie;
+    final serie = _serie;
+
+    if (serie == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.primary,
+          title: const Text('Loading...'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -92,30 +122,6 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                   child: const Center(child: Icon(Icons.broken_image, size: 40)),
                 ),
               ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Checkbox(
-                  value: _seen,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _seen = value ?? false;
-                      // AQUÍ SE HACE EL TEMA DE GUARDAR EN BASE DE DATOS Y TAL
-                    });
-                  },
-                  activeColor: AppColors.accent,
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'Mark as seen',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),

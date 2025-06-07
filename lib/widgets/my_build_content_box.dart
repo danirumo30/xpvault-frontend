@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/screens/game_detail.dart';
 import 'package:xpvault/screens/movie_detail.dart';
+import 'package:xpvault/screens/movies_series.dart';
+import 'package:xpvault/screens/serie_detail.dart';
+import 'package:xpvault/screens/series.dart';
+import 'package:xpvault/screens/steam.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 import 'my_netimagecontainer.dart';
@@ -71,7 +75,14 @@ class MyBuildContentBox extends StatelessWidget {
         );
       };
     } else if (firstTypeStr == 'Serie') {
-      onShowAllTap = null;
+      onShowAllTap = () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SeriesPage(),
+          ),
+        );
+      };
     } else {
       onShowAllTap = null;
     }
@@ -174,6 +185,15 @@ class MyBuildContentBox extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) =>
                             MovieDetailPage(movieId: item.tmbdId, returnPage: returnPage),
+                      ),
+                    );
+                  };
+                } else if (typeStr == 'Serie') {
+                  onTapHandler = () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SerieDetailPage(serieId: item.tmbdId, returnPage: returnPage),
                       ),
                     );
                   };

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
+import 'package:xpvault/screens/serie_detail.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/controllers/serie_controller.dart';
 import 'package:xpvault/widgets/serie_grid.dart';
-import 'package:xpvault/screens/desktop/serie_detail_desktop.dart';
 
 class SerieDesktopPage extends StatefulWidget {
   final Widget? returnPage;
@@ -32,8 +32,8 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => SerieDetailDesktopPage(
-            serie: fullSerie,
+          builder: (_) => SerieDetailPage(
+            serieId: fullSerie.tmbdId,
             returnPage: widget.returnPage,
           ),
         ),

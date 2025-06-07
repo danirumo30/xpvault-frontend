@@ -29,45 +29,89 @@ class SerieGrid extends StatelessWidget {
         crossAxisCount: 5,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 0.58, // Más espacio vertical para texto
+        childAspectRatio: 0.58,
       ),
       itemCount: series.length,
       itemBuilder: (context, index) {
         final serie = series[index];
-        return GestureDetector(
+        return _HoverSerieCard(
+          serie: serie,
           onTap: () => onSerieTap(serie),
+        );
+      },
+    );
+  }
+}
+
+class _HoverSerieCard extends StatefulWidget {
+  final Serie serie;
+  final VoidCallback onTap;
+
+  const _HoverSerieCard({
+    required this.serie,
+    required this.onTap,
+  });
+
+  @override
+  State<_HoverSerieCard> createState() => _HoverSerieCardState();
+}
+
+class _HoverSerieCardState extends State<_HoverSerieCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: AnimatedScale(
+        scale: _isHovered ? 1.05 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        child: GestureDetector(
+          onTap: widget.onTap,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               color: AppColors.primary,
+              boxShadow: _isHovered
+                  ? [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+                  : [],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AspectRatio(
                   aspectRatio: 2 / 3,
-                  child: serie.posterUrl != null
+                  child: widget.serie.posterUrl != null
                       ? ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-                          child: Image.network(
-                            serie.posterUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
-                          ),
-                        )
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                    child: Image.network(
+                      widget.serie.posterUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+                    ),
+                  )
                       : Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-                          ),
-                          child: const Icon(Icons.tv, size: 50),
-                        ),
+                    decoration: const BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+                    ),
+                    child: const Icon(Icons.tv, size: 50),
+                  ),
                 ),
-                Expanded( // Asegura que el texto se ajuste en el espacio restante
+                Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      serie.title,
+                      widget.serie.title,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -90,8 +134,8 @@ class SerieGrid extends StatelessWidget {
               ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

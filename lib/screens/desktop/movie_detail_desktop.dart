@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/movie_controller.dart';
 import 'package:xpvault/models/movie.dart';
+import 'package:xpvault/screens/movies_series.dart';
 import 'package:xpvault/widgets/cast_with_navigation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
@@ -24,7 +25,6 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
 
   Movie? _movie;
   bool _isLoading = true;
-  bool _seen = false;
 
   @override
   void initState() {
@@ -203,32 +203,6 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Checkbox(
-                                        value: _seen,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            _seen = value ?? false;
-                                            // AQUÍ SE HACE EL TEMA DE GUARDAR EN BASE DE DATOS Y TAL
-                                          });
-                                        },
-                                        activeColor: AppColors.accent,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      const Text(
-                                        'Mark as seen',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                                 const SizedBox(height: 16),
                                 Container(
                                   decoration: BoxDecoration(

@@ -19,7 +19,7 @@ class SeasonDetailDesktopPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         title: Text(
-          'Temporada ${seasonDetail.seasonNumber}: ${seasonDetail.title}',
+          'Season ${seasonDetail.seasonNumber}: ${seasonDetail.title}',
           style: const TextStyle(color: Colors.white),
         ),
         leading: IconButton(
@@ -42,7 +42,7 @@ class SeasonDetailDesktopPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Descripción:',
+              'Description:',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
             ),
             const SizedBox(height: 8),
@@ -55,7 +55,7 @@ class SeasonDetailDesktopPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             Text(
-              'Episodios (${seasonDetail.episodesCount}):',
+              'Episodes (${seasonDetail.episodesCount}):',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
             ),
             const SizedBox(height: 12),
@@ -73,7 +73,7 @@ class SeasonDetailDesktopPage extends StatelessWidget {
                   color: AppColors.surface,
                   child: ListTile(
                     title: Text(
-                      'Episodio ${episode.episodeNumber}: ${episode.title}',
+                      'Episode ${episode.episodeNumber}: ${episode.title}',
                       style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
                     ),
                     subtitle: Column(
@@ -86,7 +86,7 @@ class SeasonDetailDesktopPage extends StatelessWidget {
                               : 'No description available',
                           style: const TextStyle(color: AppColors.textSecondary)),
                         const SizedBox(height: 4),
-                        Text('Duración: $durationMinutes min', style: const TextStyle(color: AppColors.textSecondary)),
+                        Text('Time: $durationMinutes min', style: const TextStyle(color: AppColors.textSecondary)),
                       ],
                     ),
                   ),
@@ -95,7 +95,7 @@ class SeasonDetailDesktopPage extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Duración total de la temporada: ${seasonDetail.totalTime} min',
+              'Total time of the season: ${seasonDetail.totalTime} min',
               style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: AppColors.textPrimary),
             ),
           ],
