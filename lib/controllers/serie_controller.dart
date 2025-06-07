@@ -5,7 +5,7 @@ import '../models/serie.dart';
 class SerieController {
   final String _baseUrl = "http://localhost:5000/tv-series";
 
-  Future<List<Serie>> fetchPopularSeries({int page = 0}) async {
+  Future<List<Serie>> fetchPopularSeries({int page = 1}) async {
     final response = await http.get(Uri.parse("$_baseUrl/popular?page=$page"));
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
@@ -15,7 +15,8 @@ class SerieController {
     }
   }
 
-  Future<List<Serie>> fetchFullPopularSeries({int page = 0}) async {
+  Future<List<Serie>> fetchFullPopularSeries({int page = 1}) async {
+    print(page);
     final response = await http.get(Uri.parse("$_baseUrl/popular/full?page=$page"));
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
@@ -25,7 +26,7 @@ class SerieController {
     }
   }
 
-  Future<List<Serie>> fetchTopRatedSeries({int page = 0}) async {
+  Future<List<Serie>> fetchTopRatedSeries({int page = 1}) async {
     final response = await http.get(Uri.parse("$_baseUrl/top-rated?page=$page"));
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
@@ -35,7 +36,7 @@ class SerieController {
     }
   }
 
-  Future<Serie?> fetchSerieById(String serieId, {int page = 0}) async {
+  Future<Serie?> fetchSerieById(String serieId, {int page = 1}) async {
     final response = await http.get(Uri.parse("$_baseUrl/id/$serieId?page=$page"));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

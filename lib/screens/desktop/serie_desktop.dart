@@ -53,7 +53,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
     if (title.trim().isNotEmpty) {
       loadedSeries = await serieController.searchSerieByTitle(title.trim(), page: _currentPage);
     } else {
-      loadedSeries = await serieController.fetchPopularSeries();
+      loadedSeries = await serieController.fetchPopularSeries(page: _currentPage);
     }
 
     setState(() {
