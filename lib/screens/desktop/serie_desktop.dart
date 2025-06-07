@@ -180,6 +180,47 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                                 onSerieTap: _showSerieDetails,
                               ),
                             ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: _currentPage > 1
+                                      ? () {
+                                          setState(() {
+                                            _currentPage--;
+                                          });
+                                          if (dropdownValue.isNotEmpty) {
+                                            _searchByGenre(dropdownValue);
+                                          } else {
+                                            _searchByTitle(searchController.text);
+                                          }
+                                        }
+                                      : null,
+                                  child: const Text("Previous"),
+                                ),
+                                Text(
+                                  'Page $_currentPage',
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _currentPage++;
+                                    });
+                                    if (dropdownValue.isNotEmpty) {
+                                      _searchByGenre(dropdownValue);
+                                    } else {
+                                      _searchByTitle(searchController.text);
+                                    }
+                                  },
+                                  child: const Text("Next"),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),

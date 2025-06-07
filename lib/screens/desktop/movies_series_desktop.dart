@@ -185,6 +185,39 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                                 onMovieTap: _showMovieDetails,
                               ),
                             ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: _currentPage > 1
+                                      ? () {
+                                          setState(() {
+                                            _currentPage--;
+                                          });
+                                          _loadMovies();
+                                        }
+                                      : null,
+                                  child: const Text("Previous"),
+                                ),
+                                Text(
+                                  'Page $_currentPage',
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _currentPage++;
+                                    });
+                                    _loadMovies();
+                                  },
+                                  child: const Text("Next"),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
