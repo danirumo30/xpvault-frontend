@@ -47,7 +47,7 @@ class SeasonDetailDesktopPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              seasonDetail.description,
+              seasonDetail.description ?? 'No description available',
               style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
             ),
             const SizedBox(height: 24),
@@ -68,7 +68,7 @@ class SeasonDetailDesktopPage extends StatelessWidget {
 
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),
-                  color: AppColors.primary.withOpacity(0.2),
+                  color: AppColors.surface,
                   child: ListTile(
                     title: Text(
                       'Episodio ${episode.episodeNumber}: ${episode.title}',
@@ -78,7 +78,9 @@ class SeasonDetailDesktopPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 4),
-                        Text(episode.description, style: const TextStyle(color: AppColors.textSecondary)),
+                        Text(
+                          episode.description ?? 'No description available',
+                          style: const TextStyle(color: AppColors.textSecondary)),
                         const SizedBox(height: 4),
                         Text('Duración: $durationMinutes min', style: const TextStyle(color: AppColors.textSecondary)),
                       ],

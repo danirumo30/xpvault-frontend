@@ -9,10 +9,10 @@ class SerieDetailDesktopPage extends StatelessWidget {
   final Widget? returnPage;
 
   SerieDetailDesktopPage({
-    Key? key,
+    super.key,
     required this.serie,
     this.returnPage,
-  }) : super(key: key);
+  });
 
   final SeasonController seasonController = SeasonController();
 
@@ -20,7 +20,7 @@ class SerieDetailDesktopPage extends StatelessWidget {
     print("Season name: ${season.name}");
     print("Season tmbdId: ${season.tmbdId}");
     print("Show ID: ${season.showId}");
-    
+
     final seasonDetail = await seasonController.fetchSeasonById(
       season.showId.toString(),
       season.tmbdId,
@@ -34,7 +34,7 @@ class SerieDetailDesktopPage extends StatelessWidget {
         MaterialPageRoute(
           builder: (_) => SeasonDetailDesktopPage(
             seasonDetail: seasonDetail,
-            returnPage: this, // referencia válida al volver a esta pantalla
+            returnPage: this,
           ),
         ),
       );
@@ -44,7 +44,6 @@ class SerieDetailDesktopPage extends StatelessWidget {
       );
     }
   }
-
 
 
   @override
@@ -214,7 +213,7 @@ class SerieDetailDesktopPage extends StatelessWidget {
                                   style: const TextStyle(
                                     fontSize: 16,
                                     color: AppColors.textMuted,
-                                    decoration: TextDecoration.underline, // para que parezca clicable
+                                    decoration: TextDecoration.underline,
                                   ),
                                 ),
                               ),

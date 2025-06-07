@@ -45,27 +45,36 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
     }
   }
 
-  Future<void> _loadSeries() async {
+  // Función exclusiva para buscar por título
+  Future<void> _searchByTitle(String title) async {
     setState(() => _isLoading = true);
-
     List<Serie> loadedSeries;
-    if (searchController.text.trim().isNotEmpty) {
-      loadedSeries = await serieController.searchSerieByTitle(
-        searchController.text.trim(),
-        page: _currentPage,
-      );
+
+    if (title.trim().isNotEmpty) {
+      loadedSeries = await serieController.searchSerieByTitle(title.trim(), page: _currentPage);
     } else {
       loadedSeries = await serieController.fetchPopularSeries();
     }
 
-    if (dropdownValue.isNotEmpty) {
-      loadedSeries = loadedSeries
-          .where((s) => s.genres.contains(dropdownValue))
-          .toList();
-    }
+    setState(() {
+      series = loadedSeries;
+      dropdownValue = ""; // Limpiamos selección de género al buscar por título
+      _isLoading = false;
+    });
+  }
+
+  // Función exclusiva para buscar por género
+  Future<void> _searchByGenre(String genre) async {
+    print(genre);
+    setState(() => _isLoading = true);
+    List<Serie> loadedSeries = await serieController.fetchSeriesByGenre(genre, page: _currentPage);
+    print(loadedSeries.length);
 
     setState(() {
       series = loadedSeries;
+      dropdownValue = genre;
+      // Al buscar por género ignoramos el texto en el campo de búsqueda
+      searchController.clear();
       _isLoading = false;
     });
   }
@@ -73,7 +82,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
   @override
   void initState() {
     super.initState();
-    _loadSeries();
+    _searchByTitle(""); // Cargar series populares inicialmente
   }
 
   @override
@@ -98,7 +107,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                       setState(() {
                         _currentPage = 1;
                       });
-                      _loadSeries();
+                      _searchByTitle(value);
                     },
                   ),
                 ),
@@ -108,17 +117,29 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                   child: MyDropdownbutton(
                     hint: dropdownValue.isEmpty ? "Select genre" : dropdownValue,
                     items: const [
-                      DropdownMenuItem(value: "Drama", child: Text("Drama")),
+                      DropdownMenuItem(value: "Action & Adventure", child: Text("Action & Adventure")),
+                      DropdownMenuItem(value: "Animation", child: Text("Animation")),
                       DropdownMenuItem(value: "Comedy", child: Text("Comedy")),
-                      DropdownMenuItem(value: "Sci-Fi", child: Text("Sci-Fi")),
+                      DropdownMenuItem(value: "Crime", child: Text("Crime")),
+                      DropdownMenuItem(value: "Documentary", child: Text("Documentary")),
+                      DropdownMenuItem(value: "Drama", child: Text("Drama")),
+                      DropdownMenuItem(value: "Family", child: Text("Family")),
+                      DropdownMenuItem(value: "Kids", child: Text("Kids")),
+                      DropdownMenuItem(value: "Mystery", child: Text("Mystery")),
+                      DropdownMenuItem(value: "News", child: Text("News")),
+                      DropdownMenuItem(value: "Reality", child: Text("Reality")),
+                      DropdownMenuItem(value: "Sci-Fi & Fantasy", child: Text("Sci-Fi & Fantasy")),
+                      DropdownMenuItem(value: "Soap", child: Text("Soap")),
+                      DropdownMenuItem(value: "Talk", child: Text("Talk")),
+                      DropdownMenuItem(value: "War & Politics", child: Text("War & Politics")),
+                      DropdownMenuItem(value: "Western", child: Text("Western")),
                     ],
                     onChanged: (value) {
                       if (value is String) {
                         setState(() {
-                          dropdownValue = value;
                           _currentPage = 1;
                         });
-                        _loadSeries();
+                        _searchByGenre(value);
                       }
                     },
                   ),

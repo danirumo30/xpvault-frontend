@@ -1,8 +1,8 @@
 class Episode {
   final int tmbdid;
   final String title;
-  final String description;
-  final int totalTime;
+  final String? description;
+  final int? totalTime;
   final int seasonNumber;
   final int episodeNumber;
 
@@ -31,7 +31,7 @@ class SeasonDetail {
   final int tmbdId;
   final int tvShowId;
   final String title;
-  final String description;
+  final String? description;
   final int seasonNumber;
   final int episodesCount;
   final int totalTime;

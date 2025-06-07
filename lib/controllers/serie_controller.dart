@@ -45,7 +45,7 @@ class SerieController {
     }
   }
 
-  Future<List<Serie>> searchSerieByTitle(String title, {int page = 0}) async {
+  Future<List<Serie>> searchSerieByTitle(String title, {int page = 1}) async {
     final response = await http.get(Uri.parse("$_baseUrl/title/$title?page=$page"));
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
@@ -55,15 +55,22 @@ class SerieController {
     }
   }
 
-  Future<List<Serie>> fetchSeriesByGenre(String genre, {int page = 0}) async {
-    final response = await http.get(Uri.parse("$_baseUrl/genre/$genre?page=$page"));
-    if (response.statusCode == 200) {
-      final List data = json.decode(response.body);
-      return data.map((json) => Serie.fromJson(json)).toList();
-    } else {
-      return [];
-    }
+  Future<List<Serie>> fetchSeriesByGenre(String genre, {int page = 1}) async {
+  final url = Uri.parse("$_baseUrl/genre/$genre?page=$page");
+  print("Fetching from URL: $url");
+
+  final response = await http.get(url);
+
+  print("Response status: ${response.statusCode}");
+  print("Response body: ${response.body}");
+
+  if (response.statusCode == 200) {
+    final List data = json.decode(response.body);
+    return data.map((json) => Serie.fromJson(json)).toList();
+  } else {
+    return [];
   }
+}
 
   Future<List<Serie>> fetchUserSeries(String appUsername) async {
     final url = "http://localhost:5000/users/profile/$appUsername/tv-series";

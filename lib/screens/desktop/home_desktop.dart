@@ -179,7 +179,7 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                   const SizedBox(height: 24),
 
                   const MyBuildSectionTitle(title: "📺 Popular Series"),
-                  MyBuildContentBox(items: popularSeries, showBodyLabel: false, returnPage: HomePage()),
+                  MyBuildContentBox(items: popularSeries, showBodyLabel: false, returnPage: HomePage(),),
                 ],
               ),
             ),

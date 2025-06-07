@@ -114,7 +114,7 @@ class MainMenuWidget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => SeriesPage()), // Cambia esto por tu pantalla de búsqueda de series
+              MaterialPageRoute(builder: (context) => SeriesPage(returnPage: SeriesPage())),
             );
           },
         ),
