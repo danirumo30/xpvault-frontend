@@ -69,6 +69,19 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
     });
   }
 
+  Future<void> _topRated() async {
+    setState(() => _isLoading = true);
+    List<Serie> loadedSeries;
+
+    loadedSeries = await serieController.fetchTopRatedSeries(page: _currentPage);
+
+    setState(() {
+      series = loadedSeries;
+      dropdownValue = "";
+      _isLoading = false;
+    });
+  }
+
   Future<void> _searchByGenre(String genre) async {
     print(genre);
     setState(() => _isLoading = true);
@@ -119,7 +132,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
   void initState() {
     super.initState();
     _initUserContext();
-    _searchByTitle("");
+    _topRated();
   }
 
   @override
