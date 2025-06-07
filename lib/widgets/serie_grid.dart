@@ -29,7 +29,7 @@ class SerieGrid extends StatelessWidget {
         crossAxisCount: 5,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 0.6,
+        childAspectRatio: 0.58, // Más espacio vertical para texto
       ),
       itemCount: series.length,
       itemBuilder: (context, index) {
@@ -63,16 +63,28 @@ class SerieGrid extends StatelessWidget {
                           child: const Icon(Icons.tv, size: 50),
                         ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    serie.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                Expanded( // Asegura que el texto se ajuste en el espacio restante
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      serie.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        height: 1.2,
+                        overflow: TextOverflow.ellipsis,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(0, 0),
+                            blurRadius: 2.0,
+                            color: Colors.black87,
+                          ),
+                        ],
+                      ),
+                      maxLines: 2,
+                      textAlign: TextAlign.start,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
