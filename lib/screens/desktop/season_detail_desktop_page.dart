@@ -1,34 +1,80 @@
 import 'package:flutter/material.dart';
+import 'package:xpvault/controllers/season_controller.dart';  // Tu controller para temporadas
 import 'package:xpvault/models/season_detail.dart';
 import 'package:xpvault/themes/app_color.dart';
 
-class SeasonDetailDesktopPage extends StatelessWidget {
-  final SeasonDetail seasonDetail;
+class SeasonDetailDesktopPage extends StatefulWidget {
+  final int serieId;
+  final int seasonId;
   final Widget? returnPage;
 
   const SeasonDetailDesktopPage({
     super.key,
-    required this.seasonDetail,
+    required this.serieId,
+    required this.seasonId,
     this.returnPage,
   });
 
   @override
+  State<SeasonDetailDesktopPage> createState() => _SeasonDetailDesktopPageState();
+}
+
+class _SeasonDetailDesktopPageState extends State<SeasonDetailDesktopPage> {
+  final SeasonController _seasonController = SeasonController();
+
+  SeasonDetail? _seasonDetail;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSeasonDetail();
+  }
+
+  Future<void> _loadSeasonDetail() async {
+    final season = await _seasonController.fetchSeasonById(widget.serieId.toString(), widget.seasonId);
+    setState(() {
+      _seasonDetail = season;
+      _isLoading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(color: AppColors.accent)),
+      );
+    }
+
+    if (_seasonDetail == null) {
+      return Scaffold(
+        body: Center(
+          child: Text(
+            "Season not found",
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 18),
+          ),
+        ),
+      );
+    }
+
+    final season = _seasonDetail!;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         title: Text(
-          'Season ${seasonDetail.seasonNumber}: ${seasonDetail.title}',
+          'Season ${season.seasonNumber}: ${season.title}',
           style: const TextStyle(color: Colors.white),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
-            if (returnPage != null) {
+            if (widget.returnPage != null) {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => returnPage!),
+                MaterialPageRoute(builder: (_) => widget.returnPage!),
               );
             } else {
               Navigator.pop(context);
@@ -47,15 +93,15 @@ class SeasonDetailDesktopPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              (seasonDetail.description?.isNotEmpty ?? false)
-                  ? seasonDetail.description!
+              (season.description?.isNotEmpty ?? false)
+                  ? season.description!
                   : 'No description available',
               style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
             ),
             const SizedBox(height: 24),
 
             Text(
-              'Episodes (${seasonDetail.episodesCount}):',
+              'Episodes (${season.episodesCount}):',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
             ),
             const SizedBox(height: 12),
@@ -63,9 +109,9 @@ class SeasonDetailDesktopPage extends StatelessWidget {
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: seasonDetail.episodes.length,
+              itemCount: season.episodes.length,
               itemBuilder: (context, index) {
-                final episode = seasonDetail.episodes[index];
+                final episode = season.episodes[index];
                 final durationMinutes = episode.totalTime.toString();
 
                 return Card(
@@ -81,10 +127,10 @@ class SeasonDetailDesktopPage extends StatelessWidget {
                       children: [
                         const SizedBox(height: 4),
                         Text(
-                          (seasonDetail.description?.isNotEmpty ?? false)
-                              ? seasonDetail.description!
-                              : 'No description available',
-                          style: const TextStyle(color: AppColors.textSecondary)),
+                            (episode.description?.isNotEmpty ?? false)
+                                ? episode.description!
+                                : 'No description available',
+                            style: const TextStyle(color: AppColors.textSecondary)),
                         const SizedBox(height: 4),
                         Text('Time: $durationMinutes min', style: const TextStyle(color: AppColors.textSecondary)),
                       ],
@@ -95,7 +141,7 @@ class SeasonDetailDesktopPage extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Total time of the season: ${seasonDetail.totalTime} min',
+              'Total time of the season: ${season.totalTime} min',
               style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: AppColors.textPrimary),
             ),
           ],

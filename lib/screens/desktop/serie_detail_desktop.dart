@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/serie_controller.dart';
 import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/models/serie.dart';
+import 'package:xpvault/screens/season_detail.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
-import 'package:xpvault/screens/desktop/season_detail_desktop_page.dart';
 import 'package:xpvault/controllers/season_controller.dart';
 
 class SerieDetailDesktopPage extends StatefulWidget {
@@ -49,38 +49,25 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
 
   Future<void> _loadSerie() async {
     final serie = await _serieController.fetchSerieById(widget.serieId.toString());
+    print('Seasons loaded: ${serie?.seasons?.length ?? 0}');
     setState(() {
       _serie = serie;
     });
   }
 
-  void _showSeasonDetail(BuildContext context, Season season) async {
-    print("Season name: ${season.name}");
-    print("Season tmbdId: ${season.tmbdId}");
-    print("Show ID: ${season.showId}");
+  void _showSeasonDetail(BuildContext context, Season s) {
+    if (_serie == null) return;
 
-    final seasonDetail = await seasonController.fetchSeasonById(
-      season.showId.toString(),
-      season.tmbdId,
-    );
-
-    print("Fetched detail title: ${seasonDetail?.title}");
-
-    if (seasonDetail != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => SeasonDetailDesktopPage(
-            seasonDetail: seasonDetail,
-            returnPage: widget,
-          ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SeasonDetailPage(
+          serieId: _serie!.tmbdId,
+          seasondId: s.tmdbId,
+          returnPage: widget.returnPage,
         ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to load season details")),
-      );
-    }
+      ),
+    );
   }
 
   @override

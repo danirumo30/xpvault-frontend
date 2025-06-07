@@ -171,7 +171,7 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
 
     final games = await gameController.fetchFeaturedGames();
     final movies = await movieController.getPopularMovies();
-    final series = await serieController.fetchPopularSeries();
+    final series = await serieController.fetchTopRatedSeries();
 
     setState(() {
       _user = user;

@@ -9,20 +9,20 @@ class Episode {
   Episode({
     required this.tmbdid,
     required this.title,
-    required this.description,
-    required this.totalTime,
+    this.description,
+    this.totalTime,
     required this.seasonNumber,
     required this.episodeNumber,
   });
 
   factory Episode.fromJson(Map<String, dynamic> json) {
     return Episode(
-      tmbdid: json['tmbdid'],
-      title: json['title'],
-      description: json['description'],
-      totalTime: json['totalTime'],
-      seasonNumber: json['seasonNumber'],
-      episodeNumber: json['episodeNumber'],
+      tmbdid: (json['tmbdid'] is int) ? json['tmbdid'] as int : -1,
+      title: json['title'] as String? ?? 'Sin título',
+      description: json['description'] as String?,
+      totalTime: (json['totalTime'] is int) ? json['totalTime'] as int : null,
+      seasonNumber: (json['seasonNumber'] is int) ? json['seasonNumber'] as int : -1,
+      episodeNumber: (json['episodeNumber'] is int) ? json['episodeNumber'] as int : -1,
     );
   }
 }
@@ -41,7 +41,7 @@ class SeasonDetail {
     required this.tmbdId,
     required this.tvShowId,
     required this.title,
-    required this.description,
+    this.description,
     required this.seasonNumber,
     required this.episodesCount,
     required this.totalTime,
@@ -49,18 +49,17 @@ class SeasonDetail {
   });
 
   factory SeasonDetail.fromJson(Map<String, dynamic> json) {
-    var episodesJson = json['episodes'] as List;
-    List<Episode> episodesList =
-        episodesJson.map((e) => Episode.fromJson(e)).toList();
+    var episodesJson = json['episodes'] as List<dynamic>? ?? [];
+    List<Episode> episodesList = episodesJson.map((e) => Episode.fromJson(e)).toList();
 
     return SeasonDetail(
-      tmbdId: json['tmbdId'],
-      tvShowId: json['tvShowId'],
-      title: json['title'],
-      description: json['description'],
-      seasonNumber: json['seasonNumber'],
-      episodesCount: json['episodesCount'],
-      totalTime: json['totalTime'],
+      tmbdId: (json['tmbdId'] is int) ? json['tmbdId'] as int : -1,
+      tvShowId: (json['tvShowId'] is int) ? json['tvShowId'] as int : -1,
+      title: json['title'] as String? ?? 'Sin título',
+      description: json['description'] as String?,
+      seasonNumber: (json['seasonNumber'] is int) ? json['seasonNumber'] as int : -1,
+      episodesCount: (json['episodesCount'] is int) ? json['episodesCount'] as int : 0,
+      totalTime: (json['totalTime'] is int) ? json['totalTime'] as int : 0,
       episodes: episodesList,
     );
   }

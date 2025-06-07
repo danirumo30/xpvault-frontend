@@ -6,12 +6,14 @@ import 'package:xpvault/screens/mobile/home_mobile.dart';
 import 'package:xpvault/models/season_detail.dart';
 
 class SeasonDetailPage extends StatefulWidget {
-  final SeasonDetail seasonDetail;
+  final int serieId;
+  final int seasondId;
   final Widget? returnPage;
 
   const SeasonDetailPage({
     super.key,
-    required this.seasonDetail,
+    required this.serieId,
+    required this.seasondId,
     this.returnPage,
   });
 
@@ -26,7 +28,8 @@ class _SeasonDetailPageState extends State<SeasonDetailPage> {
       body: ResponsiveLayout(
         mobileBody: HomeMobilePage(),
         desktopBody: SeasonDetailDesktopPage(
-          seasonDetail: widget.seasonDetail,
+          serieId: widget.serieId,
+          seasonId: widget.seasondId,
           returnPage: widget.returnPage,
         ),
       ),
