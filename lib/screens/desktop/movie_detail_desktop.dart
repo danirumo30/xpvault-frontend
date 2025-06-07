@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/movie_controller.dart';
 import 'package:xpvault/models/movie.dart';
-import 'package:xpvault/screens/movies_series.dart';
 import 'package:xpvault/widgets/cast_with_navigation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
@@ -25,6 +24,7 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
 
   Movie? _movie;
   bool _isLoading = true;
+  bool _seen = false;
 
   @override
   void initState() {
@@ -72,6 +72,24 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (_movie!.headerUrl != null && _movie!.headerUrl!.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      _movie!.headerUrl!,
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 200,
+                        color: AppColors.border,
+                        child: const Center(
+                          child: Icon(Icons.broken_image, size: 60, color: AppColors.error),
+                        ),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 16),
                 Align(
                   alignment: Alignment.topLeft,
                   child: TextButton.icon(
@@ -137,7 +155,9 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                _movie!.description,
+                                (_movie!.description?.isNotEmpty ?? false)
+                                    ? _movie!.description!
+                                    : 'No description available',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   color: AppColors.textPrimary,
@@ -153,14 +173,20 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                                 ),
                               ),
                               const SizedBox(height: 8),
-
-                              // 🔧 Overflow fix: set fixed height
-                              SizedBox(
-                                height: 180, // Ajusta según necesidad
-                                child: CastWithNavigation(
-                                  casting: _movie!.casting,
-                                ),
-                              ),
+                              _movie!.casting.isNotEmpty
+                                ? SizedBox(
+                                    height: 180,
+                                    child: CastWithNavigation(casting: _movie!.casting),
+                                  )
+                                : const Text(
+                                    'Cast not found',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontStyle: FontStyle.italic,
+                                      color: AppColors.textMuted,
+                                    ),
+                                  ),
+                              const SizedBox(height: 24),
                             ],
                           ),
                         ),
@@ -171,69 +197,87 @@ class _MovieDetailDesktopPageState extends State<MovieDetailDesktopPage> {
                       // Right side
                       Expanded(
                         flex: 1,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: AppColors.border),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.network(
-                                  _movie!.posterUrl ?? '',
-                                  height: 350,
-                                  fit: BoxFit.cover,
-                                  errorBuilder:
-                                      (context, error, stackTrace) =>
-                                          const Icon(
-                                            Icons.broken_image,
-                                            size: 100,
-                                            color: AppColors.error,
-                                          ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height - 200,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                if (director?.photoUrl != null &&
-                                    director!.photoUrl!.isNotEmpty &&
-                                    !director.photoUrl!.endsWith("null"))
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(30),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Checkbox(
+                                        value: _seen,
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            _seen = value ?? false;
+                                            // AQUÍ SE HACE EL TEMA DE GUARDAR EN BASE DE DATOS Y TAL
+                                          });
+                                        },
+                                        activeColor: AppColors.accent,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Text(
+                                        'Mark as seen',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: AppColors.border),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
                                     child: Image.network(
-                                      director.photoUrl!,
-                                      width: 40,
-                                      height: 40,
+                                      _movie!.posterUrl ?? '',
+                                      height: 350,
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              const Icon(
-                                                Icons.person,
-                                                color: AppColors.textMuted,
-                                              ),
+                                      errorBuilder: (context, error, stackTrace) =>
+                                          const Icon(Icons.broken_image, size: 100, color: AppColors.error),
                                     ),
-                                  )
-                                else
-                                  const Icon(
-                                    Icons.person,
-                                    size: 40,
-                                    color: AppColors.textMuted,
                                   ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  director?.name ?? "Director desconocido",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: AppColors.textSecondary,
-                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (director?.photoUrl != null &&
+                                        director!.photoUrl!.isNotEmpty &&
+                                        !director.photoUrl!.endsWith("null"))
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(30),
+                                        child: Image.network(
+                                          director.photoUrl!,
+                                          width: 40,
+                                          height: 40,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) =>
+                                              const Icon(Icons.person, color: AppColors.textMuted),
+                                        ),
+                                      )
+                                    else
+                                      const Icon(Icons.person, size: 40, color: AppColors.textMuted),
+                                    const SizedBox(width: 8),
+                                    Flexible(
+                                      child: Text(
+                                        director?.name ?? "Director desconocido",
+                                        style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ],

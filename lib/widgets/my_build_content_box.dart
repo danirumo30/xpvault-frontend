@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/screens/game_detail.dart';
 import 'package:xpvault/screens/movie_detail.dart';
-import 'package:xpvault/screens/movies_series.dart';
-import 'package:xpvault/screens/steam.dart';
 import 'package:xpvault/themes/app_color.dart';
 
 import 'my_netimagecontainer.dart';

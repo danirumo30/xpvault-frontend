@@ -10,6 +10,8 @@ import 'package:xpvault/screens/steam.dart';
 import 'package:xpvault/screens/users.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
+import 'package:xpvault/screens/series.dart';
+
 
 class MainMenuWidget extends StatelessWidget {
   const MainMenuWidget({super.key});
@@ -91,12 +93,8 @@ class MainMenuWidget extends StatelessWidget {
             }
           },
         ),
-
         ListTile(
-          leading: const Icon(
-            Icons.movie_creation_outlined,
-            color: AppColors.textPrimary,
-          ),
+          leading: const Icon(Icons.movie_creation_outlined, color: AppColors.textPrimary),
           title: const Text(
             "Cinema",
             style: TextStyle(color: AppColors.textPrimary),
@@ -104,7 +102,20 @@ class MainMenuWidget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MoviesSeriesPage(returnPage: MoviesSeriesPage(),)),
+              MaterialPageRoute(builder: (context) => MoviesSeriesPage(returnPage: MoviesSeriesPage())),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.tv, color: AppColors.textPrimary),
+          title: const Text(
+            "Series",
+            style: TextStyle(color: AppColors.textPrimary),
+          ),
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => SeriesPage(returnPage: SeriesPage())),
             );
           },
         ),

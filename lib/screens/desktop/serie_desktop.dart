@@ -3,84 +3,75 @@ import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
-import 'package:xpvault/models/movie.dart';
-import 'package:xpvault/controllers/movie_controller.dart';
-import 'package:xpvault/widgets/movie_grid.dart';
-import 'package:xpvault/screens/desktop/movie_detail_desktop.dart';
-import 'dart:async';
+import 'package:xpvault/models/serie.dart';
+import 'package:xpvault/controllers/serie_controller.dart';
+import 'package:xpvault/widgets/serie_grid.dart';
+import 'package:xpvault/screens/desktop/serie_detail_desktop.dart';
 
-class MoviesSeriesDesktop extends StatefulWidget {
+class SerieDesktopPage extends StatefulWidget {
   final Widget? returnPage;
 
-  const MoviesSeriesDesktop({super.key, this.returnPage});
+  const SerieDesktopPage({super.key, this.returnPage});
 
   @override
-  State<MoviesSeriesDesktop> createState() => _MoviesSeriesDesktopState();
+  State<SerieDesktopPage> createState() => _SerieDesktopPageState();
 }
 
-class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
-  List<Movie> movies = [];
+class _SerieDesktopPageState extends State<SerieDesktopPage> {
+  List<Serie> series = [];
   bool _isLoading = true;
   final TextEditingController searchController = TextEditingController();
   int _currentPage = 1;
   String dropdownValue = "";
 
-  void _showMovieDetails(Movie movie) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MovieDetailDesktopPage(movieId: movie.tmbdId, returnPage: widget.returnPage,),
-      ),
-    );
-  }
+  final SerieController serieController = SerieController();
 
-  final MovieController movieController = MovieController();
-
-  Future<void> _initMovies() async {
-    await movieController.loadMoviesFromAssets('movies.json');
-    await _loadMovies();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _initMovies();
-  }
-
-  Future<void> _loadMovies() async {
-    setState(() => _isLoading = true);
-
-    List<Movie> loadedMovies;
-    if (searchController.text.trim().isNotEmpty) {
-      loadedMovies = await movieController.searchMovieByTitle(
-        searchController.text.trim(),
-        page: _currentPage,
+  void _showSerieDetails(Serie serie) async {
+    final fullSerie = await serieController.fetchSerieById(serie.tmbdId.toString());
+    if (fullSerie != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SerieDetailDesktopPage(
+            serie: fullSerie,
+            returnPage: widget.returnPage,
+          ),
+        ),
       );
     } else {
-      loadedMovies = await movieController.getPopularMovies(
-        page: _currentPage,
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to load serie details")),
       );
     }
+  }
 
-    if (dropdownValue.isNotEmpty) {
-      loadedMovies =
-          loadedMovies.where((m) => m.genres.contains(dropdownValue)).toList();
+  // Función exclusiva para buscar por título
+  Future<void> _searchByTitle(String title) async {
+    setState(() => _isLoading = true);
+    List<Serie> loadedSeries;
+
+    if (title.trim().isNotEmpty) {
+      loadedSeries = await serieController.searchSerieByTitle(title.trim(), page: _currentPage);
+    } else {
+      loadedSeries = await serieController.fetchPopularSeries(page: _currentPage);
     }
 
     setState(() {
-      movies = loadedMovies;
+      series = loadedSeries;
+      dropdownValue = ""; // Limpiamos selección de género al buscar por título
       _isLoading = false;
     });
   }
 
+  // Función exclusiva para buscar por género
   Future<void> _searchByGenre(String genre) async {
     print(genre);
     setState(() => _isLoading = true);
-    List<Movie> loadedMovies = await movieController.getMoviesByGenre(genre, page: _currentPage);
-    print(loadedMovies.length);
+    List<Serie> loadedSeries = await serieController.fetchSeriesByGenre(genre, page: _currentPage);
+    print(loadedSeries.length);
 
     setState(() {
-      movies = loadedMovies;
+      series = loadedSeries;
       dropdownValue = genre;
       // Al buscar por género ignoramos el texto en el campo de búsqueda
       searchController.clear();
@@ -88,6 +79,11 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _searchByTitle(""); // Cargar series populares inicialmente
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,14 +100,14 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                   flex: 2,
                   child: MyTextformfield(
                     textEditingController: searchController,
-                    hintText: "Search",
+                    hintText: "Search Series",
                     obscureText: false,
                     suffixIcon: Icon(Icons.search, color: AppColors.textMuted),
                     onFieldSubmitted: (value) {
                       setState(() {
                         _currentPage = 1;
                       });
-                      _loadMovies();
+                      _searchByTitle(value);
                     },
                   ),
                 ),
@@ -121,22 +117,21 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                   child: MyDropdownbutton(
                     hint: dropdownValue.isEmpty ? "Select genre" : dropdownValue,
                     items: const [
-                      DropdownMenuItem(value: "Action", child: Text("Action")),
-                      DropdownMenuItem(value: "Adventure", child: Text("Adventure")),
+                      DropdownMenuItem(value: "Action & Adventure", child: Text("Action & Adventure")),
                       DropdownMenuItem(value: "Animation", child: Text("Animation")),
                       DropdownMenuItem(value: "Comedy", child: Text("Comedy")),
                       DropdownMenuItem(value: "Crime", child: Text("Crime")),
                       DropdownMenuItem(value: "Documentary", child: Text("Documentary")),
                       DropdownMenuItem(value: "Drama", child: Text("Drama")),
                       DropdownMenuItem(value: "Family", child: Text("Family")),
-                      DropdownMenuItem(value: "Horror", child: Text("Horror")),
-                      DropdownMenuItem(value: "Music", child: Text("Music")),
+                      DropdownMenuItem(value: "Kids", child: Text("Kids")),
                       DropdownMenuItem(value: "Mystery", child: Text("Mystery")),
-                      DropdownMenuItem(value: "Romance", child: Text("Romance")),
-                      DropdownMenuItem(value: "Science Fiction", child: Text("Science Fiction")),
-                      DropdownMenuItem(value: "Thriller", child: Text("Thriller")),
-                      DropdownMenuItem(value: "TV Movie", child: Text("TV Movie")),
-                      DropdownMenuItem(value: "War", child: Text("War")),
+                      DropdownMenuItem(value: "News", child: Text("News")),
+                      DropdownMenuItem(value: "Reality", child: Text("Reality")),
+                      DropdownMenuItem(value: "Sci-Fi & Fantasy", child: Text("Sci-Fi & Fantasy")),
+                      DropdownMenuItem(value: "Soap", child: Text("Soap")),
+                      DropdownMenuItem(value: "Talk", child: Text("Talk")),
+                      DropdownMenuItem(value: "War & Politics", child: Text("War & Politics")),
                       DropdownMenuItem(value: "Western", child: Text("Western")),
                     ],
                     onChanged: (value) {
@@ -170,7 +165,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Movies",
+                              "Series",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
@@ -179,10 +174,10 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                             ),
                             const SizedBox(height: 16),
                             Expanded(
-                              child: MovieGrid(
-                                movies: movies,
+                              child: SerieGrid(
+                                series: series,
                                 isLoading: _isLoading,
-                                onMovieTap: _showMovieDetails,
+                                onSerieTap: _showSerieDetails,
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -195,7 +190,11 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                                           setState(() {
                                             _currentPage--;
                                           });
-                                          _loadMovies();
+                                          if (dropdownValue.isNotEmpty) {
+                                            _searchByGenre(dropdownValue);
+                                          } else {
+                                            _searchByTitle(searchController.text);
+                                          }
                                         }
                                       : null,
                                   child: const Text("Previous"),
@@ -212,7 +211,11 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                                     setState(() {
                                       _currentPage++;
                                     });
-                                    _loadMovies();
+                                    if (dropdownValue.isNotEmpty) {
+                                      _searchByGenre(dropdownValue);
+                                    } else {
+                                      _searchByTitle(searchController.text);
+                                    }
                                   },
                                   child: const Text("Next"),
                                 ),
@@ -245,9 +248,9 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            Expanded(
-                              child: const Center(
-                                child: Text("No movie selected"),
+                            const Expanded(
+                              child: Center(
+                                child: Text("No serie selected"),
                               ),
                             ),
                           ],
