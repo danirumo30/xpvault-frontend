@@ -73,6 +73,21 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
     });
   }
 
+  Future<void> _searchByGenre(String genre) async {
+    print(genre);
+    setState(() => _isLoading = true);
+    List<Movie> loadedMovies = await movieController.getMoviesByGenre(genre, page: _currentPage);
+    print(loadedMovies.length);
+
+    setState(() {
+      movies = loadedMovies;
+      dropdownValue = genre;
+      // Al buscar por género ignoramos el texto en el campo de búsqueda
+      searchController.clear();
+      _isLoading = false;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -106,26 +121,30 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                   child: MyDropdownbutton(
                     hint: dropdownValue.isEmpty ? "Select genre" : dropdownValue,
                     items: const [
-                      DropdownMenuItem(
-                        value: "Action",
-                        child: Text("Action"),
-                      ),
-                      DropdownMenuItem(
-                        value: "Horror",
-                        child: Text("Horror"),
-                      ),
-                      DropdownMenuItem(
-                        value: "Adventure",
-                        child: Text("Adventure"),
-                      ),
+                      DropdownMenuItem(value: "Action", child: Text("Action")),
+                      DropdownMenuItem(value: "Adventure", child: Text("Adventure")),
+                      DropdownMenuItem(value: "Animation", child: Text("Animation")),
+                      DropdownMenuItem(value: "Comedy", child: Text("Comedy")),
+                      DropdownMenuItem(value: "Crime", child: Text("Crime")),
+                      DropdownMenuItem(value: "Documentary", child: Text("Documentary")),
+                      DropdownMenuItem(value: "Drama", child: Text("Drama")),
+                      DropdownMenuItem(value: "Family", child: Text("Family")),
+                      DropdownMenuItem(value: "Horror", child: Text("Horror")),
+                      DropdownMenuItem(value: "Music", child: Text("Music")),
+                      DropdownMenuItem(value: "Mystery", child: Text("Mystery")),
+                      DropdownMenuItem(value: "Romance", child: Text("Romance")),
+                      DropdownMenuItem(value: "Science Fiction", child: Text("Science Fiction")),
+                      DropdownMenuItem(value: "Thriller", child: Text("Thriller")),
+                      DropdownMenuItem(value: "TV Movie", child: Text("TV Movie")),
+                      DropdownMenuItem(value: "War", child: Text("War")),
+                      DropdownMenuItem(value: "Western", child: Text("Western")),
                     ],
                     onChanged: (value) {
                       if (value is String) {
                         setState(() {
-                          dropdownValue = value;
                           _currentPage = 1;
                         });
-                        _loadMovies();
+                        _searchByGenre(value);
                       }
                     },
                   ),
