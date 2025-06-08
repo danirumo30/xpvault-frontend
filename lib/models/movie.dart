@@ -1,4 +1,11 @@
-class Movie {
+abstract class ContentItem {
+  String get itemType;
+}
+
+class Movie implements ContentItem {
+  @override
+  String get itemType => 'Movie';
+
   final int tmbdId;
   final String title;
   final String description;
@@ -47,7 +54,10 @@ class Movie {
   }
 }
 
-class Director {
+class Director implements ContentItem {
+  @override
+  String get itemType => 'Director';
+
   final String id;
   final String name;
   final String? photoUrl;
@@ -67,7 +77,10 @@ class Director {
   }
 }
 
-class Casting {
+class Casting implements ContentItem {
+  @override
+  String get itemType => 'Casting';
+
   final String id;
   final String name;
   final String character;

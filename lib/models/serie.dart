@@ -1,4 +1,11 @@
-class Serie {
+abstract class ContentItem {
+  String get itemType;
+}
+
+class Serie implements ContentItem {
+  @override
+  String get itemType => 'Serie';
+
   final String title;
   final String description;
   final String posterUrl;
@@ -105,7 +112,10 @@ class Season {
   }
 }
 
-class Person {
+class Person implements ContentItem{
+  @override
+  String get itemType => 'Person';
+
   final String id;
   final String name;
   final String photoUrl;
@@ -130,7 +140,10 @@ class Person {
   }
 }
 
-class CastMember {
+class CastMember implements ContentItem{
+  @override
+  String get itemType => 'CastMember';
+
   final String id;
   final String name;
   final String character;
