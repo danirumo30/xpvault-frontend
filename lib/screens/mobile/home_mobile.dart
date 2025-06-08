@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:math';
 import 'package:web/web.dart' as web;
 
 import 'package:flutter/material.dart';
@@ -20,7 +21,6 @@ import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
-import 'dart:math';
 
 class HomeMobilePage extends StatefulWidget {
   const HomeMobilePage({super.key});
@@ -239,7 +239,7 @@ class _HomeMobilePage extends State<HomeMobilePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => ProfilePage(username: widget.nickname ?? ""),
+                                    builder: (_) => ProfilePage(username: user.nickname),
                                   ),
                                 );
                               },
@@ -309,10 +309,14 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
       onExit: (_) => setState(() => _hovering = false),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ProfilePage(username: user.nickname)),
-          );
+          if (widget.nickname != null && widget.nickname!.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(username: widget.nickname!),
+              ),
+            );
+          }
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
