@@ -160,6 +160,7 @@ class MyBuildContentBox extends StatelessWidget {
 
                   final typeStr = item.runtimeType.toString();
 
+                  print('Item at index $index runtimeType: ${item.runtimeType}');
                   if (typeStr == 'Game') {
                     title = item.title;
                     imageUrl = item.screenshotUrl;
