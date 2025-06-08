@@ -40,7 +40,7 @@ class MyBuildContentBox extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SteamPage(),
+              builder: (context) => SteamPage(profileSteamId: username),
             ),
           );
         };

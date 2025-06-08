@@ -47,6 +47,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
     setState(() {
       _isUserLoggedIn = currentUser != null;
       _loggedInUsername = currentUser?.username;
+      // Si profileUsername estÃ¡ definido en el widget, usarlo, si no, usar el username logueado (puede ser null)
       _profileUsername = widget.profileUsername ?? _loggedInUsername;
     });
     if (_profileUsername != null) {
@@ -255,7 +256,6 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                     ),
                   ),
 
-                  // My Movies (propias)
                   Expanded(
                     flex: 1,
                     child: Padding(
@@ -281,7 +281,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                             ),
                             const SizedBox(height: 16),
                             Expanded(
-                              child: !_isUserLoggedIn
+                              child: _profileUsername == null
                                   ? Center(
                                 child: Text(
                                   "Please log in to view your movies.",
@@ -301,7 +301,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                                   : myMovies.isEmpty
                                   ? Center(
                                 child: Text(
-                                  "You have no movies.",
+                                  "No movies found.",
                                   style: TextStyle(
                                     color: AppColors.textPrimary,
                                     fontSize: 16,
@@ -372,10 +372,10 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            if (_isUserLoggedIn && _profileUsername != null)
+                            if (_profileUsername != null)
                               ElevatedButton(
                                 onPressed: () => _loadMyOwnedMovies(_profileUsername!),
-                                child: const Text("Reload My Movies"),
+                                child: const Text("Reload Movies"),
                               ),
                           ],
                         ),

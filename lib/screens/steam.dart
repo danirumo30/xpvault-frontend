@@ -15,6 +15,7 @@ class SteamPage extends StatefulWidget {
 class _SteamPageState extends State<SteamPage> {
   @override
   Widget build(BuildContext context) {
+    print(widget.profileSteamId);
     return Scaffold(
       body: ResponsiveLayout(
         mobileBody: Scaffold(),
