@@ -99,7 +99,6 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
               backgroundColor: AppColors.success,
             ),
           );
-          await _logout();
         });
       }
     });
@@ -330,7 +329,6 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                                 backgroundColor: AppColors.success,
                               ),
                             );
-                            await _logout();
                           },
                         )
                       else

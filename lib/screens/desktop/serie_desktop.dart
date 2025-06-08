@@ -307,6 +307,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                                 series: mySeries,
                                 isLoading: false,
                                 onSerieTap: _showSerieDetails,
+                                title: false,
                               ),
                             ),
                           ],
