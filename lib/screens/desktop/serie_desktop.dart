@@ -45,7 +45,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to load serie details")),
+        SnackBar(content: Text("Failed to load serie details")),
       );
     }
   }
@@ -162,7 +162,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                   flex: 1,
                   child: MyDropdownbutton(
                     hint: dropdownValue.isEmpty ? "Select genre" : dropdownValue,
-                    items: const [
+                    items: [
                       DropdownMenuItem(value: "Action & Adventure", child: Text("Action & Adventure")),
                       DropdownMenuItem(value: "Animation", child: Text("Animation")),
                       DropdownMenuItem(value: "Comedy", child: Text("Comedy")),
@@ -233,24 +233,15 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                                 ElevatedButton(
                                   onPressed: _currentPage > 1
                                       ? () {
-                                    setState(() {
-                                      _currentPage--;
-                                    });
-                                    if (dropdownValue.isNotEmpty) {
-                                      _searchByGenre(dropdownValue);
-                                    } else {
-                                      _searchByTitle(searchController.text);
-                                    }
-                                  }
-                                    setState(() {
-                                      _currentPage--;
-                                    });
-                                    if (dropdownValue.isNotEmpty) {
-                                      _searchByGenre(dropdownValue);
-                                    } else {
-                                      _searchByTitle(searchController.text);
-                                    }
-                                  }
+                                          setState(() {
+                                            _currentPage--;
+                                          });
+                                          if (dropdownValue.isNotEmpty) {
+                                            _searchByGenre(dropdownValue);
+                                          } else {
+                                            _searchByTitle(searchController.text);
+                                          }
+                                        }
                                       : null,
                                   child: const Text("Previous"),
                                 ),
@@ -296,7 +287,6 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                           children: [
                             Text(
                               _profileUsername == null ? "My Series" : "${_profileUsername!} Series",
-                              _profileUsername == null ? "My Series" : "${_profileUsername!} Series",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
@@ -308,13 +298,13 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                               child: _isLoadingMySeries
                                   ? const Center(child: CircularProgressIndicator())
                                   : mySeries.isEmpty
-                                  ? const Center(child: Text("No series found"))
-                                  : SerieGrid(
-                                series: mySeries,
-                                isLoading: false,
-                                onSerieTap: _showSerieDetails,
-                                title: false,
-                              ),
+                                      ? const Center(child: Text("No series found"))
+                                      : SerieGrid(
+                                          series: mySeries,
+                                          isLoading: false,
+                                          onSerieTap: _showSerieDetails,
+                                          title: false,
+                                        ),
                             ),
                           ],
                         ),

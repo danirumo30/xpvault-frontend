@@ -12,9 +12,7 @@ import 'package:xpvault/widgets/my_textformfield.dart';
 class SteamDesktopPage extends StatefulWidget {
   final Widget? returnPage;
   final String? profileSteamId;
-  final String? profileSteamId;
 
-  const SteamDesktopPage({super.key, this.returnPage, this.profileSteamId});
   const SteamDesktopPage({super.key, this.returnPage, this.profileSteamId});
 
   @override
@@ -132,14 +130,11 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   }
 
   Future<void> _loadMyGames(String steamId) async {
-  Future<void> _loadMyGames(String steamId) async {
     setState(() {
       _isLoadingMyGames = true;
       _isSteamUser = true;
-      _isSteamUser = true;
     });
 
-    List<Game> loadedGames = await _gameController.getUserGames(steamId);
     List<Game> loadedGames = await _gameController.getUserGames(steamId);
 
     setState(() {
@@ -187,24 +182,20 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                   flex: 2,
                   child: MyDropdownbutton(
                     hint: dropdownvalue.isEmpty ? "Select genre" : dropdownvalue,
-                    items: steamGenres.map<DropdownMenuItem<String>>(
-                          (String genre) {
-                        return DropdownMenuItem<String>(
-                          value: genre,
-                          child: Text(genre),
-                        );
-                      },
-                    ).toList(),
+                    items: steamGenres
+                        .map<DropdownMenuItem<String>>(
+                          (String genre) => DropdownMenuItem<String>(
+                            value: genre,
+                            child: Text(genre),
+                          ),
+                        )
+                        .toList(),
                     onChanged: (value) {
                       if (value is String) {
                         setState(() {
                           searchController.clear();
                           _currentPage = 0;
-                          if (value == "All") {
-                            dropdownvalue = "";
-                          } else {
-                            dropdownvalue = value;
-                          }
+                          dropdownvalue = value == "All" ? "" : value;
                         });
                         _loadGames();
                       }
@@ -243,57 +234,55 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                             Expanded(
                               child: _isLoading
                                   ? Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.accent,
-                                ),
-                              )
-                                  : games.isEmpty
-                                  ? Center(
-                                child: Text(
-                                  "No games found.",
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                                  : GridView.builder(
-                                itemCount: games.length,
-                                gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10,
-                                  childAspectRatio: 2,
-                                ),
-                                itemBuilder: (context, index) {
-                                  final game = games[index];
-                                  final imageUrl = (game.screenshotUrl
-                                      ?.trim()
-                                      .isNotEmpty ??
-                                      false)
-                                      ? game.screenshotUrl!
-                                      : defaultImage;
-
-                                  return MyNetImageContainer(
-                                    title: game.title,
-                                    body: '',
-                                    image: imageUrl,
-                                    onTap: () => Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            GameDetailPage(
-                                              steamId: game.steamId,
-                                              returnPage: widget.returnPage,),
-                                              steamId: game.steamId,
-                                              returnPage: widget.returnPage,),
+                                      child: CircularProgressIndicator(
+                                        color: AppColors.accent,
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
+                                    )
+                                  : games.isEmpty
+                                      ? Center(
+                                          child: Text(
+                                            "No games found.",
+                                            style: TextStyle(
+                                              color: AppColors.textPrimary,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        )
+                                      : GridView.builder(
+                                          itemCount: games.length,
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 3,
+                                            crossAxisSpacing: 10,
+                                            mainAxisSpacing: 10,
+                                            childAspectRatio: 2,
+                                          ),
+                                          itemBuilder: (context, index) {
+                                            final game = games[index];
+                                            final imageUrl = (game.screenshotUrl
+                                                        ?.trim()
+                                                        .isNotEmpty ??
+                                                    false)
+                                                ? game.screenshotUrl!
+                                                : defaultImage;
+
+                                            return MyNetImageContainer(
+                                              title: game.title,
+                                              body: '',
+                                              image: imageUrl,
+                                              onTap: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => GameDetailPage(
+                                                    steamId: game.steamId,
+                                                    returnPage: widget.returnPage,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
                             ),
                           ],
                         ),
@@ -314,10 +303,7 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              (myGames.isEmpty || myGames == null)
-                                  ? "My games"
-                                  : "${_steamUsername ?? 'My'} games",
-                              (myGames.isEmpty || myGames == null)
+                              myGames.isEmpty
                                   ? "My games"
                                   : "${_steamUsername ?? 'My'} games",
                               style: TextStyle(
@@ -330,71 +316,67 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                             Expanded(
                               child: !_isSteamUser
                                   ? Center(
-                                child: Text(
-                                  "Please log in with your Steam account to view your games.",
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              )
-                                  : _isLoadingMyGames
-                                  ? Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.accent,
-                                ),
-                              )
-                                  : myGames.isEmpty
-                                  ? Center(
-                                child: Text(
-                                  "You have no games.",
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              )
-                                  : GridView.builder(
-                                itemCount: myGames.length,
-                                gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 1,
-                                  crossAxisSpacing: 5,
-                                  mainAxisSpacing: 10,
-                                  childAspectRatio: 5,
-                                ),
-                                itemBuilder: (context, index) {
-                                  final game = myGames[index];
-                                  final imageUrl =
-                                  (game.screenshotUrl
-                                      ?.trim()
-                                      .isNotEmpty ??
-                                      false)
-                                      ? game.screenshotUrl!
-                                      : defaultImage;
-
-                                  return MyNetImageContainer(
-                                    title: game.title,
-                                    body: '',
-                                    image: imageUrl,
-                                    onTap: () => Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            GameDetailPage(
-                                              steamId:
-                                              game.steamId,
-                                              returnPage: widget.returnPage,),
-                                              steamId:
-                                              game.steamId,
-                                              returnPage: widget.returnPage,),
+                                      child: Text(
+                                        "Please log in with your Steam account to view your games.",
+                                        style: TextStyle(
+                                          color: AppColors.textPrimary,
+                                          fontSize: 16,
+                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
+                                    )
+                                  : _isLoadingMyGames
+                                      ? Center(
+                                          child: CircularProgressIndicator(
+                                            color: AppColors.accent,
+                                          ),
+                                        )
+                                      : myGames.isEmpty
+                                          ? Center(
+                                              child: Text(
+                                                "You have no games.",
+                                                style: TextStyle(
+                                                  color: AppColors.textPrimary,
+                                                  fontSize: 16,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            )
+                                          : GridView.builder(
+                                              itemCount: myGames.length,
+                                              gridDelegate:
+                                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 1,
+                                                crossAxisSpacing: 5,
+                                                mainAxisSpacing: 10,
+                                                childAspectRatio: 5,
+                                              ),
+                                              itemBuilder: (context, index) {
+                                                final game = myGames[index];
+                                                final imageUrl = (game.screenshotUrl
+                                                            ?.trim()
+                                                            .isNotEmpty ??
+                                                        false)
+                                                    ? game.screenshotUrl!
+                                                    : defaultImage;
+
+                                                return MyNetImageContainer(
+                                                  title: game.title,
+                                                  body: '',
+                                                  image: imageUrl,
+                                                  onTap: () => Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          GameDetailPage(
+                                                        steamId: game.steamId,
+                                                        returnPage: widget.returnPage,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
                             ),
                           ],
                         ),
@@ -410,11 +392,11 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                 ElevatedButton(
                   onPressed: _currentPage > 0 && !_isLoading
                       ? () {
-                    setState(() {
-                      _currentPage--;
-                    });
-                    _loadGames();
-                  }
+                          setState(() {
+                            _currentPage--;
+                          });
+                          _loadGames();
+                        }
                       : null,
                   child: const Text("Previous"),
                 ),
@@ -422,11 +404,11 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                 ElevatedButton(
                   onPressed: !_isLoading && games.length == _pageSize
                       ? () {
-                    setState(() {
-                      _currentPage++;
-                    });
-                    _loadGames();
-                  }
+                          setState(() {
+                            _currentPage++;
+                          });
+                          _loadGames();
+                        }
                       : null,
                   child: const Text("Next"),
                 ),
