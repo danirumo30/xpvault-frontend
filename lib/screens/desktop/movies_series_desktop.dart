@@ -270,7 +270,9 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "My Movies",
+                              _profileUsername == null
+                                  ? "My Movies"
+                                  : "${_profileUsername!} Movies",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,

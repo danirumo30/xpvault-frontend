@@ -4,8 +4,9 @@ import 'package:xpvault/screens/desktop/steam_desktop.dart';
 
 class SteamPage extends StatefulWidget {
   final Widget? returnPage;
+  final String? profileSteamId;
 
-  const SteamPage({super.key, this.returnPage});
+  const SteamPage({super.key, this.returnPage, this.profileSteamId});
 
   @override
   State<SteamPage> createState() => _SteamPageState();
@@ -17,7 +18,7 @@ class _SteamPageState extends State<SteamPage> {
     return Scaffold(
       body: ResponsiveLayout(
         mobileBody: Scaffold(),
-        desktopBody: SteamDesktopPage(returnPage: widget.returnPage),
+        desktopBody: SteamDesktopPage(returnPage: widget.returnPage, profileSteamId: widget.profileSteamId),
       ),
     );
   }
