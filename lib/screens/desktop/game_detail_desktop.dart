@@ -402,3 +402,4 @@ class _GameDetailDesktopPageState extends State<GameDetailDesktopPage> {
     );
   }
 }
+
