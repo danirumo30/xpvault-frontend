@@ -9,7 +9,7 @@ import 'package:xpvault/services/user_manager.dart';
 class UserController {
   Future<void> getUser() async {
     final token = await TokenManager.getToken();
-    final url = Uri.parse("https://www.xpvaultbackend.es/users/me");
+    final url = Uri.parse("https://xpvaultbackend.es/users/me");
 
     final headers = {
       'Authorization': 'Bearer $token',
@@ -31,7 +31,7 @@ class UserController {
 
   Future<int> getSteamUserId(String steamUser) async {
     final url = Uri.parse(
-      "https://www.xpvaultbackend.es/steam-user/resolve/id?username=$steamUser",
+      "https://xpvaultbackend.es/steam-user/resolve/id?username=$steamUser",
     );
 
     try {
@@ -50,7 +50,7 @@ class UserController {
   }
 
   Future<List<TopUser>> getTopMovies() async {
-    final url = Uri.parse("https://www.xpvaultbackend.es/users/top/movies");
+    final url = Uri.parse("https://xpvaultbackend.es/users/top/movies");
 
     try {
       final res = await http.get(url);
@@ -70,7 +70,7 @@ class UserController {
   }
 
   Future<List<TopUser>> getTopTvSeries() async {
-    final url = Uri.parse("https://www.xpvaultbackend.es/users/top/tv-series");
+    final url = Uri.parse("https://xpvaultbackend.es/users/top/tv-series");
 
     try {
       final res = await http.get(url);
@@ -88,7 +88,7 @@ class UserController {
   }
 
   Future<List<TopUser>> getTopGames() async {
-    final url = Uri.parse("https://www.xpvaultbackend.es/steam-user/top");
+    final url = Uri.parse("https://xpvaultbackend.es/steam-user/top");
 
     try {
       final res = await http.get(url);
@@ -106,7 +106,7 @@ class UserController {
   }
 
   Future<User?> getUserByUsername(String username) async {
-    final url = Uri.parse("https://www.xpvaultbackend.es/users/search?username=$username");
+    final url = Uri.parse("https://xpvaultbackend.es/users/search?username=$username");
 
     try {
       final res = await http.get(url);
@@ -134,7 +134,7 @@ class UserController {
   }
 
   Future<bool> saveUser(User user, String token) async {
-    final url = Uri.parse('https://www.xpvaultbackend.es/users/save');
+    final url = Uri.parse('https://xpvaultbackend.es/users/save');
 
     final response = await http.post(
       url,
@@ -158,7 +158,7 @@ class UserController {
   }
 
   Future<List<BasicUser>> getAllUsers() async {
-    final url = Uri.parse("https://www.xpvaultbackend.es/users/all");
+    final url = Uri.parse("https://xpvaultbackend.es/users/all");
 
     try {
       final res = await http.post(url);
@@ -179,7 +179,7 @@ class UserController {
   }
 
   Future<List<BasicUser>> fetchUserFriends(String appUsername) async {
-    final url = "https://www.xpvaultbackend.es/users/profile/$appUsername/friends";
+    final url = "https://xpvaultbackend.es/users/profile/$appUsername/friends";
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -193,7 +193,7 @@ class UserController {
   Future<bool> addFriend(String username, String friendUsername) async {
     final token = await TokenManager.getToken();
     final url = Uri.parse(
-      "https://www.xpvaultbackend.es/users/$username/friends/add?friendUsername=$friendUsername",
+      "https://xpvaultbackend.es/users/$username/friends/add?friendUsername=$friendUsername",
     );
 
     try {
@@ -222,7 +222,7 @@ class UserController {
   Future<bool> deleteFriendFromUser(String username, String friendUsername) async {
     final token = await TokenManager.getToken();
     final url = Uri.parse(
-        "https://www.xpvaultbackend.es/users/$username/friends/delete?friendUsername=$friendUsername"
+        "https://xpvaultbackend.es/users/$username/friends/delete?friendUsername=$friendUsername"
     );
 
     try {
@@ -251,7 +251,7 @@ class UserController {
   Future<bool> isFriend(String username, String friendUsername) async {
     final token = await TokenManager.getToken();
     final url = Uri.parse(
-        "https://www.xpvaultbackend.es/users/$username/friends/is-friend?friendUsername=$friendUsername"
+        "https://xpvaultbackend.es/users/$username/friends/is-friend?friendUsername=$friendUsername"
     );
 
     try {
@@ -280,7 +280,7 @@ class UserController {
   Future<bool> deleteMovieFromUser(String username, int movieId) async {
     final token = await TokenManager.getToken();
     final url = Uri.parse(
-      "https://www.xpvaultbackend.es/users/$username/movies/delete?movieId=$movieId",
+      "https://xpvaultbackend.es/users/$username/movies/delete?movieId=$movieId",
     );
 
     try {
@@ -308,7 +308,7 @@ class UserController {
   Future<bool> deleteTvSerieFromUser(String username, int tvSerieId) async {
     final token = await TokenManager.getToken();
     final url = Uri.parse(
-      "https://www.xpvaultbackend.es/users/$username/tv-series/delete?tvSerieId=$tvSerieId",
+      "https://xpvaultbackend.es/users/$username/tv-series/delete?tvSerieId=$tvSerieId",
     );
 
     try {
@@ -336,7 +336,7 @@ class UserController {
   Future<bool> isMovieAdded(String username, int movieId) async {
     final token = await TokenManager.getToken();
     final url = Uri.parse(
-      "https://www.xpvaultbackend.es/users/$username/movies/is-added?movieId=$movieId",
+      "https://xpvaultbackend.es/users/$username/movies/is-added?movieId=$movieId",
     );
 
     try {
@@ -363,7 +363,7 @@ class UserController {
   Future<bool> isTvSerieAdded(String username, int tvSerieId) async {
     final token = await TokenManager.getToken();
     final url = Uri.parse(
-      "https://www.xpvaultbackend.es/users/$username/tv-series/is-added?tvSerieId=$tvSerieId",
+      "https://xpvaultbackend.es/users/$username/tv-series/is-added?tvSerieId=$tvSerieId",
     );
 
     try {
@@ -389,7 +389,7 @@ class UserController {
 
   Future<bool> addMovieToUser(String username, int movieId, {String language = "en"}) async {
     final token = await TokenManager.getToken();
-    final url = Uri.parse("https://www.xpvaultbackend.es/users/$username/movies/add?movieId=$movieId");
+    final url = Uri.parse("https://xpvaultbackend.es/users/$username/movies/add?movieId=$movieId");
 
     try {
       final response = await http.post(
@@ -417,7 +417,7 @@ class UserController {
 
   Future<bool> addTvSerieToUser(String username, int tvSerieId, {String language = "en"}) async {
     final token = await TokenManager.getToken();
-    final url = Uri.parse("https://www.xpvaultbackend.es/users/$username/tv-series/add?tvSerieId=$tvSerieId");
+    final url = Uri.parse("https://xpvaultbackend.es/users/$username/tv-series/add?tvSerieId=$tvSerieId");
 
     try {
       final response = await http.post(

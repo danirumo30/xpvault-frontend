@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/season_detail.dart';
 
 class SeasonController {
-  final String _baseUrl = "https://www.xpvaultbackend.es/tv-series";
+  final String _baseUrl = "https://xpvaultbackend.es/tv-series";
 
   Future<SeasonDetail?> fetchSeasonById(String tvSerieId, int seasonId) async {
     final uri = Uri.parse("$_baseUrl/season/$tvSerieId").replace(queryParameters: {

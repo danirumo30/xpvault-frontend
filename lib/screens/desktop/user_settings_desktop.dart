@@ -337,7 +337,7 @@ class _UserSettingsDesktopPageState extends State<UserSettingsDesktopPage> {
                           fontSize: 25,
                           onTap: () {
                             web.window.location.href =
-                                'https://www.xpvaultbackend.es/steam-auth/login';
+                                'https://xpvaultbackend.es/steam-auth/login';
                           },
                         ),
                     ],
