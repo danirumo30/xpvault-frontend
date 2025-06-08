@@ -324,7 +324,7 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
             Expanded(
               child: ListView(
                 children: [
-                  MyBuildContentBox(items: _games, title: "🎮 My Games"),
+                  MyBuildContentBox(items: _games, title: "🎮 My Games", username: _user!.steamUser!.steamId),
                   const SizedBox(height: 45),
 
                   MyBuildContentBox(items: _movies, title: "🎬 My Movies", username: _user!.username),

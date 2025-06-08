@@ -11,8 +11,9 @@ import 'package:xpvault/widgets/my_textformfield.dart';
 
 class SteamDesktopPage extends StatefulWidget {
   final Widget? returnPage;
+  final String? profileSteamId;
 
-  const SteamDesktopPage({super.key, this.returnPage});
+  const SteamDesktopPage({super.key, this.returnPage, this.profileSteamId});
 
   @override
   State<SteamDesktopPage> createState() => _SteamDesktopPageState();
@@ -27,6 +28,10 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
 
   static const int _pageSize = 12;
 
+  String? _steamUsername;
+  String? _profileSteamId;
+  String? _loggedInSteamId;
+  bool _isUserLoggedIn = false;
   String dropdownvalue = "";
   String lastSearchValue = "";
   List<Game> games = [];
@@ -57,7 +62,20 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   void initState() {
     super.initState();
     _loadGames();
-    _loadMyGames();
+    _initUserContext();
+  }
+
+  Future<void> _initUserContext() async {
+    final currentUser = await UserManager.getUser();
+    setState(() {
+      _isUserLoggedIn = currentUser != null;
+      _loggedInSteamId = currentUser?.steamUser?.steamId;
+      _steamUsername = currentUser?.steamUser?.nickname;
+      _profileSteamId = widget.profileSteamId ?? _loggedInSteamId;
+    });
+    if (_profileSteamId != null) {
+      await _loadMyGames(_profileSteamId!);
+    }
   }
 
   Future<void> _loadGames() async {
@@ -113,21 +131,13 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
     });
   }
 
-  Future<void> _loadMyGames() async {
-    late List<Game> loadedGames = [];
-    final currentUser = await UserManager.getUser();
-
-    if (currentUser?.steamUser != null) {
-      _isSteamUser = true;
-    }
-
+  Future<void> _loadMyGames(String steamId) async {
     setState(() {
       _isLoadingMyGames = true;
+      _isSteamUser = true;
     });
 
-    if (_isSteamUser) {
-      loadedGames = await _gameController.getUserGames(currentUser!.steamUser?.steamId);
-    }
+    List<Game> loadedGames = await _gameController.getUserGames(steamId);
 
     setState(() {
       myGames = loadedGames;
@@ -272,8 +282,8 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             GameDetailPage(
-                                                steamId: game.steamId,
-                                                returnPage: widget.returnPage,),
+                                              steamId: game.steamId,
+                                              returnPage: widget.returnPage,),
                                       ),
                                     ),
                                   );
@@ -299,7 +309,9 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "My games",
+                              (myGames.isEmpty || myGames == null)
+                                  ? "My games"
+                                  : "${_steamUsername ?? 'My'} games",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
@@ -364,9 +376,9 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             GameDetailPage(
-                                                steamId:
-                                                game.steamId,
-                                                returnPage: widget.returnPage,),
+                                              steamId:
+                                              game.steamId,
+                                              returnPage: widget.returnPage,),
                                       ),
                                     ),
                                   );
