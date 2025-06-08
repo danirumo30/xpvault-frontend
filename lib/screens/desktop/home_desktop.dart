@@ -339,7 +339,7 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                         MaterialPageRoute(
                           builder:
                               (_) =>
-                                  ProfilePage(username: username: widget.nickname ?? ""),
+                                  ProfilePage(username: widget.nickname ?? ""),
                         ),
                       );
                     },
