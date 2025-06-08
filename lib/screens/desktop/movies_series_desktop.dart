@@ -47,7 +47,6 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
     setState(() {
       _isUserLoggedIn = currentUser != null;
       _loggedInUsername = currentUser?.username;
-      // Si profileUsername está definido en el widget, usarlo, si no, usar el username logueado (puede ser null)
       _profileUsername = widget.profileUsername ?? _loggedInUsername;
     });
     if (_profileUsername != null) {
@@ -115,7 +114,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MovieDetailDesktopPage(movieId: movie.tmbdId, returnPage: widget.returnPage),
+        builder: (_) => MovieDetailPage(movieId: movie.tmbdId, returnPage: widget.returnPage),
       ),
     );
   }

@@ -19,7 +19,6 @@ import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
-import 'package:xpvault/widgets/my_build_section_title.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
 
 class HomeDesktopPage extends StatefulWidget {

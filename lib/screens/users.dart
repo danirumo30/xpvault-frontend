@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/responsive_layout.dart';
+import 'package:xpvault/screens/mobile/user_search_mobile.dart';
 
 import 'desktop/user_searsh_desktop.dart';
 
@@ -22,7 +23,8 @@ class _UsersPageState extends State<UsersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ResponsiveLayout(
-        mobileBody: Scaffold(),
+        mobileBody: UserSearchMobilePage( initialSearchTerm: widget.initialSearchTerm,
+          viewFriendsOf: widget.viewFriendsOf,),
         desktopBody: UserSearchDesktopPage(
           initialSearchTerm: widget.initialSearchTerm,
           viewFriendsOf: widget.viewFriendsOf,

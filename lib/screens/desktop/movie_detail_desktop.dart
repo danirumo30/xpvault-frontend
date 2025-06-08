@@ -4,7 +4,6 @@ import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/screens/movies_series.dart';
 import 'package:xpvault/services/user_manager.dart';
-import 'package:xpvault/widgets/cast_with_navigation.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';

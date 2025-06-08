@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/responsive_layout.dart';
 import 'package:xpvault/screens/desktop/serie_detail_desktop.dart';
-import 'package:xpvault/screens/mobile/home_mobile.dart';
+import 'package:xpvault/screens/mobile/serie_detail_mobile.dart';
 
 class SerieDetailPage extends StatefulWidget {
   final int serieId;
@@ -22,7 +22,8 @@ class _SerieDetailPageState extends State<SerieDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ResponsiveLayout(
-        mobileBody: HomeMobilePage(),
+        mobileBody: SerieDetailMobilePage(serieId: widget.serieId,
+          returnPage: widget.returnPage,),
         desktopBody: SerieDetailDesktopPage(
           serieId: widget.serieId,
           returnPage: widget.returnPage,

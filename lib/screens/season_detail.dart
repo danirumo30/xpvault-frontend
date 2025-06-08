@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/responsive_layout.dart';
 import 'package:xpvault/screens/desktop/season_detail_desktop_page.dart';
-import 'package:xpvault/screens/mobile/home_mobile.dart';
+import 'package:xpvault/screens/mobile/season_detail_mobile.dart';
 
 
 class SeasonDetailPage extends StatefulWidget {
@@ -25,7 +25,9 @@ class _SeasonDetailPageState extends State<SeasonDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ResponsiveLayout(
-        mobileBody: HomeMobilePage(),
+        mobileBody: SeasonDetailMobilePage(serieId: widget.serieId,
+          seasonId: widget.seasondId,
+          returnPage: widget.returnPage,),
         desktopBody: SeasonDetailDesktopPage(
           serieId: widget.serieId,
           seasonId: widget.seasondId,

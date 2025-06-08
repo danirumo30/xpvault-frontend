@@ -10,6 +10,7 @@ import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
+import 'package:xpvault/screens/profile.dart';
 import 'package:xpvault/screens/user_settings.dart';
 import 'package:xpvault/screens/users.dart';
 import 'package:xpvault/services/user_manager.dart';
@@ -324,13 +325,13 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
             Expanded(
               child: ListView(
                 children: [
-                  MyBuildContentBox(items: _games, title: "🎮 My Games", username: _user!.steamUser!.steamId),
+                  MyBuildContentBox(items: _games, title: "🎮 My Games", username: _user!.steamUser!.steamId, returnPage: ProfilePage(username: widget.username!)),
                   const SizedBox(height: 45),
 
-                  MyBuildContentBox(items: _movies, title: "🎬 My Movies", username: _user!.username),
+                  MyBuildContentBox(items: _movies, title: "🎬 My Movies", username: _user!.username, returnPage: ProfilePage(username: widget.username!),),
                   const SizedBox(height: 45),
 
-                  MyBuildContentBox(items: _series, title: "📺 My Series", username: _user!.username,),
+                  MyBuildContentBox(items: _series, title: "📺 My Series", username: _user!.username, returnPage: ProfilePage(username: widget.username!),),
                 ],
               ),
             ),

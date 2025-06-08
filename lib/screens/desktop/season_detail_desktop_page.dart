@@ -128,7 +128,7 @@ class _SeasonDetailDesktopPageState extends State<SeasonDetailDesktopPage> {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
+                              color: Colors.black.withValues(),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -160,14 +160,14 @@ class _SeasonDetailDesktopPageState extends State<SeasonDetailDesktopPage> {
                           return InkWell(
                             borderRadius: BorderRadius.circular(16),
                             onTap: () {},
-                            hoverColor: AppColors.accent.withOpacity(0.1),
+                            hoverColor: AppColors.accent.withValues(),
                             child: Container(
                               decoration: BoxDecoration(
                                 color: AppColors.surface,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Colors.black.withValues(),
                                     blurRadius: 6,
                                     offset: const Offset(0, 3),
                                   ),
@@ -179,7 +179,7 @@ class _SeasonDetailDesktopPageState extends State<SeasonDetailDesktopPage> {
                                 children: [
                                   CircleAvatar(
                                     radius: 20,
-                                    backgroundColor: AppColors.accent.withOpacity(0.15),
+                                    backgroundColor: AppColors.accent.withValues(),
                                     child: Text(
                                       episode.episodeNumber.toString(),
                                       style: const TextStyle(
