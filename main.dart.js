@@ -100730,7 +100730,7 @@ A.aHg.prototype={
 $0(){return this.a.d=this.b},
 $S:0}
 A.aHo.prototype={
-$0(){self.window.location.href="https://xpvaultbackend.es/steam-auth/login"},
+$0(){self.window.location.href="http://localhost:5000/steam-auth/login"},
 $S:0}
 A.H9.prototype={
 S(){return new A.Lc(new A.bz(null,t.am),new A.dg(B.ah,$.az()))}}
