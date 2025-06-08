@@ -162,8 +162,6 @@ class MyBuildContentBox extends StatelessWidget {
                   String? imageUrl;
                   String bodyText;
 
-                  final typeStr = item.runtimeType.toString();
-
                   print('Item at index $index runtimeType: ${item.runtimeType}');
                   if (item is Game) {
                     title = item.title;
@@ -178,7 +176,7 @@ class MyBuildContentBox extends StatelessWidget {
                     imageUrl = item.posterUrl;
                     bodyText = "Serie";
                   } else if (item is Achievement) {
-                    title = item.name ?? 'Unknown';
+                    title = item.name;
                     imageUrl = item.url;
                     bodyText = "Achievement";
                   } else if (item is Casting) {
@@ -200,7 +198,7 @@ class MyBuildContentBox extends StatelessWidget {
                   }
 
                   void Function()? onTapHandler;
-                  if (typeStr == 'Game') {
+                  if (item is Game) {
                     onTapHandler = () {
                       Navigator.pushReplacement(
                         context,
@@ -210,7 +208,7 @@ class MyBuildContentBox extends StatelessWidget {
                         ),
                       );
                     };
-                  } else if (typeStr == 'Movie') {
+                  } else if (item is Movie) {
                     onTapHandler = () {
                       Navigator.pushReplacement(
                         context,
@@ -220,7 +218,7 @@ class MyBuildContentBox extends StatelessWidget {
                         ),
                       );
                     };
-                  } else if (typeStr == 'Serie') {
+                  } else if (item is Serie) {
                     onTapHandler = () {
                       Navigator.pushReplacement(
                         context,
