@@ -28084,7 +28084,7 @@ _.e=_.d=null
 _.f=a
 _.r=b
 _.w=!0
-_.y=_.x=!1
+_.x=!1
 _.z=c
 _.Q=1
 _.as=""
@@ -28234,7 +28234,7 @@ F1:function F1(a,b,c){this.c=a
 this.d=b
 this.a=c},
 Jv:function Jv(a,b,c,d){var _=this
-_.d=null
+_.e=_.d=null
 _.r=a
 _.w=!0
 _.x=b
@@ -28332,6 +28332,7 @@ a0H:function a0H(a,b,c,d,e){var _=this
 _.d=a
 _.e=b
 _.w=_.r=_.f=null
+_.x=!1
 _.z=_.y=""
 _.Q=c
 _.as=d
@@ -96190,7 +96191,7 @@ m=i.f
 l=m.c
 l=A.a7(l.length!==0?l:"No description available",g,g,g,g,B.By,g,g)
 m=m.y
-s=A.ch(A.km(A.bY(A.a([o,B.dv,s,B.dv,n,B.a9,l,B.bX,m.length!==0?A.cD(new A.jl(m,!1,g,"Cast",g,g),g,g):B.a1M,B.bX],p),B.N,B.p,B.m,0),g),2)
+s=A.ch(A.km(A.bY(A.a([o,B.dv,s,B.dv,n,B.a9,l,B.bX,m.length!==0?A.cD(new A.jl(m,!1,g,"Cast",g,g),g,g):B.a1L,B.bX],p),B.N,B.p,B.m,0),g),2)
 o=A.c1(a,g,t.w).w
 n=A.a5l(B.jO)
 m=A.c5(12)
@@ -96377,16 +96378,15 @@ r=A.c5(8)
 q=o.d
 q=q==null?"My Movies":q+" Movies"
 q=A.a7(q,n,n,n,n,A.bf(n,n,B.h,n,n,n,n,n,n,n,n,30,n,n,B.M,n,n,!0,n,n,n,n,n,n,n,n),n,n)
-if(!o.y)p=A.cE(A.a7("Please log in to view your movies.",n,n,n,n,A.bf(n,n,B.h,n,n,n,n,n,n,n,n,16,n,n,n,n,n,!0,n,n,n,n,n,n,n,n),B.by,n),n,n)
+if(o.d==null)p=A.cE(A.a7("Please log in to view your movies.",n,n,n,n,A.bf(n,n,B.h,n,n,n,n,n,n,n,n,16,n,n,n,n,n,!0,n,n,n,n,n,n,n,n),B.by,n),n,n)
 else if(o.x)p=A.cE(A.Mz(B.V),n,n)
-else p=J.eu(o.r)?A.cE(A.a7("You have no movies.",n,n,n,n,A.bf(n,n,B.h,n,n,n,n,n,n,n,n,16,n,n,n,n,n,!0,n,n,n,n,n,n,n,n),B.by,n),n,n):A.OE(B.AT,new A.axw(o),J.c_(o.r))
+else p=J.eu(o.r)?A.cE(A.a7("No movies found.",n,n,n,n,A.bf(n,n,B.h,n,n,n,n,n,n,n,n,16,n,n,n,n,n,!0,n,n,n,n,n,n,n,n),B.by,n),n,n):A.OE(B.AT,new A.axw(o),J.c_(o.r))
 p=A.a([q,B.a9,A.ch(p,1),B.dv],s)
-if(o.y&&o.d!=null)p.push(A.j8(B.a1G,new A.axx(o),n))
+if(o.d!=null)p.push(A.j8(B.a1N,new A.axx(o),n))
 return new A.dg("XPVAULT",new A.bn(B.bt,A.bY(A.a([l,B.a9,A.ch(A.c2(A.a([m,A.ch(new A.bn(B.bt,A.cO(n,A.bY(p,B.N,B.p,B.m,0),B.t,n,n,new A.bR(B.db,n,n,r,n,n,B.T),n,n,n,B.c5,n,n,n),n),1)],s),B.N,B.p,B.m),1)],s),B.N,B.p,B.m,0),n),n)}}
 A.ax9.prototype={
-$0(){var s,r=this.a,q=this.b,p=q==null
-r.y=!p
-q=r.e=p?null:q.b
+$0(){var s,r=this.a,q=this.b
+q=r.e=q==null?null:q.b
 s=r.a.d
 r.d=s==null?q:s},
 $S:0}
@@ -96849,7 +96849,7 @@ case 2:q.J(new p.aA8(q,b))
 return A.u(null,r)}})
 return A.v($async$z9,r)},
 Od(a){var s=null,r=A.a([A.cO(s,s,B.t,B.V,s,s,s,24,s,s,s,s,4),B.iN,A.a7(a,s,s,s,s,B.iS,s,s),B.B0],t.p)
-if(this.a.e!=null)r.push(A.aNT(B.Mj,B.a1K,new A.aA7(this),A.aHE(s,s,s,s,s,s,s,s,s,B.V,s,s,s,s,s,s,s,B.a_Q,s)))
+if(this.a.e!=null)r.push(A.aNT(B.Mj,B.a1J,new A.aA7(this),A.aHE(s,s,s,s,s,s,s,s,s,B.V,s,s,s,s,s,s,s,B.a_Q,s)))
 return new A.bn(B.KS,A.c2(r,B.x,B.p,B.m),s)},
 H(a){var s,r,q,p,o,n,m,l=this,k="XPVAULT",j=null
 if(l.f)return new A.dg(k,A.cE(A.Mz(B.V),j,j),j)
@@ -97035,7 +97035,8 @@ s.x.jK(0,B.fP)
 s.w=!1},
 $S:0}
 A.aAn.prototype={
-$0(){this.b.d=this.a.a},
+$0(){var s=this.b,r=s.e=this.a.a,q=s.a.d
+s.d=q==null?r:q},
 $S:0}
 A.aAo.prototype={
 $0(){this.a.as=!0},
@@ -97401,7 +97402,8 @@ m=A.ch(A.c2(A.a([s,A.ch(new A.bn(B.bt,A.cO(n,A.bY(A.a([l,B.a9,A.ch(p,1)],q),B.N,
 l=A.j8(B.fS,o.cy>0&&!o.at?new A.aBI(o):n,n)
 return new A.dg("XPVAULT",new A.bn(B.bt,A.bY(A.a([r,B.a9,m,A.c2(A.a([l,B.cB,A.j8(B.fR,!o.at&&J.c_(o.Q)===12?new A.aBJ(o):n,n)],q),B.x,B.bd,B.m)],q),B.N,B.p,B.m,0),n),n)}}
 A.aBp.prototype={
-$0(){var s,r=null,q=this.a,p=this.b,o=p==null
+$0(){var s,r=null,q=this.a,p=this.b,o=p==null,n=!o
+q.x=n
 if(o)s=r
 else{s=p.e
 s=s==null?r:s.a}q.w=s
@@ -97409,7 +97411,8 @@ if(o)p=r
 else{p=p.e
 p=p==null?r:p.b}q.f=p
 q.a.toString
-q.r=s},
+q.r=s
+q.ay=n},
 $S:0}
 A.aBq.prototype={
 $0(){this.a.at=!0},
@@ -101725,8 +101728,8 @@ B.LZ=new A.cX(58286,!1)
 B.Mp=new A.cr(B.LZ,45,B.V,null,null)
 B.a9=new A.cM(null,16,null,null)
 B.Bz=new A.q(!0,B.h,null,null,null,null,20,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.a1N=new A.b_("You need to log in to access the profile",null,B.Bz,null,null,null,null,null,null,null)
-B.Om=A.a(s([B.Mp,B.a9,B.a1N]),t.p)
+B.a1M=new A.b_("You need to log in to access the profile",null,B.Bz,null,null,null,null,null,null,null)
+B.Om=A.a(s([B.Mp,B.a9,B.a1M]),t.p)
 B.Ja=new A.AJ(B.as,B.bd,B.m,B.x,null,B.eq,null,0,B.Om,null)
 B.Fi=new A.ih(B.Q,null,null,B.Ja,null)
 B.JF=new A.dg("XPVAULT",B.Fi,null)
@@ -102245,8 +102248,8 @@ B.a2e=new A.b_("Action & Adventure",null,null,null,null,null,null,null,null,null
 B.Kf=new A.cG("Action & Adventure",B.a2e,B.a4,null,t.r)
 B.a1W=new A.b_("Animation",null,null,null,null,null,null,null,null,null)
 B.os=new A.cG("Animation",B.a1W,B.a4,null,t.r)
-B.a1H=new A.b_("Comedy",null,null,null,null,null,null,null,null,null)
-B.or=new A.cG("Comedy",B.a1H,B.a4,null,t.r)
+B.a1G=new A.b_("Comedy",null,null,null,null,null,null,null,null,null)
+B.or=new A.cG("Comedy",B.a1G,B.a4,null,t.r)
 B.a1P=new A.b_("Crime",null,null,null,null,null,null,null,null,null)
 B.oo=new A.cG("Crime",B.a1P,B.a4,null,t.r)
 B.a2a=new A.b_("Documentary",null,null,null,null,null,null,null,null,null)
@@ -102271,8 +102274,8 @@ B.a1B=new A.b_("Talk",null,null,null,null,null,null,null,null,null)
 B.Kg=new A.cG("Talk",B.a1B,B.a4,null,t.r)
 B.a25=new A.b_("War & Politics",null,null,null,null,null,null,null,null,null)
 B.Kl=new A.cG("War & Politics",B.a25,B.a4,null,t.r)
-B.a1L=new A.b_("Western",null,null,null,null,null,null,null,null,null)
-B.ot=new A.cG("Western",B.a1L,B.a4,null,t.r)
+B.a1K=new A.b_("Western",null,null,null,null,null,null,null,null,null)
+B.ot=new A.cG("Western",B.a1K,B.a4,null,t.r)
 B.OA=A.a(s([B.Kf,B.os,B.or,B.oo,B.on,B.op,B.ou,B.Ka,B.oq,B.Kn,B.Kb,B.Kj,B.K9,B.Kg,B.Kl,B.ot]),t.FG)
 B.il=new A.Dw(0,"nonZero")
 B.w1=new A.Dw(1,"evenOdd")
@@ -104004,8 +104007,8 @@ B.hm=new A.z(1,1,0.6235294117647059,0.2627450980392157,B.e)
 B.WE=new A.eV(B.a2h,B.hm,null,null,null,null,null,null,null,null,null,null,null,B.a5,null,null,null,B.v,null)
 B.a24=new A.b_("No user is currently logged in",null,null,null,null,null,null,null,null,null)
 B.WF=new A.eV(B.a24,null,null,null,null,null,null,null,null,null,null,null,null,B.a5,null,null,null,B.v,null)
-B.a1I=new A.b_("Profile image updated successfully",null,null,null,null,null,null,null,null,null)
-B.WG=new A.eV(B.a1I,B.co,null,null,null,null,null,null,null,null,null,null,null,B.a5,null,null,null,B.v,null)
+B.a1H=new A.b_("Profile image updated successfully",null,null,null,null,null,null,null,null,null)
+B.WG=new A.eV(B.a1H,B.co,null,null,null,null,null,null,null,null,null,null,null,B.a5,null,null,null,B.v,null)
 B.a1A=new A.b_("Please complete both password fields.",null,null,null,null,null,null,null,null,null)
 B.WH=new A.eV(B.a1A,B.bo,null,null,null,null,null,null,null,null,null,null,null,B.a5,null,null,null,B.v,null)
 B.a28=new A.b_("Password updated successfully",null,null,null,null,null,null,null,null,null)
@@ -104014,7 +104017,7 @@ B.a1E=new A.b_("Login to add movies.",null,null,null,null,null,null,null,null,nu
 B.WJ=new A.eV(B.a1E,B.hm,null,null,null,null,null,null,null,null,null,null,null,B.a5,null,null,null,B.v,null)
 B.a1S=new A.b_("Something went wrong",null,null,null,null,null,null,null,null,null)
 B.lQ=new A.eV(B.a1S,B.hm,null,null,null,null,null,null,null,null,null,null,null,B.a5,null,null,null,B.v,null)
-B.a1J=new A.b_("No Steam ID found in URL. Unable to link Steam account.",null,null,null,null,null,null,null,null,null)
+B.a1I=new A.b_("No Steam ID found in URL. Unable to link Steam account.",null,null,null,null,null,null,null,null,null)
 B.I1=new A.z(1,1,0.9529411764705882,0.8784313725490196,B.e)
 B.IE=new A.z(1,1,0.8784313725490196,0.6980392156862745,B.e)
 B.J9=new A.z(1,1,0.8,0.5019607843137255,B.e)
@@ -104027,7 +104030,7 @@ B.IN=new A.z(1,0.9372549019607843,0.4235294117647059,0,B.e)
 B.HQ=new A.z(1,0.9019607843137255,0.3176470588235294,0,B.e)
 B.Rt=new A.cz([50,B.I1,100,B.IE,200,B.J9,300,B.FD,400,B.Ie,500,B.Ix,600,B.IP,700,B.I9,800,B.IN,900,B.HQ],t.pl)
 B.RE=new A.mK(B.Rt,1,1,0.596078431372549,0,B.e)
-B.WK=new A.eV(B.a1J,B.RE,null,null,null,null,null,null,B.fL,null,null,null,null,B.a5,null,null,null,B.v,null)
+B.WK=new A.eV(B.a1I,B.RE,null,null,null,null,null,null,B.fL,null,null,null,null,B.a5,null,null,null,B.v,null)
 B.a1Y=new A.b_("Steam account successfully linked",null,null,null,null,null,null,null,null,null)
 B.WL=new A.eV(B.a1Y,B.ig,null,null,null,null,null,null,B.fL,null,null,null,null,B.ow,null,null,null,B.v,null)
 B.a2q=new A.b_("You can only edit your own profile",null,null,null,null,null,null,null,null,null)
@@ -104441,11 +104444,11 @@ B.a0B=new A.q(!0,B.l,null,".AppleSystemUIFont",null,null,null,null,null,null,nul
 B.Yj=new A.q(!0,B.l,null,".AppleSystemUIFont",null,null,null,null,null,null,null,null,null,null,null,null,null,B.j,null,null,null,"blackRedwoodCity labelSmall",null,null,null,null)
 B.a1x=new A.eo(B.a_8,B.Z5,B.a_9,B.a_N,B.YG,B.YN,B.Zw,B.a_z,B.ZK,B.a0k,B.Y9,B.Yu,B.a0g,B.a0B,B.Yj)
 B.a1z=new A.b_("\ud83c\udfc6 Ranking",null,B.Bu,null,null,null,null,null,null,null)
-B.a1G=new A.b_("Reload My Movies",null,null,null,null,null,null,null,null,null)
 B.fR=new A.b_("Next",null,null,null,null,null,null,null,null,null)
-B.a1K=new A.b_("Back",null,null,null,null,null,null,null,null,null)
+B.a1J=new A.b_("Back",null,null,null,null,null,null,null,null,null)
 B.a12=new A.q(!0,B.bp,null,null,null,null,16,null,B.dX,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.a1M=new A.b_("Cast not found",null,B.a12,null,null,null,null,null,null,null)
+B.a1L=new A.b_("Cast not found",null,B.a12,null,null,null,null,null,null,null)
+B.a1N=new A.b_("Reload Movies",null,null,null,null,null,null,null,null,null)
 B.a1Q=new A.b_("Home",null,B.b6,null,null,null,null,null,null,null)
 B.a1R=new A.b_("Users",null,B.b6,null,null,null,null,null,null,null)
 B.BA=new A.b_("Login",null,B.b6,null,null,null,null,null,null,null)
