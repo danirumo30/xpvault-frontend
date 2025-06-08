@@ -12,7 +12,9 @@ import 'package:xpvault/widgets/my_textformfield.dart';
 class SteamDesktopPage extends StatefulWidget {
   final Widget? returnPage;
   final String? profileSteamId;
+  final String? profileSteamId;
 
+  const SteamDesktopPage({super.key, this.returnPage, this.profileSteamId});
   const SteamDesktopPage({super.key, this.returnPage, this.profileSteamId});
 
   @override
@@ -130,11 +132,14 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
   }
 
   Future<void> _loadMyGames(String steamId) async {
+  Future<void> _loadMyGames(String steamId) async {
     setState(() {
       _isLoadingMyGames = true;
       _isSteamUser = true;
+      _isSteamUser = true;
     });
 
+    List<Game> loadedGames = await _gameController.getUserGames(steamId);
     List<Game> loadedGames = await _gameController.getUserGames(steamId);
 
     setState(() {
@@ -282,6 +287,8 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                             GameDetailPage(
                                               steamId: game.steamId,
                                               returnPage: widget.returnPage,),
+                                              steamId: game.steamId,
+                                              returnPage: widget.returnPage,),
                                       ),
                                     ),
                                   );
@@ -307,6 +314,9 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
+                              (myGames.isEmpty || myGames == null)
+                                  ? "My games"
+                                  : "${_steamUsername ?? 'My'} games",
                               (myGames.isEmpty || myGames == null)
                                   ? "My games"
                                   : "${_steamUsername ?? 'My'} games",
@@ -374,6 +384,9 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             GameDetailPage(
+                                              steamId:
+                                              game.steamId,
+                                              returnPage: widget.returnPage,),
                                               steamId:
                                               game.steamId,
                                               returnPage: widget.returnPage,),

@@ -242,6 +242,15 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                                       _searchByTitle(searchController.text);
                                     }
                                   }
+                                    setState(() {
+                                      _currentPage--;
+                                    });
+                                    if (dropdownValue.isNotEmpty) {
+                                      _searchByGenre(dropdownValue);
+                                    } else {
+                                      _searchByTitle(searchController.text);
+                                    }
+                                  }
                                       : null,
                                   child: const Text("Previous"),
                                 ),
@@ -286,6 +295,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
+                              _profileUsername == null ? "My Series" : "${_profileUsername!} Series",
                               _profileUsername == null ? "My Series" : "${_profileUsername!} Series",
                               style: TextStyle(
                                 color: AppColors.textPrimary,

@@ -45,6 +45,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
     final currentUser = await UserManager.getUser();
     setState(() {
       _loggedInUsername = currentUser?.username;
+      // Si profileUsername estÃ¡ definido en el widget, usarlo, si no, usar el username logueado (puede ser null)
       _profileUsername = widget.profileUsername ?? _loggedInUsername;
     });
     if (_profileUsername != null) {
