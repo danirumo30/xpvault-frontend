@@ -198,6 +198,7 @@ class _HomeMobilePage extends State<HomeMobilePage> {
                       imageBytes: _user?.profilePhoto != null
                           ? base64Decode(_user!.profilePhoto!)
                           : null,
+                      nickname: _user?.username,
                     ),
                   ],
                 ),
@@ -238,7 +239,7 @@ class _HomeMobilePage extends State<HomeMobilePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => ProfilePage(username: user.nickname),
+                                    builder: (_) => ProfilePage(username: widget.nickname ?? ""),
                                   ),
                                 );
                               },
@@ -285,8 +286,13 @@ class _HomeMobilePage extends State<HomeMobilePage> {
 
 class _HoverableProfileAvatar extends StatefulWidget {
   final Uint8List? imageBytes;
+  final String? nickname;
 
-  const _HoverableProfileAvatar({Key? key, this.imageBytes}) : super(key: key);
+  const _HoverableProfileAvatar({
+    Key? key,
+    this.imageBytes,
+    this.nickname,
+  }) : super(key: key);
 
   @override
   State<_HoverableProfileAvatar> createState() => _HoverableProfileAvatarState();
