@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:xpvault/models/achievement.dart';
+import 'package:xpvault/models/game.dart';
+import 'package:xpvault/models/movie.dart';
+import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/screens/game_detail.dart';
 import 'package:xpvault/screens/movie_detail.dart';
 import 'package:xpvault/screens/movies_series.dart';
@@ -161,31 +165,31 @@ class MyBuildContentBox extends StatelessWidget {
                   final typeStr = item.runtimeType.toString();
 
                   print('Item at index $index runtimeType: ${item.runtimeType}');
-                  if (typeStr == 'Game') {
+                  if (item is Game) {
                     title = item.title;
                     imageUrl = item.screenshotUrl;
                     bodyText = "Game";
-                  } else if (typeStr == 'Movie') {
+                  } else if (item is Movie) {
                     title = item.title;
                     imageUrl = item.posterUrl;
                     bodyText = "Movie";
-                  } else if (typeStr == 'Serie') {
+                  } else if (item is Serie) {
                     title = item.title;
                     imageUrl = item.posterUrl;
                     bodyText = "Serie";
-                  } else if (typeStr == 'Achievement') {
+                  } else if (item is Achievement) {
                     title = item.name ?? 'Unknown';
                     imageUrl = item.url;
                     bodyText = "Achievement";
-                  } else if (typeStr == 'Casting') {
+                  } else if (item is Casting) {
                     title = item.name;
                     imageUrl = item.photoUrl;
                     bodyText = showBodyLabel ? item.character : '';
-                  } else if (typeStr == 'CastMember') {
+                  } else if (item is CastMember) {
                     title = item.name;
                     imageUrl = item.photoUrl;
                     bodyText = showBodyLabel ? item.character : '';
-                  } else if (typeStr == 'Person') {
+                  } else if (item is Person) {
                     title = item.name;
                     imageUrl = item.photoUrl;
                     bodyText = showBodyLabel ? 'Director' : '';

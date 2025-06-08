@@ -1,13 +1,6 @@
 import 'achievement.dart';
 
-abstract class ContentItem {
-  String get itemType;
-}
-
-class Game implements ContentItem {
-  @override
-  String get itemType => 'Game';
-
+class Game {
   final String title;
   final String description;
   final String? screenshotUrl;
