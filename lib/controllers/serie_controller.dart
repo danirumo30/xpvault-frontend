@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/serie.dart';
 
 class SerieController {
-  final String _baseUrl = "http://localhost:5000/tv-series";
+  final String _baseUrl = "https://www.xpvaultbackend.es/tv-series";
 
   Future<List<Serie>> fetchPopularSeries({int page = 1}) async {
     final response = await http.get(Uri.parse("$_baseUrl/popular?page=$page"));
@@ -74,7 +74,7 @@ class SerieController {
 }
 
   Future<List<Serie>> fetchUserSeries(String appUsername) async {
-    final url = "http://localhost:5000/users/profile/$appUsername/tv-series";
+    final url = "https://www.xpvaultbackend.es/users/profile/$appUsername/tv-series";
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

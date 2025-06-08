@@ -4,7 +4,7 @@ import 'package:xpvault/models/movie.dart';
 import 'package:flutter/services.dart';
 
 class MovieController {
-  final String _baseUrl = "http://localhost:5000/movies";
+  final String _baseUrl = "https://www.xpvaultbackend.es/movies";
 
   Future<void> loadMoviesFromAssets(String path) async {
     try {
@@ -136,7 +136,7 @@ class MovieController {
   }
 
   Future<List<Movie>> fetchUserMovies(String appUsername) async {
-    final url = "http://localhost:5000/users/profile/$appUsername/movies";
+    final url = "https://www.xpvaultbackend.es/users/profile/$appUsername/movies";
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

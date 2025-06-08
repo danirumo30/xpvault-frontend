@@ -6,7 +6,7 @@ import 'package:xpvault/models/news.dart';
 class GameController {
   Future<List<Game>> fetchGames({int page = 0, int size = 12}) async {
     final url = Uri.parse(
-      "http://localhost:5000/game/steam/apps-with-details?page=$page&size=$size",
+      "https://www.xpvaultbackend.es/game/steam/apps-with-details?page=$page&size=$size",
     );
 
     try {
@@ -30,7 +30,7 @@ class GameController {
     String gameTitle = "",
   }) async {
     final url = Uri.parse(
-      "http://localhost:5000/game/steam/title/$gameTitle?page=$page&size=$size",
+      "https://www.xpvaultbackend.es/game/steam/title/$gameTitle?page=$page&size=$size",
     );
     try {
       final res = await http.get(url);
@@ -50,7 +50,7 @@ class GameController {
 
   Future<List<Game>> getUserGames(String? steamUserId) async {
     final url = Uri.parse(
-      "http://localhost:5000/steam-user/owned/$steamUserId",
+      "https://www.xpvaultbackend.es/steam-user/owned/$steamUserId",
     );
 
     try {
@@ -74,7 +74,7 @@ class GameController {
 
   Future<List<Game>> getTenUserGames(String? steamUserId) async {
     final url = Uri.parse(
-      "http://localhost:5000/steam-user/owned/ten/$steamUserId",
+      "https://www.xpvaultbackend.es/steam-user/owned/ten/$steamUserId",
     );
 
     try {
@@ -98,7 +98,7 @@ class GameController {
 
   Future<List<News>> getGameNewsById(int steamGameId) async {
     final url = Uri.parse(
-      "http://localhost:5000/game/steam/news/$steamGameId",
+      "https://www.xpvaultbackend.es/game/steam/news/$steamGameId",
     );
 
     try {
@@ -118,7 +118,7 @@ class GameController {
   }
 
   Future<List<Game>> fetchFeaturedGames() async {
-    final response = await http.get(Uri.parse("http://localhost:5000/game/steam/featured"));
+    final response = await http.get(Uri.parse("https://www.xpvaultbackend.es/game/steam/featured"));
 
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
@@ -129,7 +129,7 @@ class GameController {
   }
 
   Future<Game?> getGameBySteamId(int steamId) async {
-    final url = Uri.parse("http://localhost:5000/game/steam/details/$steamId");
+    final url = Uri.parse("https://www.xpvaultbackend.es/game/steam/details/$steamId");
 
     try {
       final res = await http.get(url);
@@ -148,11 +148,11 @@ class GameController {
 
   String proxiedSteamImage(String imageUrl) {
     final encodedUrl = Uri.encodeComponent(imageUrl);
-    return 'http://localhost:5000/game/steam/image-proxy?url=$encodedUrl';
+    return 'https://www.xpvaultbackend.es/game/steam/image-proxy?url=$encodedUrl';
   }
 
   Future<List<Game>> getGamesByGenre({String genre = "",int page = 0, int size = 12}) async {
-    final url = Uri.parse("http://localhost:5000/game/steam/genre/$genre?page=$page&size=$size");
+    final url = Uri.parse("https://www.xpvaultbackend.es/game/steam/genre/$genre?page=$page&size=$size");
 
     try {
       final res = await http.get(url);
