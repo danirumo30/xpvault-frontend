@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
+import 'package:xpvault/screens/movie_detail.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
@@ -7,7 +8,6 @@ import 'package:xpvault/widgets/my_textformfield.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/controllers/movie_controller.dart';
 import 'package:xpvault/widgets/movie_grid.dart';
-import 'package:xpvault/screens/desktop/movie_detail_desktop.dart';
 import 'dart:async';
 
 class MoviesSeriesDesktop extends StatefulWidget {
