@@ -249,7 +249,7 @@ class _UserSettingsMobilePageState extends State<UserSettingsMobilePage> {
                   text: "Connect with Steam",
                   fontSize: 18,
                   onTap: () {
-                    web.window.location.href = 'http://localhost:5000/steam-auth/login';
+                    web.window.location.href = 'https://xpvaultbackend.es/steam-auth/login';
                   },
                 ),
               const SizedBox(height: 24),
