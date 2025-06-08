@@ -338,7 +338,7 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                         MaterialPageRoute(
                           builder:
                               (_) =>
-                                  ProfileDesktopPage(username: user.nickname),
+                                  ProfilePage(username: user.nickname),
                         ),
                       );
                     },
@@ -417,7 +417,7 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ProfilePage()),
+            MaterialPageRoute(builder: (context) => ProfilePage(username: user.nickname)),
           );
         },
         child: AnimatedContainer(
