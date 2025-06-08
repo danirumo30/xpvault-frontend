@@ -37,9 +37,8 @@ class MyBuildContentBox extends StatelessWidget {
     void Function()? onShowAllTap;
 
     if (!isEmpty) {
-      final firstTypeStr = items[0].runtimeType.toString();
 
-      if (firstTypeStr == 'Game') {
+      if (items[0] is Game) {
         onShowAllTap = () {
           Navigator.push(
             context,
@@ -48,7 +47,7 @@ class MyBuildContentBox extends StatelessWidget {
             ),
           );
         };
-      } else if (firstTypeStr == 'Movie') {
+      } else if (items[0] is Movie) {
         onShowAllTap = () {
           Navigator.push(
             context,
@@ -57,7 +56,7 @@ class MyBuildContentBox extends StatelessWidget {
             ),
           );
         };
-      } else if (firstTypeStr == 'Serie') {
+      } else if (items[0] is Serie) {
         onShowAllTap = () {
           Navigator.push(
             context,
