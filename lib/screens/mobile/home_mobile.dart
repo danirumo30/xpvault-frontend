@@ -305,7 +305,7 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ProfileDesktopPage()),
+            MaterialPageRoute(builder: (context) => ProfilePage()),
           );
         },
         child: AnimatedContainer(
