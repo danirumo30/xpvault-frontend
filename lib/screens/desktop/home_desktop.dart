@@ -275,6 +275,7 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                             imageBytes: base64Decode(_user!.profilePhoto!),
                           )
                           : const _HoverableProfileAvatar(imageBytes: null),
+                      nickname: _user?.username,
                     ],
                   ),
                 ),
@@ -338,7 +339,7 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                         MaterialPageRoute(
                           builder:
                               (_) =>
-                                  ProfilePage(username: user.nickname),
+                                  ProfilePage(username: username: widget.nickname ?? ""),
                         ),
                       );
                     },
@@ -396,12 +397,16 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
 
 class _HoverableProfileAvatar extends StatefulWidget {
   final Uint8List? imageBytes;
+  final String? nickname;
 
-  const _HoverableProfileAvatar({Key? key, this.imageBytes}) : super(key: key);
+  const _HoverableProfileAvatar({
+    Key? key,
+    this.imageBytes,
+    this.nickname,
+  }) : super(key: key);
 
   @override
-  State<_HoverableProfileAvatar> createState() =>
-      _HoverableProfileAvatarState();
+  State<_HoverableProfileAvatar> createState() => _HoverableProfileAvatarState();
 }
 
 class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
