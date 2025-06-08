@@ -1,4 +1,4 @@
-# XPVault - Frontend
+# XPVault - Frontend 
 
 **XPVault** es la aplicación frontend desarrollada con **Flutter**, diseñada para ofrecer una interfaz fluida, multiplataforma y segura. Se conecta al backend de XPVault para gestionar información personal relacionada con perfiles de Steam, películas y series.
 
