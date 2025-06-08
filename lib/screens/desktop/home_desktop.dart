@@ -13,7 +13,7 @@ import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
-import 'package:xpvault/screens/desktop/profile.dart';
+import 'package:xpvault/screens/profile.dart';
 import 'package:xpvault/screens/home.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
