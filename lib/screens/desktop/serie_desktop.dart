@@ -105,9 +105,9 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
     }
 
     setState(() {
-      _isUserLoggedIn = username != null;
       _loggedInUsername = username;
-      _profileUsername = username;
+      _profileUsername = widget.username ?? username;
+      _isUserLoggedIn = _loggedInUsername != null;
     });
 
     if (_profileUsername != null) {
