@@ -40,7 +40,7 @@ class MyBuildContentBox extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SteamPage(),
+              builder: (context) => SteamPage(returnPage: SteamPage(),),
             ),
           );
         };
@@ -49,7 +49,7 @@ class MyBuildContentBox extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MoviesSeriesPage(profileUsername: username),
+              builder: (context) => MoviesSeriesPage(profileUsername: username,returnPage: MoviesSeriesPage(profileUsername: username,),),
             ),
           );
         };
@@ -58,7 +58,7 @@ class MyBuildContentBox extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SeriesPage(username: username),
+              builder: (context) => SeriesPage(username: username, returnPage: SeriesPage(username: username,),),
             ),
           );
         };

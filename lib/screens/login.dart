@@ -15,8 +15,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ResponsiveLayout(
-        mobileBody: LoginMobilePage(),
-        desktopBody: LoginDesktopPage(),
+        mobileBody: const LoginMobilePage(),
+        desktopBody: const LoginDesktopPage(),
       ),
     );
   }

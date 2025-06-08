@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
+import 'package:xpvault/screens/movie_detail.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_dropdownbutton.dart';
@@ -7,7 +8,6 @@ import 'package:xpvault/widgets/my_textformfield.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/controllers/movie_controller.dart';
 import 'package:xpvault/widgets/movie_grid.dart';
-import 'package:xpvault/screens/desktop/movie_detail_desktop.dart';
 import 'dart:async';
 
 class MoviesSeriesDesktop extends StatefulWidget {
@@ -27,7 +27,6 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
   List<Movie> myMovies = [];
   bool _isLoading = true;
   bool _isLoadingMyMovies = false;
-  bool _isUserLoggedIn = false;
 
   final TextEditingController searchController = TextEditingController();
   int _currentPage = 1;
@@ -45,7 +44,6 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
   Future<void> _initUserContext() async {
     final currentUser = await UserManager.getUser();
     setState(() {
-      _isUserLoggedIn = currentUser != null;
       _loggedInUsername = currentUser?.username;
       _profileUsername = widget.profileUsername ?? _loggedInUsername;
     });
@@ -114,7 +112,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MovieDetailDesktopPage(movieId: movie.tmbdId, returnPage: widget.returnPage),
+        builder: (_) => MovieDetailPage(movieId: movie.tmbdId, returnPage: widget.returnPage),
       ),
     );
   }
@@ -255,7 +253,6 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                     ),
                   ),
 
-                  // My Movies (propias)
                   Expanded(
                     flex: 1,
                     child: Padding(
@@ -270,7 +267,9 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "My Movies",
+                              _profileUsername == null
+                                  ? "My Movies"
+                                  : "${_profileUsername!} Movies",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
@@ -279,7 +278,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                             ),
                             const SizedBox(height: 16),
                             Expanded(
-                              child: !_isUserLoggedIn
+                              child: _profileUsername == null
                                   ? Center(
                                 child: Text(
                                   "Please log in to view your movies.",
@@ -299,7 +298,7 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                                   : myMovies.isEmpty
                                   ? Center(
                                 child: Text(
-                                  "You have no movies.",
+                                  "No movies found.",
                                   style: TextStyle(
                                     color: AppColors.textPrimary,
                                     fontSize: 16,
@@ -370,10 +369,10 @@ class _MoviesSeriesDesktopState extends State<MoviesSeriesDesktop> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            if (_isUserLoggedIn && _profileUsername != null)
+                            if (_profileUsername != null)
                               ElevatedButton(
                                 onPressed: () => _loadMyOwnedMovies(_profileUsername!),
-                                child: const Text("Reload My Movies"),
+                                child: const Text("Reload Movies"),
                               ),
                           ],
                         ),

@@ -21,8 +21,6 @@ class SerieDesktopPage extends StatefulWidget {
 
 class _SerieDesktopPageState extends State<SerieDesktopPage> {
   String? _profileUsername;
-  String? _loggedInUsername;
-  bool _isUserLoggedIn = false;
   List<Serie> series = [];
   bool _isLoading = true;
   final TextEditingController searchController = TextEditingController();
@@ -105,9 +103,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
     }
 
     setState(() {
-      _isUserLoggedIn = username != null;
-      _loggedInUsername = username;
-      _profileUsername = username;
+      _profileUsername = widget.username ?? username;
     });
 
     if (_profileUsername != null) {
@@ -237,15 +233,15 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                                 ElevatedButton(
                                   onPressed: _currentPage > 1
                                       ? () {
-                                          setState(() {
-                                            _currentPage--;
-                                          });
-                                          if (dropdownValue.isNotEmpty) {
-                                            _searchByGenre(dropdownValue);
-                                          } else {
-                                            _searchByTitle(searchController.text);
-                                          }
-                                        }
+                                    setState(() {
+                                      _currentPage--;
+                                    });
+                                    if (dropdownValue.isNotEmpty) {
+                                      _searchByGenre(dropdownValue);
+                                    } else {
+                                      _searchByTitle(searchController.text);
+                                    }
+                                  }
                                       : null,
                                   child: const Text("Previous"),
                                 ),
@@ -290,7 +286,7 @@ class _SerieDesktopPageState extends State<SerieDesktopPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "My Series",
+                              _profileUsername == null ? "My Series" : "${_profileUsername!} Series",
                               style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,

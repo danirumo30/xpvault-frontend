@@ -4,6 +4,7 @@ import 'package:xpvault/controllers/user_controller.dart';
 import 'package:xpvault/layouts/desktop_layout.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/screens/season_detail.dart';
+import 'package:xpvault/screens/series.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/controllers/season_controller.dart';
@@ -42,7 +43,10 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
   Future<void> _checkUserHasSerie() async {
     final currentUser = await UserManager.getUser();
     if (currentUser != null && _serie != null) {
-      final has = await _userController.isTvSerieAdded(currentUser.username, _serie!.tmbdId);
+      final has = await _userController.isTvSerieAdded(
+        currentUser.username,
+        _serie!.tmbdId,
+      );
       setState(() {
         _hasSerie = has;
       });
@@ -50,7 +54,9 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
   }
 
   Future<void> _loadSerie() async {
-    final serie = await _serieController.fetchSerieById(widget.serieId.toString());
+    final serie = await _serieController.fetchSerieById(
+      widget.serieId.toString(),
+    );
     setState(() {
       _serie = serie;
     });
@@ -62,11 +68,12 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SeasonDetailPage(
-          serieId: _serie!.tmbdId,
-          seasondId: s.tmdbId,
-          returnPage: widget.returnPage,
-        ),
+        builder:
+            (context) => SeasonDetailPage(
+              serieId: _serie!.tmbdId,
+              seasondId: s.tmdbId,
+              returnPage: widget.returnPage,
+            ),
       ),
     );
   }
@@ -91,6 +98,30 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  size: 30,
+                  color: AppColors.textPrimary,
+                ),
+                onPressed: () {
+                  if (widget.returnPage != null) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => widget.returnPage!,
+                      ),
+                    );
+                  } else {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SeriesPage(),
+                      ),
+                    );
+                  }
+                },
+              ),
               // --- HEADER ---
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +134,9 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                       height: 320,
                       width: 220,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 120),
+                      errorBuilder:
+                          (_, __, ___) =>
+                              const Icon(Icons.broken_image, size: 120),
                     ),
                   ),
                   const SizedBox(width: 32),
@@ -128,12 +161,23 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                           Wrap(
                             spacing: 10,
                             runSpacing: 6,
-                            children: serie.genres.map((g) => Chip(
-                              label: Text(g),
-                              backgroundColor: AppColors.secondary,
-                              labelStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                            )).toList(),
+                            children:
+                                serie.genres
+                                    .map(
+                                      (g) => Chip(
+                                        label: Text(g),
+                                        backgroundColor: AppColors.secondary,
+                                        labelStyle: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 14,
+                                          vertical: 6,
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                           ),
 
                         const SizedBox(height: 18),
@@ -143,7 +187,11 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                           children: [
                             Row(
                               children: [
-                                const Icon(Icons.calendar_today, color: AppColors.accent, size: 18),
+                                const Icon(
+                                  Icons.calendar_today,
+                                  color: AppColors.accent,
+                                  size: 18,
+                                ),
                                 const SizedBox(width: 6),
                                 Text(
                                   serie.releaseDate,
@@ -157,7 +205,11 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                             const SizedBox(width: 24),
                             Row(
                               children: [
-                                const Icon(Icons.star, color: Colors.amber, size: 18),
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 18,
+                                ),
                                 const SizedBox(width: 6),
                                 Text(
                                   serie.rating.toStringAsFixed(1),
@@ -175,7 +227,9 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
 
                         // Description
                         Text(
-                          (serie.description.isNotEmpty) ? serie.description : 'No description available',
+                          (serie.description.isNotEmpty)
+                              ? serie.description
+                              : 'No description available',
                           style: const TextStyle(
                             fontSize: 17,
                             height: 1.4,
@@ -209,10 +263,14 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                         bool success;
                         if (_hasSerie) {
                           success = await _userController.deleteTvSerieFromUser(
-                              currentUser.username, _serie!.tmbdId);
+                            currentUser.username,
+                            _serie!.tmbdId,
+                          );
                         } else {
                           success = await _userController.addTvSerieToUser(
-                              currentUser.username, _serie!.tmbdId);
+                            currentUser.username,
+                            _serie!.tmbdId,
+                          );
                         }
 
                         if (success) {
@@ -222,9 +280,11 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(_hasSerie
-                                  ? "Serie added successfully!"
-                                  : "Serie deleted successfully!"),
+                              content: Text(
+                                _hasSerie
+                                    ? "Serie added successfully!"
+                                    : "Serie deleted successfully!",
+                              ),
                               backgroundColor: Colors.green,
                             ),
                           );
@@ -246,10 +306,13 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                           height: 40,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: _hasSerie ? Colors.lightGreenAccent : Colors.grey,
+                            color:
+                                _hasSerie
+                                    ? Colors.lightGreenAccent
+                                    : Colors.grey,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.15),
+                                color: Colors.black.withValues(),
                                 blurRadius: 8,
                                 offset: const Offset(0, 3),
                               ),
@@ -275,10 +338,15 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
 
               Card(
                 elevation: 3,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 color: AppColors.surface,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 20,
+                  ),
                   child: Row(
                     children: [
                       Text(
@@ -300,7 +368,10 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                       const SizedBox(width: 40),
                       Row(
                         children: [
-                          const Icon(Icons.schedule, color: AppColors.secondary),
+                          const Icon(
+                            Icons.schedule,
+                            color: AppColors.secondary,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             '${serie.totalTime ~/ 60}h ${serie.totalTime % 60}m',
@@ -334,60 +405,70 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                 Wrap(
                   spacing: 20,
                   runSpacing: 20,
-                  children: serie.seasons.map((s) {
-                    bool isHovering = false;
+                  children:
+                      serie.seasons.map((s) {
+                        bool isHovering = false;
 
-                    return StatefulBuilder(
-                      builder: (context, setLocalState) {
-                        return MouseRegion(
-                          onEnter: (_) => setLocalState(() => isHovering = true),
-                          onExit: (_) => setLocalState(() => isHovering = false),
-                          cursor: SystemMouseCursors.click,
-                          child: AnimatedScale(
-                            scale: isHovering ? 1.05 : 1.0,
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeInOut,
-                            child: InkWell(
-                              onTap: () => _showSeasonDetail(context, s),
-                              borderRadius: BorderRadius.circular(14),
-                              child: Container(
-                                width: 200,
-                                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-                                decoration: BoxDecoration(
-                                  color: AppColors.surface,
+                        return StatefulBuilder(
+                          builder: (context, setLocalState) {
+                            return MouseRegion(
+                              onEnter:
+                                  (_) => setLocalState(() => isHovering = true),
+                              onExit:
+                                  (_) =>
+                                      setLocalState(() => isHovering = false),
+                              cursor: SystemMouseCursors.click,
+                              child: AnimatedScale(
+                                scale: isHovering ? 1.05 : 1.0,
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.easeInOut,
+                                child: InkWell(
+                                  onTap: () => _showSeasonDetail(context, s),
                                   borderRadius: BorderRadius.circular(14),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.08),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
+                                  child: Container(
+                                    width: 200,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                      horizontal: 20,
                                     ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.tv, color: AppColors.accent),
-                                    const SizedBox(width: 14),
-                                    Expanded(
-                                      child: Text(
-                                        s.name,
-                                        style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textPrimary,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.surface,
+                                      borderRadius: BorderRadius.circular(14),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 4),
                                         ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
+                                      ],
                                     ),
-                                  ],
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.tv,
+                                          color: AppColors.accent,
+                                        ),
+                                        const SizedBox(width: 14),
+                                        Expanded(
+                                          child: Text(
+                                            s.name,
+                                            style: const TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.textPrimary,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         );
-                      },
-                    );
-                  }).toList(),
+                      }).toList(),
                 ),
               ],
 
@@ -398,7 +479,9 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                 const SizedBox(height: 12),
                 Card(
                   elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   color: AppColors.surface,
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -417,7 +500,9 @@ class _SerieDetailDesktopPageState extends State<SerieDetailDesktopPage> {
                 const SizedBox(height: 12),
                 Card(
                   elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   color: AppColors.surface,
                   child: Padding(
                     padding: const EdgeInsets.all(20),

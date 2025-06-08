@@ -15,8 +15,8 @@ class _PlaystationPageState extends State<PlaystationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ResponsiveLayout(
-        mobileBody: PlaystationMobilePage(),
-        desktopBody: PlaystationDesktop(),
+        mobileBody: const PlaystationMobilePage(),
+        desktopBody: const PlaystationDesktop(),
       ),
     );
   }

@@ -11,7 +11,7 @@ class UserSearchDesktopPage extends StatefulWidget {
   final String? initialSearchTerm;
   final String? viewFriendsOf;
 
-  const UserSearchDesktopPage({Key? key, this.initialSearchTerm, this.viewFriendsOf}) : super(key: key);
+  const UserSearchDesktopPage({super.key, this.initialSearchTerm, this.viewFriendsOf});
 
   @override
   State<UserSearchDesktopPage> createState() => _UserSearchDesktopPageState();
