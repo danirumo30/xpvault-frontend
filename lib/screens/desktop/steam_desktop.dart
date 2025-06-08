@@ -72,7 +72,6 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
       _loggedInSteamId = currentUser?.steamUser?.steamId;
       _steamUsername = currentUser?.steamUser?.nickname;
       _profileSteamId = widget.profileSteamId ?? _loggedInSteamId;
-      _isSteamUser = _isUserLoggedIn || widget.profileSteamId != null;
     });
     if (_profileSteamId != null) {
       await _loadMyGames(_profileSteamId!);
@@ -283,8 +282,8 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             GameDetailPage(
-                                                steamId: game.steamId,
-                                                returnPage: widget.returnPage,),
+                                              steamId: game.steamId,
+                                              returnPage: widget.returnPage,),
                                       ),
                                     ),
                                   );
@@ -377,9 +376,9 @@ class _SteamDesktopPageState extends State<SteamDesktopPage> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             GameDetailPage(
-                                                steamId:
-                                                game.steamId,
-                                                returnPage: widget.returnPage,),
+                                              steamId:
+                                              game.steamId,
+                                              returnPage: widget.returnPage,),
                                       ),
                                     ),
                                   );
