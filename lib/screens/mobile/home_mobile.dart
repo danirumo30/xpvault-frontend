@@ -13,7 +13,7 @@ import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
-import 'package:xpvault/screens/desktop/profile_desktop.dart';
+import 'package:xpvault/screens/desktop/profile.dart';
 import 'package:xpvault/screens/home.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
@@ -238,7 +238,7 @@ class _HomeMobilePage extends State<HomeMobilePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => ProfileDesktopPage(username: user.nickname),
+                                    builder: (_) => ProfilePage(username: user.nickname),
                                   ),
                                 );
                               },
