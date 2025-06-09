@@ -66,15 +66,18 @@ class _SerieMobilePageState extends State<SerieMobilePage> {
   }
 
   void _showSerieDetails(Serie serie) async {
-    final fullSerie = await serieController.fetchSerieById(serie.tmbdId.toString());
+    final fullSerie = await serieController.fetchSerieById(
+      serie.tmbdId.toString(),
+    );
     if (fullSerie != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => SerieDetailPage(
-            serieId: fullSerie.tmbdId,
-            returnPage: widget.returnPage,
-          ),
+          builder:
+              (_) => SerieDetailPage(
+                serieId: fullSerie.tmbdId,
+                returnPage: widget.returnPage,
+              ),
         ),
       );
     } else {
@@ -86,9 +89,13 @@ class _SerieMobilePageState extends State<SerieMobilePage> {
 
   Future<void> _searchByTitle(String title) async {
     setState(() => _isLoading = true);
-    final loadedSeries = title.trim().isNotEmpty
-        ? await serieController.searchSerieByTitle(title.trim(), page: _currentPage)
-        : await serieController.fetchPopularSeries(page: _currentPage);
+    final loadedSeries =
+        title.trim().isNotEmpty
+            ? await serieController.searchSerieByTitle(
+              title.trim(),
+              page: _currentPage,
+            )
+            : await serieController.fetchPopularSeries(page: _currentPage);
     setState(() {
       series = loadedSeries;
       dropdownValue = "";
@@ -98,7 +105,9 @@ class _SerieMobilePageState extends State<SerieMobilePage> {
 
   Future<void> _topRated() async {
     setState(() => _isLoading = true);
-    final loadedSeries = await serieController.fetchTopRatedSeries(page: _currentPage);
+    final loadedSeries = await serieController.fetchTopRatedSeries(
+      page: _currentPage,
+    );
     setState(() {
       series = loadedSeries;
       dropdownValue = "";
@@ -108,7 +117,10 @@ class _SerieMobilePageState extends State<SerieMobilePage> {
 
   Future<void> _searchByGenre(String genre) async {
     setState(() => _isLoading = true);
-    final loadedSeries = await serieController.fetchSeriesByGenre(genre, page: _currentPage);
+    final loadedSeries = await serieController.fetchSeriesByGenre(
+      genre,
+      page: _currentPage,
+    );
     setState(() {
       series = loadedSeries;
       dropdownValue = genre;
@@ -139,21 +151,33 @@ class _SerieMobilePageState extends State<SerieMobilePage> {
             MyDropdownbutton(
               hint: dropdownValue.isEmpty ? "Select genre" : dropdownValue,
               items: const [
-                DropdownMenuItem(value: "Action & Adventure", child: Text("Action & Adventure")),
+                DropdownMenuItem(
+                  value: "Action & Adventure",
+                  child: Text("Action & Adventure"),
+                ),
                 DropdownMenuItem(value: "Animation", child: Text("Animation")),
                 DropdownMenuItem(value: "Comedy", child: Text("Comedy")),
                 DropdownMenuItem(value: "Crime", child: Text("Crime")),
-                DropdownMenuItem(value: "Documentary", child: Text("Documentary")),
+                DropdownMenuItem(
+                  value: "Documentary",
+                  child: Text("Documentary"),
+                ),
                 DropdownMenuItem(value: "Drama", child: Text("Drama")),
                 DropdownMenuItem(value: "Family", child: Text("Family")),
                 DropdownMenuItem(value: "Kids", child: Text("Kids")),
                 DropdownMenuItem(value: "Mystery", child: Text("Mystery")),
                 DropdownMenuItem(value: "News", child: Text("News")),
                 DropdownMenuItem(value: "Reality", child: Text("Reality")),
-                DropdownMenuItem(value: "Sci-Fi & Fantasy", child: Text("Sci-Fi & Fantasy")),
+                DropdownMenuItem(
+                  value: "Sci-Fi & Fantasy",
+                  child: Text("Sci-Fi & Fantasy"),
+                ),
                 DropdownMenuItem(value: "Soap", child: Text("Soap")),
                 DropdownMenuItem(value: "Talk", child: Text("Talk")),
-                DropdownMenuItem(value: "War & Politics", child: Text("War & Politics")),
+                DropdownMenuItem(
+                  value: "War & Politics",
+                  child: Text("War & Politics"),
+                ),
                 DropdownMenuItem(value: "Western", child: Text("Western")),
               ],
               onChanged: (value) {
@@ -183,14 +207,15 @@ class _SerieMobilePageState extends State<SerieMobilePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
-                  onPressed: _currentPage > 1
-                      ? () {
-                          setState(() => _currentPage--);
-                          dropdownValue.isNotEmpty
-                              ? _searchByGenre(dropdownValue)
-                              : _searchByTitle(searchController.text);
-                        }
-                      : null,
+                  onPressed:
+                      _currentPage > 1
+                          ? () {
+                            setState(() => _currentPage--);
+                            dropdownValue.isNotEmpty
+                                ? _searchByGenre(dropdownValue)
+                                : _searchByTitle(searchController.text);
+                          }
+                          : null,
                   child: const Text("Previous"),
                 ),
                 Text(
@@ -210,7 +235,9 @@ class _SerieMobilePageState extends State<SerieMobilePage> {
             ),
             const SizedBox(height: 30),
             Text(
-              _profileUsername == null ? "My Series" : "${_profileUsername!}'s Series",
+              _profileUsername == null
+                  ? "My Series"
+                  : "${_profileUsername!}'s Series",
               style: TextStyle(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
@@ -221,13 +248,12 @@ class _SerieMobilePageState extends State<SerieMobilePage> {
             _isLoadingMySeries
                 ? const Center(child: CircularProgressIndicator())
                 : mySeries.isEmpty
-                    ? const Center(child: Text("No series found"))
-                    : SerieGrid(
-                        series: mySeries,
-                        isLoading: false,
-                        onSerieTap: _showSerieDetails,
-                        title: false,
-                      ),
+                ? const Center(child: Text("No series found"))
+                : SerieGridMobile(
+                  series: mySeries,
+                  isLoading: false,
+                  onSerieTap: _showSerieDetails,
+                ),
           ],
         ),
       ),

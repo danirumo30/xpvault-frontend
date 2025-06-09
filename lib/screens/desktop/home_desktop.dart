@@ -13,7 +13,7 @@ import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
-import 'package:xpvault/screens/desktop/profile_desktop.dart';
+import 'package:xpvault/screens/profile.dart';
 import 'package:xpvault/screens/home.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
@@ -39,7 +39,6 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
   bool _isSteamLoggedIn = false;
   String _token = "";
 
-  // Para la búsqueda de usuarios:
   final TextEditingController _searchController = TextEditingController();
   List<BasicUser> _allUsers = [];
   List<BasicUser> _filteredUsers = [];
@@ -73,10 +72,7 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
         _isSteamLoggedIn = true;
       });
 
-      // Assign steamId locally
       await UserManager.assignSteamIdToUser(steamId);
-
-      // Reload user from local
       var user = await UserManager.getUser();
 
       if (user != null) {
@@ -90,24 +86,15 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
             _token = token;
           });
 
-          print("USER DATA TO UPDATE: ${user.toJson()}");
-
-          // Try to save user in backend
           final saved = await _userController.saveUser(user, _token);
-
           if (saved) {
-            // Fetch updated user from backend
             final updatedUser = await _userController.getUserByUsername(user.username);
-
             if (updatedUser != null) {
-              print("UpdatedUser steamUser: ${updatedUser.steamUser}, Expected steamId: $steamId");
               await UserManager.saveUser(updatedUser);
-
               setState(() {
                 _user = updatedUser;
               });
               if (updatedUser.steamUser != null) {
-                // Steam user was assigned successfully
                 Future.microtask(() {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -119,7 +106,6 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                   );
                 });
               } else {
-                // Steam user field null or different => failed assignment
                 Future.microtask(() {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -133,21 +119,13 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                   );
                 });
               }
-            } else {
-              print("Failed to get updated user from backend");
             }
-          } else {
-            print("Could not save user to backend");
-            // Optionally, aquí también podrías mostrar un error general si quieres.
           }
         }
       }
 
-      // Clear URL parameters
       web.window.history.replaceState(null, '', '/');
     } else if (search.isNotEmpty && (steamId == null || steamId.isEmpty)) {
-      print('No Steam ID found in URL');
-
       Future.microtask(() {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -163,7 +141,6 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
 
   Future<void> loadContentSequentially() async {
     final user = await UserManager.getUser();
-    print("${user?.username}");
     final gameController = GameController();
     final movieController = MovieController();
     final serieController = SerieController();
@@ -196,22 +173,13 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
   }
 
   void _applyUserFilter(String filter) {
-    if (filter.isEmpty) {
-      setState(() {
-        _filteredUsers = [];
-      });
-    } else {
-      setState(() {
-        _filteredUsers =
-            _allUsers
-                .where(
-                  (user) => user.nickname.toLowerCase().contains(
-                    filter.toLowerCase(),
-                  ),
-                )
-                .toList();
-      });
-    }
+    setState(() {
+      _filteredUsers = filter.isEmpty
+          ? []
+          : _allUsers
+          .where((user) => user.nickname.toLowerCase().contains(filter.toLowerCase()))
+          .toList();
+    });
   }
 
   String _getTimeLabel(BasicUser user) {
@@ -235,15 +203,9 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(
-              left: 0,
-              top: 24,
-              right: 32,
-              bottom: 0,
-            ),
+            padding: const EdgeInsets.only(left: 0, top: 24, right: 32),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
                   width: 600,
@@ -268,13 +230,12 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
                           ),
                         ),
                       const SizedBox(width: 12),
-                      _user != null &&
-                              _user!.profilePhoto != null &&
-                              _user!.profilePhoto!.isNotEmpty
-                          ? _HoverableProfileAvatar(
-                            imageBytes: base64Decode(_user!.profilePhoto!),
-                          )
-                          : const _HoverableProfileAvatar(imageBytes: null),
+                      _HoverableProfileAvatar(
+                        imageBytes: _user?.profilePhoto != null
+                            ? base64Decode(_user!.profilePhoto!)
+                            : null,
+                        nickname: _user?.username,
+                      ),
                     ],
                   ),
                 ),
@@ -284,108 +245,90 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
 
           const SizedBox(height: 16),
 
-          // Mostrar lista de usuarios solo si hay texto en búsqueda
           if (_loadingUsers)
-            const Center(
-              child: CircularProgressIndicator(color: AppColors.accent),
-            )
+            const Center(child: CircularProgressIndicator(color: AppColors.accent))
           else if (_searchController.text.isEmpty)
             const SizedBox()
           else if (_filteredUsers.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                "No users found",
-                style: TextStyle(color: Colors.white),
-              ),
-            )
-          else
-            SizedBox(
-              height: 200,
-              child: ListView.separated(
-                itemCount: _filteredUsers.length,
-                separatorBuilder:
-                    (_, __) => const Divider(color: Colors.white24),
-                itemBuilder: (context, index) {
-                  final user = _filteredUsers[index];
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: AppColors.surface,
-                      backgroundImage:
-                          (user.photoUrl != null && user.photoUrl!.isNotEmpty)
-                              ? MemoryImage(base64Decode(user.photoUrl!))
-                              : null,
-                      child:
-                          (user.photoUrl == null || user.photoUrl!.isEmpty)
-                              ? const Icon(Icons.person, color: Colors.white)
-                              : null,
-                    ),
-                    title: Text(
-                      user.nickname,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text("No users found", style: TextStyle(color: Colors.white)),
+              )
+            else
+              SizedBox(
+                height: 200,
+                child: ListView.separated(
+                  itemCount: _filteredUsers.length,
+                  separatorBuilder: (_, __) => const Divider(color: Colors.white24),
+                  itemBuilder: (context, index) {
+                    final user = _filteredUsers[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: AppColors.surface,
+                        backgroundImage: (user.photoUrl != null && user.photoUrl!.isNotEmpty)
+                            ? MemoryImage(base64Decode(user.photoUrl!))
+                            : null,
+                        child: (user.photoUrl == null || user.photoUrl!.isEmpty)
+                            ? const Icon(Icons.person, color: Colors.white)
+                            : null,
                       ),
-                    ),
-                    subtitle: Text(
-                      _getTimeLabel(user),
-                      style: const TextStyle(color: Colors.white70),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) =>
-                                  ProfileDesktopPage(username: user.nickname),
+                      title: Text(
+                        user.nickname,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                      );
-                    },
-                  );
-                },
+                      ),
+                      subtitle: Text(
+                        _getTimeLabel(user),
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProfilePage(username: user.nickname),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
 
           const SizedBox(height: 32),
 
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
-              child:
-                  isLoading
-                      ? const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.accent,
-                        ),
-                      )
-                      : ListView(
-                        children: [
-                          MyBuildContentBox(
-                            items: featuredGames,
-                            showBodyLabel: false,
-                            returnPage: HomePage(),
-                            title: "🎮 Featured Games",
-                          ),
-                          const SizedBox(height: 24),
-
-                          MyBuildContentBox(
-                            items: popularMovies,
-                            showBodyLabel: false,
-                            returnPage: HomePage(),
-                            title: "🎬 Popular Movies",
-                          ),
-                          const SizedBox(height: 24),
-
-                          MyBuildContentBox(
-                            items: popularSeries,
-                            showBodyLabel: false,
-                            returnPage: HomePage(),
-                            title: "📺 Popular Series",
-                          ),
-                          const SizedBox(height: 24),
-                        ],
-                      ),
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator(color: AppColors.accent))
+                  : ListView(
+                children: [
+                  MyBuildContentBox(
+                    items: featuredGames,
+                    showBodyLabel: false,
+                    returnPage: const HomePage(),
+                    title: "🎮 Featured Games",
+                  ),
+                  const SizedBox(height: 24),
+                  MyBuildContentBox(
+                    items: popularMovies,
+                    showBodyLabel: false,
+                    returnPage: const HomePage(),
+                    title: "🎬 Popular Movies",
+                  ),
+                  const SizedBox(height: 24),
+                  MyBuildContentBox(
+                    items: popularSeries,
+                    showBodyLabel: false,
+                    returnPage: const HomePage(),
+                    title: "📺 Popular Series",
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           ),
         ],
@@ -396,12 +339,16 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
 
 class _HoverableProfileAvatar extends StatefulWidget {
   final Uint8List? imageBytes;
+  final String? nickname;
 
-  const _HoverableProfileAvatar({Key? key, this.imageBytes}) : super(key: key);
+  const _HoverableProfileAvatar({
+    Key? key,
+    this.imageBytes,
+    this.nickname,
+  }) : super(key: key);
 
   @override
-  State<_HoverableProfileAvatar> createState() =>
-      _HoverableProfileAvatarState();
+  State<_HoverableProfileAvatar> createState() => _HoverableProfileAvatarState();
 }
 
 class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
@@ -415,10 +362,14 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
       onExit: (_) => setState(() => _hovering = false),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ProfileDesktopPage()),
-          );
+          if (widget.nickname != null && widget.nickname!.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(username: widget.nickname!),
+              ),
+            );
+          }
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
@@ -426,20 +377,18 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
           height: _hovering ? 56 : 48,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            image:
-                widget.imageBytes != null
-                    ? DecorationImage(
-                      image: MemoryImage(widget.imageBytes!),
-                      fit: BoxFit.cover,
-                    )
-                    : null,
+            image: widget.imageBytes != null
+                ? DecorationImage(
+              image: MemoryImage(widget.imageBytes!),
+              fit: BoxFit.cover,
+            )
+                : null,
             color: widget.imageBytes == null ? AppColors.surface : null,
           ),
           alignment: Alignment.center,
-          child:
-              widget.imageBytes == null
-                  ? const Text("👤", style: TextStyle(fontSize: 24))
-                  : null,
+          child: widget.imageBytes == null
+              ? const Text("👤", style: TextStyle(fontSize: 24))
+              : null,
         ),
       ),
     );

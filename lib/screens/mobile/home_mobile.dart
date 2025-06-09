@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:math';
 import 'package:web/web.dart' as web;
 
 import 'package:flutter/material.dart';
@@ -13,14 +14,13 @@ import 'package:xpvault/models/game.dart';
 import 'package:xpvault/models/movie.dart';
 import 'package:xpvault/models/serie.dart';
 import 'package:xpvault/models/user.dart';
-import 'package:xpvault/screens/desktop/profile_desktop.dart';
+import 'package:xpvault/screens/profile.dart';
 import 'package:xpvault/screens/home.dart';
 import 'package:xpvault/services/token_manager.dart';
 import 'package:xpvault/services/user_manager.dart';
 import 'package:xpvault/themes/app_color.dart';
 import 'package:xpvault/widgets/my_build_content_box.dart';
 import 'package:xpvault/widgets/my_textformfield.dart';
-import 'dart:math';
 
 class HomeMobilePage extends StatefulWidget {
   const HomeMobilePage({super.key});
@@ -175,29 +175,22 @@ class _HomeMobilePage extends State<HomeMobilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
-                MyTextformfield(
-                  textEditingController: _searchController,
-                  hintText: "Search friends...",
-                  obscureText: false,
-                ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 34),
                 Row(
                   children: [
-                    if (_user != null)
-                      Text(
-                        _user!.username,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Expanded(
+                      child: MyTextformfield(
+                        textEditingController: _searchController,
+                        hintText: "Search friends...",
+                        obscureText: false,
                       ),
-                    const SizedBox(width: 12),
+                    ),
+                    const SizedBox(width: 5),
                     _HoverableProfileAvatar(
                       imageBytes: _user?.profilePhoto != null
                           ? base64Decode(_user!.profilePhoto!)
                           : null,
+                      nickname: _user?.username,
                     ),
                   ],
                 ),
@@ -207,73 +200,73 @@ class _HomeMobilePage extends State<HomeMobilePage> {
                 else if (_searchController.text.isNotEmpty)
                   _filteredUsers.isEmpty
                       ? const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Text("No users found", style: TextStyle(color: Colors.white)),
-                        )
+                    padding: EdgeInsets.all(8),
+                    child: Text("No users found", style: TextStyle(color: Colors.white)),
+                  )
                       : ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: min(_filteredUsers.length, 5),
-                          separatorBuilder: (_, __) => const Divider(color: Colors.white24),
-                          itemBuilder: (context, index) {
-                            final user = _filteredUsers[index];
-                            return ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: AppColors.surface,
-                                backgroundImage: user.photoUrl != null && user.photoUrl!.isNotEmpty
-                                    ? MemoryImage(base64Decode(user.photoUrl!))
-                                    : null,
-                                child: user.photoUrl == null || user.photoUrl!.isEmpty
-                                    ? const Icon(Icons.person, color: Colors.white)
-                                    : null,
-                              ),
-                              title: Text(user.nickname,
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white)),
-                              subtitle: Text(_getTimeLabel(user),
-                                  style: const TextStyle(color: Colors.white70)),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => ProfileDesktopPage(username: user.nickname),
-                                  ),
-                                );
-                              },
-                            );
-                          },
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: min(_filteredUsers.length, 5),
+                    separatorBuilder: (_, __) => const Divider(color: Colors.white24),
+                    itemBuilder: (context, index) {
+                      final user = _filteredUsers[index];
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: AppColors.surface,
+                          backgroundImage: user.photoUrl != null && user.photoUrl!.isNotEmpty
+                              ? MemoryImage(base64Decode(user.photoUrl!))
+                              : null,
+                          child: user.photoUrl == null || user.photoUrl!.isEmpty
+                              ? const Icon(Icons.person, color: Colors.white)
+                              : null,
                         ),
+                        title: Text(user.nickname,
+                            style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                        subtitle: Text(_getTimeLabel(user),
+                            style: const TextStyle(color: Colors.white70)),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ProfilePage(username: user.nickname),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 const SizedBox(height: 24),
                 isLoading
                     ? const Center(child: CircularProgressIndicator(color: AppColors.accent))
                     : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          MyBuildContentBox(
-                            items: featuredGames,
-                            showBodyLabel: false,
-                            returnPage: HomePage(),
-                            title: "🎮 Featured Games",
-                          ),
-                          const SizedBox(height: 24),
-                          MyBuildContentBox(
-                            items: popularMovies,
-                            showBodyLabel: false,
-                            returnPage: HomePage(),
-                            title: "🎬 Popular Movies",
-                          ),
-                          const SizedBox(height: 24),
-                          MyBuildContentBox(
-                            items: popularSeries,
-                            showBodyLabel: false,
-                            returnPage: HomePage(),
-                            title: "📺 Popular Series",
-                          ),
-                          const SizedBox(height: 24),
-                        ],
-                      ),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MyBuildContentBox(
+                      items: featuredGames,
+                      showBodyLabel: false,
+                      returnPage: HomePage(),
+                      title: "🎮 Featured Games",
+                    ),
+                    const SizedBox(height: 24),
+                    MyBuildContentBox(
+                      items: popularMovies,
+                      showBodyLabel: false,
+                      returnPage: HomePage(),
+                      title: "🎬 Popular Movies",
+                    ),
+                    const SizedBox(height: 24),
+                    MyBuildContentBox(
+                      items: popularSeries,
+                      showBodyLabel: false,
+                      returnPage: HomePage(),
+                      title: "📺 Popular Series",
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ],
             ),
           ),
@@ -285,8 +278,13 @@ class _HomeMobilePage extends State<HomeMobilePage> {
 
 class _HoverableProfileAvatar extends StatefulWidget {
   final Uint8List? imageBytes;
+  final String? nickname;
 
-  const _HoverableProfileAvatar({Key? key, this.imageBytes}) : super(key: key);
+  const _HoverableProfileAvatar({
+    Key? key,
+    this.imageBytes,
+    this.nickname,
+  }) : super(key: key);
 
   @override
   State<_HoverableProfileAvatar> createState() => _HoverableProfileAvatarState();
@@ -303,10 +301,14 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
       onExit: (_) => setState(() => _hovering = false),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ProfileDesktopPage()),
-          );
+          if (widget.nickname != null && widget.nickname!.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(username: widget.nickname!),
+              ),
+            );
+          }
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
@@ -316,9 +318,9 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
             shape: BoxShape.circle,
             image: widget.imageBytes != null
                 ? DecorationImage(
-                    image: MemoryImage(widget.imageBytes!),
-                    fit: BoxFit.cover,
-                  )
+              image: MemoryImage(widget.imageBytes!),
+              fit: BoxFit.cover,
+            )
                 : null,
             color: widget.imageBytes == null ? AppColors.surface : null,
           ),
