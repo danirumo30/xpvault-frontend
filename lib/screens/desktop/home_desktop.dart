@@ -177,8 +177,8 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
       _filteredUsers = filter.isEmpty
           ? []
           : _allUsers
-              .where((user) => user.nickname.toLowerCase().contains(filter.toLowerCase()))
-              .toList();
+          .where((user) => user.nickname.toLowerCase().contains(filter.toLowerCase()))
+          .toList();
     });
   }
 
@@ -250,52 +250,52 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
           else if (_searchController.text.isEmpty)
             const SizedBox()
           else if (_filteredUsers.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text("No users found", style: TextStyle(color: Colors.white)),
-            )
-          else
-            SizedBox(
-              height: 200,
-              child: ListView.separated(
-                itemCount: _filteredUsers.length,
-                separatorBuilder: (_, __) => const Divider(color: Colors.white24),
-                itemBuilder: (context, index) {
-                  final user = _filteredUsers[index];
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: AppColors.surface,
-                      backgroundImage: (user.photoUrl != null && user.photoUrl!.isNotEmpty)
-                          ? MemoryImage(base64Decode(user.photoUrl!))
-                          : null,
-                      child: (user.photoUrl == null || user.photoUrl!.isEmpty)
-                          ? const Icon(Icons.person, color: Colors.white)
-                          : null,
-                    ),
-                    title: Text(
-                      user.nickname,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text("No users found", style: TextStyle(color: Colors.white)),
+              )
+            else
+              SizedBox(
+                height: 200,
+                child: ListView.separated(
+                  itemCount: _filteredUsers.length,
+                  separatorBuilder: (_, __) => const Divider(color: Colors.white24),
+                  itemBuilder: (context, index) {
+                    final user = _filteredUsers[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: AppColors.surface,
+                        backgroundImage: (user.photoUrl != null && user.photoUrl!.isNotEmpty)
+                            ? MemoryImage(base64Decode(user.photoUrl!))
+                            : null,
+                        child: (user.photoUrl == null || user.photoUrl!.isEmpty)
+                            ? const Icon(Icons.person, color: Colors.white)
+                            : null,
                       ),
-                    ),
-                    subtitle: Text(
-                      _getTimeLabel(user),
-                      style: const TextStyle(color: Colors.white70),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ProfilePage(username: user.nickname),
+                      title: Text(
+                        user.nickname,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                      );
-                    },
-                  );
-                },
+                      ),
+                      subtitle: Text(
+                        _getTimeLabel(user),
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProfilePage(username: user.nickname),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
 
           const SizedBox(height: 32),
 
@@ -305,30 +305,30 @@ class _HomeDesktopPageState extends State<HomeDesktopPage> {
               child: isLoading
                   ? const Center(child: CircularProgressIndicator(color: AppColors.accent))
                   : ListView(
-                      children: [
-                        MyBuildContentBox(
-                          items: featuredGames,
-                          showBodyLabel: false,
-                          returnPage: const HomePage(),
-                          title: "🎮 Featured Games",
-                        ),
-                        const SizedBox(height: 24),
-                        MyBuildContentBox(
-                          items: popularMovies,
-                          showBodyLabel: false,
-                          returnPage: const HomePage(),
-                          title: "🎬 Popular Movies",
-                        ),
-                        const SizedBox(height: 24),
-                        MyBuildContentBox(
-                          items: popularSeries,
-                          showBodyLabel: false,
-                          returnPage: const HomePage(),
-                          title: "📺 Popular Series",
-                        ),
-                        const SizedBox(height: 24),
-                      ],
-                    ),
+                children: [
+                  MyBuildContentBox(
+                    items: featuredGames,
+                    showBodyLabel: false,
+                    returnPage: const HomePage(),
+                    title: "🎮 Featured Games",
+                  ),
+                  const SizedBox(height: 24),
+                  MyBuildContentBox(
+                    items: popularMovies,
+                    showBodyLabel: false,
+                    returnPage: const HomePage(),
+                    title: "🎬 Popular Movies",
+                  ),
+                  const SizedBox(height: 24),
+                  MyBuildContentBox(
+                    items: popularSeries,
+                    showBodyLabel: false,
+                    returnPage: const HomePage(),
+                    title: "📺 Popular Series",
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           ),
         ],
@@ -379,9 +379,9 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
             shape: BoxShape.circle,
             image: widget.imageBytes != null
                 ? DecorationImage(
-                    image: MemoryImage(widget.imageBytes!),
-                    fit: BoxFit.cover,
-                  )
+              image: MemoryImage(widget.imageBytes!),
+              fit: BoxFit.cover,
+            )
                 : null,
             color: widget.imageBytes == null ? AppColors.surface : null,
           ),

@@ -179,105 +179,60 @@ class _SteamMobilePageState extends State<SteamMobilePage> {
             const SizedBox(height: 16),
             Text("Games",
                 style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    )),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                )),
             const SizedBox(height: 8),
             _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : games.isEmpty
-                    ? const Center(child: Text("No games found."))
-                    : GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: games.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                          childAspectRatio: 1.3,
-                        ),
-                        itemBuilder: (context, index) {
-                          final game = games[index];
-                          final imageUrl = (game.screenshotUrl?.trim().isNotEmpty ?? false)
-                              ? game.screenshotUrl!
-                              : defaultImage;
+                ? const Center(child: Text("No games found."))
+                : GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: games.length,
+              gridDelegate:
+              const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 1.3,
+              ),
+              itemBuilder: (context, index) {
+                final game = games[index];
+                final imageUrl = (game.screenshotUrl?.trim().isNotEmpty ?? false)
+                    ? game.screenshotUrl!
+                    : defaultImage;
 
-                          return MyNetImageContainer(
-                            title: game.title,
-                            body: '',
-                            image: imageUrl,
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => GameDetailPage(
-                                  steamId: game.steamId,
-                                  returnPage: widget.returnPage,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
+                return MyNetImageContainer(
+                  title: game.title,
+                  body: '',
+                  image: imageUrl,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GameDetailPage(
+                        steamId: game.steamId,
+                        returnPage: widget.returnPage,
                       ),
-            const SizedBox(height: 20),
-            Text(
-              (_steamUsername != null ? "$_steamUsername's Games" : "My Games"),
-              style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    ),
                   ),
+                );
+              },
             ),
-            const SizedBox(height: 8),
-            _isLoadingMyGames
-                ? const Center(child: CircularProgressIndicator())
-                : !_isSteamUser
-                    ? const Text(
-                        "Please log in with your Steam account to see your games.",
-                        style: TextStyle(color: AppColors.textPrimary),)
-                    : myGames.isEmpty
-                        ? const Text("You have no games.",
-                        style: TextStyle(color: AppColors.textPrimary))
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: myGames.length,
-                            itemBuilder: (context, index) {
-                              final game = myGames[index];
-                              final imageUrl = (game.screenshotUrl?.trim().isNotEmpty ?? false)
-                                  ? game.screenshotUrl!
-                                  : defaultImage;
 
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                                child: MyNetImageContainer(
-                                  title: game.title,
-                                  body: '',
-                                  image: imageUrl,
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => GameDetailPage(
-                                        steamId: game.steamId,
-                                        returnPage: widget.returnPage,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
             const SizedBox(height: 20),
-            // Pagination
+
+            // PAGINACIÓN MOVIDA AQUÍ
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: _currentPage > 0 && !_isLoading
                       ? () {
-                          setState(() => _currentPage--);
-                          _loadGames();
-                        }
+                    setState(() => _currentPage--);
+                    _loadGames();
+                  }
                       : null,
                   child: const Text("Previous"),
                 ),
@@ -285,13 +240,63 @@ class _SteamMobilePageState extends State<SteamMobilePage> {
                 ElevatedButton(
                   onPressed: !_isLoading && games.length == _pageSize
                       ? () {
-                          setState(() => _currentPage++);
-                          _loadGames();
-                        }
+                    setState(() => _currentPage++);
+                    _loadGames();
+                  }
                       : null,
                   child: const Text("Next"),
                 ),
               ],
+            ),
+
+            const SizedBox(height: 20),
+
+            Text(
+              (_steamUsername != null ? "$_steamUsername's Games" : "My Games"),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            _isLoadingMyGames
+                ? const Center(child: CircularProgressIndicator())
+                : !_isSteamUser
+                ? const Text(
+              "Please log in with your Steam account to see your games.",
+              style: TextStyle(color: AppColors.textPrimary),
+            )
+                : myGames.isEmpty
+                ? const Text("You have no games.",
+                style: TextStyle(color: AppColors.textPrimary))
+                : ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: myGames.length,
+              itemBuilder: (context, index) {
+                final game = myGames[index];
+                final imageUrl = (game.screenshotUrl?.trim().isNotEmpty ?? false)
+                    ? game.screenshotUrl!
+                    : defaultImage;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: MyNetImageContainer(
+                    title: game.title,
+                    body: '',
+                    image: imageUrl,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameDetailPage(
+                          steamId: game.steamId,
+                          returnPage: widget.returnPage,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
