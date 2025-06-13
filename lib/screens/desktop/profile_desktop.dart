@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:xpvault/controllers/game_controller.dart';
 import 'package:xpvault/controllers/movie_controller.dart';
@@ -88,7 +87,7 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
 
     List<Game> games = [];
     if (widget.steamId != null) {
-      games = await _gameController.getTenUserGames(widget.steamId);
+      games = await _gameController.getTenUserGames(widget.steamId!);
     } else if (loadedUser.steamUser != null) {
       games = await _gameController.getTenUserGames(loadedUser.steamUser!.steamId);
     }
@@ -110,14 +109,14 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
   Widget build(BuildContext context) {
     if (_loading) {
       return const DesktopLayout(
-        title: "XPVAULT",
+        title: "PROFILE",
         body: Center(child: CircularProgressIndicator(color: AppColors.accent)),
       );
     }
 
     if (_user == null) {
       return const DesktopLayout(
-        title: "XPVAULT",
+        title: "PROFILE",
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -135,207 +134,217 @@ class _ProfileDesktopPageState extends State<ProfileDesktopPage> {
     }
 
     return DesktopLayout(
-      title: "XPVAULT",
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () async {
-                      final currentUser = await UserManager.getUser();
-                      if (currentUser != null &&
-                          currentUser.username == _user!.username) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UserSettingsPage(user: _user),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("You can only edit your own profile"),
-                            backgroundColor: AppColors.warning,
-                          ),
-                        );
-                      }
-                    },
-                    child: CircleAvatar(
-                      radius: 36,
-                      backgroundColor: AppColors.surface,
-                      backgroundImage:
-                      (_user!.profilePhoto != null &&
-                          _user!.profilePhoto!.isNotEmpty)
-                          ? MemoryImage(base64Decode(_user!.profilePhoto!))
-                          : null,
-                      child:
-                      (_user!.profilePhoto == null ||
-                          _user!.profilePhoto!.isEmpty)
-                          ? const Text("👤", style: TextStyle(fontSize: 28))
-                          : null,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  _user!.username,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Wrap(
-                    spacing: 24,
-                    runSpacing: 12,
-                    children: [
-                      MyStatsCard(
-                        title: "🎮 Hours played",
-                        value: _user!.totalTimePlayed,
-                        isTime: true,
-                      ),
-                      MyStatsCard(
-                        title: "🎬 Hours watched in movies",
-                        value: _user!.totalTimeMoviesWatched,
-                        isTime: true,
-                      ),
-                      MyStatsCard(
-                        title: "📺 Hours watched in series",
-                        value: _user!.totalTimeEpisodesWatched,
-                        isTime: true,
-                      ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        onEnter: (_) => setState(() => _hoveringFriends = true),
-                        onExit: (_) => setState(() => _hoveringFriends = false),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => UsersPage(
-                                  initialSearchTerm: "",
-                                  viewFriendsOf: _user!.username,
-                                ),
-                              ),
-                            );
-                          },
-                          child: AnimatedScale(
-                            scale: _hoveringFriends ? 1.05 : 1.0,
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeInOut,
-                            child: MyStatsCard(
-                              title: "👥 Friends",
-                              value: _user!.totalFriends,
-                              isTime: false,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (_currentUsername != null && _currentUsername != _user!.username)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 24),
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      onEnter: (_) => setState(() => _hoveringTick = true),
-                      onExit: (_) => setState(() => _hoveringTick = false),
-                      child: GestureDetector(
-                        onTap: () async {
-                          bool success;
-                          final currentUsername = (await UserManager.getUser())?.username;
-
-                          if (currentUsername == null) {
-                            print('Error: No se pudo obtener el usuario actual');
-                            return;
-                          }
-
-                          if (_isFriend) {
-                            success = await _userController.deleteFriendFromUser(currentUsername, _user!.username);
-                          } else {
-                            success = await _userController.addFriend(currentUsername, _user!.username);
-                          }
-
-                          if (success) {
-                            setState(() {
-                              _isFriend = !_isFriend;
-                              _loading = true;
-                            });
-
-                            await _loadUserAndContent();
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  _isFriend ? "Friend added!" : "Friend removed!",
-                                ),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Something went wrong"),
-                                backgroundColor: AppColors.warning,
-                              ),
-                            );
-                          }
-                        },
-                        child: AnimatedScale(
-                          scale: _hoveringTick ? 1.3 : 1.0,
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeInOut,
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _isFriend ? Colors.lightGreenAccent : Colors.grey,
-                            ),
-                            child: const Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 32),
-
-            Expanded(
-              child: ListView(
+      title: "PROFILE",
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  MyBuildContentBox(items: _games, title: "🎮 My Games", username: _user!.steamUser!.steamId, returnPage: ProfilePage(username: widget.username!)),
-                  const SizedBox(height: 45),
-
-                  MyBuildContentBox(items: _movies, title: "🎬 My Movies", username: _user!.username, returnPage: ProfilePage(username: widget.username!),),
-                  const SizedBox(height: 45),
-
-                  MyBuildContentBox(items: _series, title: "📺 My Series", username: _user!.username, returnPage: ProfilePage(username: widget.username!),),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () async {
+                        final currentUser = await UserManager.getUser();
+                        if (currentUser != null &&
+                            currentUser.username == _user!.username) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UserSettingsPage(user: _user),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("You can only edit your own profile"),
+                              backgroundColor: AppColors.warning,
+                            ),
+                          );
+                        }
+                      },
+                      child: CircleAvatar(
+                        radius: 36,
+                        backgroundColor: AppColors.surface,
+                        backgroundImage:
+                        (_user!.profilePhoto != null && _user!.profilePhoto!.isNotEmpty)
+                            ? MemoryImage(base64Decode(_user!.profilePhoto!))
+                            : null,
+                        child:
+                        (_user!.profilePhoto == null || _user!.profilePhoto!.isEmpty)
+                            ? const Text("👤", style: TextStyle(fontSize: 28))
+                            : null,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    _user!.username,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 24),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Wrap(
+                      spacing: 24,
+                      runSpacing: 12,
+                      children: [
+                        MyStatsCard(
+                          title: "🎮 Hours played",
+                          value: _user!.totalTimePlayed,
+                          isTime: true,
+                        ),
+                        MyStatsCard(
+                          title: "🎬 Hours watched in movies",
+                          value: _user!.totalTimeMoviesWatched,
+                          isTime: true,
+                        ),
+                        MyStatsCard(
+                          title: "📺 Hours watched in series",
+                          value: _user!.totalTimeEpisodesWatched,
+                          isTime: true,
+                        ),
+                        MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          onEnter: (_) => setState(() => _hoveringFriends = true),
+                          onExit: (_) => setState(() => _hoveringFriends = false),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UsersPage(
+                                    initialSearchTerm: "",
+                                    viewFriendsOf: _user!.username,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: AnimatedScale(
+                              scale: _hoveringFriends ? 1.05 : 1.0,
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut,
+                              child: MyStatsCard(
+                                title: "👥 Friends",
+                                value: _user!.totalFriends,
+                                isTime: false,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_currentUsername != null && _currentUsername != _user!.username)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 24),
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        onEnter: (_) => setState(() => _hoveringTick = true),
+                        onExit: (_) => setState(() => _hoveringTick = false),
+                        child: GestureDetector(
+                          onTap: () async {
+                            bool success;
+                            final currentUsername = (await UserManager.getUser())?.username;
+
+                            if (currentUsername == null) return;
+
+                            if (_isFriend) {
+                              success = await _userController.deleteFriendFromUser(currentUsername, _user!.username);
+                            } else {
+                              success = await _userController.addFriend(currentUsername, _user!.username);
+                            }
+
+                            if (success) {
+                              setState(() {
+                                _isFriend = !_isFriend;
+                                _loading = true;
+                              });
+
+                              await _loadUserAndContent();
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    _isFriend ? "Friend added!" : "Friend removed!",
+                                  ),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Something went wrong"),
+                                  backgroundColor: AppColors.warning,
+                                ),
+                              );
+                            }
+                          },
+                          child: AnimatedScale(
+                            scale: _hoveringTick ? 1.3 : 1.0,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
+                            child: Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _isFriend ? Colors.lightGreenAccent : Colors.grey,
+                              ),
+                              child: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 32),
+
+              Column(
+                children: [
+                  MyBuildContentBox(
+                      items: _games,
+                      title: "🎮 My Games",
+                      username: _user!.steamUser?.steamId,
+                      returnPage: ProfilePage(username: widget.username!)
+                  ),
+                  const SizedBox(height: 45),
+
+                  MyBuildContentBox(
+                      items: _movies,
+                      title: "🎬 My Movies",
+                      username: _user!.username,
+                      returnPage: ProfilePage(username: widget.username!)
+                  ),
+                  const SizedBox(height: 45),
+
+                  MyBuildContentBox(
+                      items: _series,
+                      title: "📺 My Series",
+                      username: _user!.username,
+                      returnPage: ProfilePage(username: widget.username!)
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
