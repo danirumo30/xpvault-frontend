@@ -363,8 +363,7 @@ class _HoverableProfileAvatarState extends State<_HoverableProfileAvatar> {
       child: GestureDetector(
         onTap: () {
           if (widget.nickname != null && widget.nickname!.isNotEmpty) {
-            Navigator.push(
-              context,
+            Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(
                 builder: (context) => ProfilePage(username: widget.nickname!),
               ),

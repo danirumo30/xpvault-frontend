@@ -16,11 +16,9 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePage extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ResponsiveLayout(
-        mobileBody: ProfileMobilePage(username: widget.username, steamId: widget.steamId),
-        desktopBody: ProfileDesktopPage(username: widget.username, steamId: widget.steamId),
-      ),
+    return ResponsiveLayout(
+      mobileBody: ProfileMobilePage(username: widget.username, steamId: widget.steamId),
+      desktopBody: ProfileDesktopPage(username: widget.username, steamId: widget.steamId),
     );
   }
 }
